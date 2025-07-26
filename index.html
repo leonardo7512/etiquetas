@@ -1,0 +1,443 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.6">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Menlo}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px Menlo; min-height: 13.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="es"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Procesador de Etiquetas - FUCAS SPA&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>* { margin: 0; padding: 0; box-sizing: border-box; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f5f5f5; color: #333; line-height: 1.6; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.container { max-width: 1400px; margin: 0 auto; padding: 20px; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.header { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; padding: 30px; border-radius: 10px; text-align: center; margin-bottom: 20px; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.header h1 { font-size: 2rem; margin-bottom: 10px; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.type-selector, .form-section, .preview-section { background: white; border-radius: 10px; padding: 30px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.type-buttons { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.type-btn { padding: 15px 30px; border: 2px solid #e5e7eb; background: white; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; min-width: 150px; text-align: center; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.type-btn.active { background: #2563eb; color: white; border-color: #2563eb; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.type-btn:hover:not(.active) { border-color: #2563eb; background: #f8fafc; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.form-section { display: none; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.form-section.active { display: block; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 20px; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.form-group { display: flex; flex-direction: column; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.form-group label { font-weight: 600; margin-bottom: 5px; color: #374151; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.form-group label.required::after { content: " *"; color: #ef4444; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.form-group input, .form-group select, .form-group textarea { padding: 10px; border: 2px solid #e5e7eb; border-radius: 6px; font-size: 14px; transition: border-color 0.3s; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.form-group textarea { min-height: 80px; resize: vertical; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn { padding: 12px 24px; border: none; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn-primary { background-color: #2563eb; color: white; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn-primary:hover:not(:disabled) { background-color: #1d4ed8; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn-info { background-color: #0ea5e9; color: white; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn-info:hover { background-color: #0284c7; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn-success { background-color: #059669; color: white; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn-success:hover { background-color: #047857; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn-warning { background-color: #d97706; color: white; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn-warning:hover { background-color: #b45309; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn-secondary { background-color: #6b7280; color: white; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn-secondary:hover { background-color: #4b5563; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn:disabled { opacity: 0.5; cursor: not-allowed; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn-group { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 20px; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.preview-section { display: none; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.preview-section.active { display: block; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.success-message { background-color: #d1fae5; border: 1px solid #a7f3d0; color: #065f46; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: none; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.success-message.active { display: block; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.table-container { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>table { width: 100%; border-collapse: collapse; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>td { padding: 10px 12px; border-bottom: 1px solid #e5e7eb; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>tr:nth-child(even) { background-color: #f9fafb; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.copy-section { background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 8px; padding: 20px; margin-top: 20px; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.copy-textarea { width: 100%; height: 200px; padding: 15px; border: 1px solid #e5e7eb; border-radius: 6px; font-family: monospace; font-size: 12px; background: white; resize: vertical; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.hidden { display: none !important; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>@media (max-width: 768px) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>.container { padding: 10px; }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>.form-grid { grid-template-columns: 1fr; }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>.type-buttons, .btn-group { flex-direction: column; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="header"&gt;&lt;h1&gt;Procesador de Etiquetas - FUCAS SPA&lt;/h1&gt;&lt;p&gt;Sistema interactivo de generación de etiquetas&lt;/p&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="type-selector"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h3 style="margin-bottom: 15px; text-align: center;"&gt;Selecciona el tipo de operación:&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="type-buttons"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="type-btn" onclick="seleccionarTipo('RETIRO', this)"&gt;🏪 RETIRO&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="type-btn" onclick="seleccionarTipo('ENVIO', this)"&gt;📦 ENVÍO&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="type-btn" onclick="seleccionarTipo('PROVISORIA', this)"&gt;⏳ PROVISORIA&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="formRetiro" class="form-section"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h2 style="margin-bottom: 20px; color: #1f2937;"&gt;📋 Formulario de Retiro&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="form-grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;&lt;label for="retiroVendedor"&gt;Vendedor&lt;/label&gt;&lt;select id="retiroVendedor"&gt;&lt;/select&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;&lt;label for="retiroCliente" class="required"&gt;Cliente&lt;/label&gt;&lt;input type="text" id="retiroCliente"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;&lt;label for="retiroNotaVenta" class="required"&gt;Nota de Venta&lt;/label&gt;&lt;input type="text" id="retiroNotaVenta"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;&lt;label for="retiroBultos"&gt;Copias de Etiqueta&lt;/label&gt;&lt;input type="number" id="retiroBultos" min="1" value="1"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;&lt;label for="retiroObservaciones"&gt;Observaciones&lt;/label&gt;&lt;textarea id="retiroObservaciones"&gt;&lt;/textarea&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="btn-group"&gt;&lt;button class="btn btn-primary" onclick="procesarRetiro()"&gt;Generar Vista Previa&lt;/button&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="formProvisoria" class="form-section"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h2 style="margin-bottom: 20px; color: #1f2937;"&gt;⏳ Formulario de Etiqueta Provisoria&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="form-grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;&lt;label for="provisoriaVendedor"&gt;Vendedor&lt;/label&gt;&lt;select id="provisoriaVendedor"&gt;&lt;/select&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;&lt;label for="provisoriaCliente" class="required"&gt;Cliente&lt;/label&gt;&lt;input type="text" id="provisoriaCliente"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;&lt;label for="provisoriaNotaVenta" class="required"&gt;Nota de Venta&lt;/label&gt;&lt;input type="text" id="provisoriaNotaVenta"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;&lt;label for="provisoriaBultos"&gt;Copias de Etiqueta&lt;/label&gt;&lt;input type="number" id="provisoriaBultos" min="1" value="1"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;&lt;label for="provisoriaObservaciones"&gt;Observaciones&lt;/label&gt;&lt;textarea id="provisoriaObservaciones"&gt;&lt;/textarea&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="btn-group"&gt;&lt;button class="btn btn-primary" onclick="procesarProvisoria()"&gt;Generar Vista Previa&lt;/button&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="formEnvio" class="form-section"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h2 style="margin-bottom: 20px; color: #1f2937;"&gt;📦 Formulario de Envío&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="form-group"&gt;&lt;label for="envioVendedor"&gt;Vendedor (Remitente)&lt;/label&gt;&lt;select id="envioVendedor"&gt;&lt;/select&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h3 style="margin-bottom: 15px; color: #374151;"&gt;Datos del Destinatario&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="form-grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;&lt;label for="envioDestinatario" class="required"&gt;Destinatario&lt;/label&gt;&lt;input type="text" id="envioDestinatario"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;&lt;label for="envioRut" class="required"&gt;RUT&lt;/label&gt;&lt;input type="text" id="envioRut"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;&lt;label for="envioTelefono" class="required"&gt;Teléfono&lt;/label&gt;&lt;input type="text" id="envioTelefono"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;&lt;label for="envioDireccion" class="required"&gt;Dirección&lt;/label&gt;&lt;input type="text" id="envioDireccion"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;&lt;label for="envioComuna" class="required"&gt;Comuna&lt;/label&gt;&lt;select id="envioComuna"&gt;&lt;option value=""&gt;Seleccionar...&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;&lt;label for="envioTipo"&gt;Tipo de Envío&lt;/label&gt;&lt;select id="envioTipo"&gt;&lt;option value="Domicilio"&gt;Domicilio&lt;/option&gt;&lt;option value="Oficina"&gt;Oficina&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h3 style="margin: 25px 0 15px 0; color: #374151;"&gt;Datos del Envío&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="form-grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;&lt;label for="envioNotaVenta" class="required"&gt;Nota de Venta&lt;/label&gt;&lt;input type="text" id="envioNotaVenta"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;&lt;label for="envioBultos"&gt;Bultos (N° de etiquetas)&lt;/label&gt;&lt;input type="number" id="envioBultos" min="1" value="1"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;&lt;label for="envioTransporte"&gt;Transporte&lt;/label&gt;&lt;select id="envioTransporte"&gt;&lt;option value=""&gt;Seleccionar...&lt;/option&gt;&lt;option value="TUTTO PETS"&gt;TUTTO PETS&lt;/option&gt;&lt;option value="JULIO MILLAN"&gt;JULIO MILLAN&lt;/option&gt;&lt;option value="CHRISTIAN ALIAGA"&gt;CHRISTIAN ALIAGA&lt;/option&gt;&lt;option value="Starken"&gt;Starken&lt;/option&gt;&lt;option value="Chilexpress"&gt;Chilexpress&lt;/option&gt;&lt;option value="Blue Express"&gt;Blue Express&lt;/option&gt;&lt;option value="Correos de Chile"&gt;Correos de Chile&lt;/option&gt;&lt;option value="Shipit"&gt;Shipit&lt;/option&gt;&lt;option value="Shippify"&gt;Shippify&lt;/option&gt;&lt;option value="VARMONTT"&gt;VARMONTT&lt;/option&gt;&lt;option value="PULLMAN"&gt;PULLMAN&lt;/option&gt;&lt;option value="CACEM"&gt;CACEM&lt;/option&gt;&lt;option value="MERCOSUR"&gt;MERCOSUR&lt;/option&gt;&lt;option value="TVP"&gt;TVP&lt;/option&gt;&lt;option value="Otro"&gt;Otro&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group hidden" id="transporteOtroGroup"&gt;&lt;label for="envioTransporteOtro"&gt;Especificar Transporte&lt;/label&gt;&lt;input type="text" id="envioTransporteOtro"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;&lt;label for="envioPago"&gt;Pago&lt;/label&gt;&lt;select id="envioPago"&gt;&lt;option value=""&gt;Seleccionar...&lt;/option&gt;&lt;option value="Pagado"&gt;Pagado&lt;/option&gt;&lt;option value="Por Pagar"&gt;Por Pagar&lt;/option&gt;&lt;option value="Contra Entrega"&gt;Contra Entrega&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="btn-group"&gt;&lt;button class="btn btn-primary" onclick="procesarEnvio()"&gt;Generar Vista Previa&lt;/button&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="previewSection" class="preview-section"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h2 style="margin-bottom: 20px; color: #1f2937;"&gt;👀 Vista Previa&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="successMessage" class="success-message"&gt;&lt;strong&gt;✅ Datos correctos.&lt;/strong&gt;&lt;p&gt;Usa las opciones de abajo para imprimir o exportar.&lt;/p&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="table-container"&gt;&lt;table&gt;&lt;tbody id="previewTable"&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="btn-group"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="btn btn-info" onclick="generarVistaImprimible()"&gt;🖨️ Imprimir Etiquetas&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="btn btn-success" onclick="generarExcel()"&gt;📊 Exportar a Excel&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="btn btn-success" onclick="copiarParaSheets()"&gt;📋 Copiar para Sheets&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="btn btn-warning" onclick="mostrarDatosCopiables()"&gt;📝 Copiar Datos&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="btn btn-secondary" onclick="volverInicio()"&gt;🔄 Nuevo&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="copySection" class="copy-section hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h3 style="margin-bottom: 15px;"&gt;📋 Datos para Copiar&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;textarea id="copyTextarea" class="copy-textarea" readonly&gt;&lt;/textarea&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div style="margin-top: 10px; text-align: center;"&gt;&lt;button class="btn btn-warning" onclick="copiarAlPortapapeles()"&gt;Copiar&lt;/button&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let processedData = null;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const vendedores = { "LEONARDO CASTRO": "2 3347 5040", "ANDREA FUENTES": "+56 9 6863 7136", "JOSELYN GOMEZ": "+56 9 3096 8640", "YEIMY REALPE": "+56 9 8544 9261", "LESLIE RIOS": "+56 9 3457 2139" };</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const comunasPorRegion = { "Arica y Parinacota": ["Arica", "Camarones", "Putre", "General Lagos"], "Tarapacá": ["Iquique", "Alto Hospicio", "Pozo Almonte", "Camiña", "Colchane", "Huara", "Pica"], "Antofagasta": ["Antofagasta", "Mejillones", "Sierra Gorda", "Taltal", "Calama", "Ollagüe", "San Pedro de Atacama", "Tocopilla", "María Elena"], "Atacama": ["Copiapó", "Caldera", "Tierra Amarilla", "Chañaral", "Diego de Almagro", "Vallenar", "Alto del Carmen", "Freirina", "Huasco"], "Coquimbo": ["La Serena", "Coquimbo", "Andacollo", "La Higuera", "Paiguano", "Vicuña", "Illapel", "Canela", "Los Vilos", "Salamanca", "Ovalle", "Combarbalá", "Monte Patria", "Punitaqui", "Río Hurtado"], "Valparaíso": ["Valparaíso", "Casablanca", "Concón", "Juan Fernández", "Puchuncaví", "Quintero", "Viña del Mar", "Isla de Pascua", "Los Andes", "Calle Larga", "Rinconada", "San Esteban", "La Ligua", "Cabildo", "Papudo", "Petorca", "Zapallar", "Quillota", "Calera", "Hijuelas", "La Cruz", "Nogales", "San Antonio", "Algarrobo", "Cartagena", "El Quisco", "El Tabo", "Santo Domingo", "San Felipe", "Catemu", "Llaillay", "Panquehue", "Putaendo", "Santa María", "Quilpué", "Limache", "Olmué", "Villa Alemana"], "Metropolitana de Santiago": ["Santiago", "Cerrillos", "Cerro Navia", "Conchalí", "El Bosque", "Estación Central", "Huechuraba", "Independencia", "La Cisterna", "La Florida", "La Granja", "La Pintana", "La Reina", "Las Condes", "Lo Barnechea", "Lo Espejo", "Lo Prado", "Macul", "Maipú", "Ñuñoa", "Pedro Aguirre Cerda", "Peñalolén", "Providencia", "Pudahuel", "Quilicura", "Quinta Normal", "Recoleta", "Renca", "San Joaquín", "San Miguel", "San Ramón", "Vitacura", "Puente Alto", "Pirque", "San José de Maipo", "Colina", "Lampa", "Tiltil", "San Bernardo", "Buin", "Calera de Tango", "Paine", "Melipilla", "Alhué", "Curacaví", "María Pinto", "San Pedro", "Talagante", "El Monte", "Isla de Maipo", "Padre Hurtado", "Peñaflor"], "Libertador General Bernardo O'Higgins": ["Rancagua", "Codegua", "Coinco", "Coltauco", "Doñihue", "Graneros", "Las Cabras", "Machalí", "Malloa", "Mostazal", "Olivar", "Peumo", "Pichidegua", "Quinta de Tilcoco", "Rengo", "Requínoa", "San Vicente", "Pichilemu", "La Estrella", "Litueche", "Marchihue", "Navidad", "Paredones", "San Fernando", "Chépica", "Chimbarongo", "Lolol", "Nancagua", "Palmilla", "Peralillo", "Placilla", "Pumanque", "Santa Cruz"], "Maule": ["Talca", "Constitución", "Curepto", "Empedrado", "Maule", "Pelarco", "Pencahue", "Río Claro", "San Clemente", "San Rafael", "Cauquenes", "Chanco", "Pelluhue", "Curicó", "Hualañé", "Licantén", "Molina", "Rauco", "Romeral", "Sagrada Familia", "Teno", "Vichuquén", "Linares", "Colbún", "Longaví", "Parral", "Retiro", "San Javier", "Villa Alegre", "Yerbas Buenas"], "Ñuble": ["Cobquecura", "Coelemu", "Ninhue", "Portezuelo", "Quirihue", "Ránquil", "Treguaco", "Bulnes", "Chillán Viejo", "Chillán", "El Carmen", "Pemuco", "Pinto", "Quillón", "San Ignacio", "Yungay", "Coihueco", "Ñiquén", "San Carlos", "San Fabián", "San Nicolás"], "Biobío": ["Concepción", "Coronel", "Chiguayante", "Florida", "Hualqui", "Lota", "Penco", "San Pedro de la Paz", "Santa Juana", "Talcahuano", "Tomé", "Hualpén", "Lebu", "Arauco", "Cañete", "Contulmo", "Curanilahue", "Los Álamos", "Tirúa", "Los Ángeles", "Antuco", "Cabrero", "Laja", "Mulchén", "Nacimiento", "Negrete", "Quilaco", "Quilleco", "San Rosendo", "Santa Bárbara", "Tucapel", "Yumbel", "Alto Biobío"], "La Araucanía": ["Temuco", "Carahue", "Cunco", "Curarrehue", "Freire", "Galvarino", "Gorbea", "Lautaro", "Loncoche", "Melipeuco", "Nueva Imperial", "Padre las Casas", "Perquenco", "Pitrufquén", "Pucón", "Saavedra", "Teodoro Schmidt", "Toltén", "Vilcún", "Villarrica", "Cholchol", "Angol", "Collipulli", "Curacautín", "Ercilla", "Lonquimay", "Los Sauces", "Lumaco", "Purén", "Renaico", "Traiguén", "Victoria"], "Los Ríos": ["Valdivia", "Corral", "Lanco", "Los Lagos", "Máfil", "Mariquina", "Paillaco", "Panguipulli", "La Unión", "Futrono", "Lago Ranco", "Río Bueno"], "Los Lagos": ["Puerto Montt", "Calbuco", "Cochamó", "Fresia", "Frutillar", "Los Muermos", "Llanquihue", "Maullín", "Puerto Varas", "Castro", "Ancud", "Chonchi", "Curaco de Vélez", "Dalcahue", "Puqueldón", "Queilén", "Quellón", "Quemchi", "Quinchao", "Osorno", "Puerto Octay", "Purranque", "Puyehue", "Río Negro", "San Juan de la Costa", "San Pablo", "Chaitén", "Futaleufú", "Hualaihué", "Palena"], "Aysén del General Carlos Ibáñez del Campo": ["Coyhaique", "Lago Verde", "Aysén", "Cisnes", "Guaitecas", "Cochrane", "O'Higgins", "Tortel", "Chile Chico", "Río Ibáñez"], "Magallanes y de la Antártica Chilena": ["Punta Arenas", "Laguna Blanca", "Río Verde", "San Gregorio", "Cabo de Hornos (Ex Navarino)", "Antártica", "Porvenir", "Primavera", "Timaukel", "Natales", "Torres del Paine"] };</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function poblarSelect(selectId, data, useKeysAsValue = true) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const select = document.getElementById(selectId);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>select.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>for (const key in data) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const option = document.createElement('option');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>option.value = useKeysAsValue ? key : data[key];</p>
+<p class="p1"><span class="Apple-converted-space">                </span>option.textContent = key;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>select.appendChild(option);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>document.addEventListener('DOMContentLoaded', () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const selectComuna = document.getElementById('envioComuna');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>selectComuna.innerHTML = '&lt;option value=""&gt;Seleccionar...&lt;/option&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>for (const region in comunasPorRegion) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const optgroup = document.createElement('optgroup');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>optgroup.label = region;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>comunasPorRegion[region].forEach(comuna =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const option = document.createElement('option');</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>option.value = comuna;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>option.textContent = comuna;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>optgroup.appendChild(option);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">                </span>selectComuna.appendChild(optgroup);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>poblarSelect('retiroVendedor', vendedores, true);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>poblarSelect('provisoriaVendedor', vendedores, true);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>poblarSelect('envioVendedor', vendedores, true);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('envioTransporte').addEventListener('change', function() {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const pagoSelect = document.getElementById('envioPago');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('transporteOtroGroup').classList.toggle('hidden', this.value !== 'Otro');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>pagoSelect.disabled = false;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (this.value === 'TUTTO PETS') {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>pagoSelect.value = 'Pagado';</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>pagoSelect.disabled = true;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>alert('ATENCIÓN: Envío por TUTTO PETS debe ser PAGADO y cobrado en la nota de venta.');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>} else if (this.value === 'JULIO MILLAN' || this.value === 'CHRISTIAN ALIAGA') {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const courierName = this.value;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>alert(`INFO: Para envíos con ${courierName}, si seleccionas "Por Pagar", el cobro lo gestiona directamente él.`);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function seleccionarTipo(tipo, element) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.querySelectorAll('.type-btn').forEach(btn =&gt; btn.classList.remove('active'));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>element.classList.add('active');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.querySelectorAll('.form-section, #previewSection').forEach(s =&gt; s.classList.remove('active'));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const formId = `form${tipo.charAt(0).toUpperCase() + tipo.slice(1).toLowerCase()}`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById(formId).classList.add('active');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function procesarRetiro() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const cliente = document.getElementById('retiroCliente').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const notaVenta = document.getElementById('retiroNotaVenta').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (!cliente || !notaVenta) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>alert('Los campos Cliente y Nota de Venta son obligatorios.');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const vendedorSeleccionado = document.getElementById('retiroVendedor').value;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const fecha = new Date();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>processedData = {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tipo: 'RETIRO',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>bultos: parseInt(document.getElementById('retiroBultos').value) || 1,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>datos: [</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['CLIENTE', cliente],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['NOTA DE VENTA', notaVenta],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['FECHA', `${fecha.getDate().toString().padStart(2, '0')}/${(fecha.getMonth() + 1).toString().padStart(2, '0')}/${fecha.getFullYear()}`],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['VENDEDOR', `${vendedorSeleccionado} - ${vendedores[vendedorSeleccionado]}`],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['OBSERVACIONES', document.getElementById('retiroObservaciones').value.trim()]</p>
+<p class="p1"><span class="Apple-converted-space">                </span>]</p>
+<p class="p1"><span class="Apple-converted-space">            </span>};</p>
+<p class="p1"><span class="Apple-converted-space">            </span>mostrarVistaPrevia();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function procesarProvisoria() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const cliente = document.getElementById('provisoriaCliente').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const notaVenta = document.getElementById('provisoriaNotaVenta').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (!cliente || !notaVenta) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>alert('Los campos Cliente y Nota de Venta son obligatorios.');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const vendedorSeleccionado = document.getElementById('provisoriaVendedor').value;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const fecha = new Date();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>processedData = {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tipo: 'PROVISORIA',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>bultos: parseInt(document.getElementById('provisoriaBultos').value) || 1,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>datos: [</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['CLIENTE', cliente],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['NOTA DE VENTA', notaVenta],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['FECHA', `${fecha.getDate().toString().padStart(2, '0')}/${(fecha.getMonth() + 1).toString().padStart(2, '0')}/${fecha.getFullYear()}`],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['VENDEDOR', `${vendedorSeleccionado} - ${vendedores[vendedorSeleccionado]}`],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['OBSERVACIONES', document.getElementById('provisoriaObservaciones').value.trim()]</p>
+<p class="p1"><span class="Apple-converted-space">                </span>]</p>
+<p class="p1"><span class="Apple-converted-space">            </span>};</p>
+<p class="p1"><span class="Apple-converted-space">            </span>mostrarVistaPrevia();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function procesarEnvio() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const campos = { destinatario: document.getElementById('envioDestinatario').value.trim(), rut: document.getElementById('envioRut').value.trim(), telefono: document.getElementById('envioTelefono').value.trim(), direccion: document.getElementById('envioDireccion').value.trim(), comuna: document.getElementById('envioComuna').value, notaVenta: document.getElementById('envioNotaVenta').value.trim() };</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const faltantes = Object.keys(campos).filter(k =&gt; !campos[k]);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (faltantes.length &gt; 0) { alert(`Faltan campos obligatorios: ${faltantes.join(', ')}`); return; }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let transporte = document.getElementById('envioTransporte').value;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (transporte === 'Otro') { transporte = document.getElementById('envioTransporteOtro').value.trim() || 'Otro (sin especificar)'; }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let region = 'No encontrada';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>for (const r in comunasPorRegion) { if (comunasPorRegion[r].includes(campos.comuna)) { region = r; break; } }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let ciudad = campos.comuna;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (region === 'Metropolitana de Santiago') { ciudad = 'Santiago'; }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const vendedorSeleccionado = document.getElementById('envioVendedor').value;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>processedData = {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tipo: 'ENVÍO',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>bultos: parseInt(document.getElementById('envioBultos').value) || 1,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>datos: [</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['DE', 'SOC INV FUCAS SPA - RUT: 76.230.392-2'],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['VENDEDOR', `${vendedorSeleccionado} - ${vendedores[vendedorSeleccionado]}`],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['DIRECCIÓN', 'AV LO ESPEJO 02360, SAN BERNARDO, SANTIAGO'],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['TELÉFONO', '2 3347 5040'],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['SEPARADOR_1', ''],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['DESTINATARIO', campos.destinatario],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['RUT DESTINATARIO', campos.rut],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['TELÉFONO DESTINO', campos.telefono],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['DIRECCIÓN DESTINO', campos.direccion],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['COMUNA DESTINO', campos.comuna],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['CIUDAD DESTINO', ciudad],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['REGIÓN', region],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['SEPARADOR_2', ''],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['TIPO DE ENVÍO', document.getElementById('envioTipo').value],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['MEDIO DE TRANSPORTE', transporte],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['FORMA DE PAGO', document.getElementById('envioPago').value],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>['NOTA DE VENTA', campos.notaVenta]</p>
+<p class="p1"><span class="Apple-converted-space">                </span>]</p>
+<p class="p1"><span class="Apple-converted-space">            </span>};</p>
+<p class="p1"><span class="Apple-converted-space">            </span>mostrarVistaPrevia();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function mostrarVistaPrevia() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (!processedData) return;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.querySelectorAll('.form-section').forEach(s =&gt; s.classList.remove('active'));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('previewSection').classList.add('active');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('successMessage').classList.add('active');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const tbody = document.getElementById('previewTable');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>tbody.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>processedData.datos.filter(fila =&gt; !fila[0].startsWith('SEPARADOR') &amp;&amp; !fila[0].startsWith('*****')).forEach(fila =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const tr = document.createElement('tr');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tr.innerHTML = `&lt;td style="font-weight: 600;"&gt;${fila[0] || ''}&lt;/td&gt;&lt;td&gt;${fila[1] || ''}&lt;/td&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tbody.appendChild(tr);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function generarVistaImprimible() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (!processedData) { alert('Primero debes procesar los datos.'); return; }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const printWindow = window.open('', '_blank');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const esRetiro = processedData.tipo === 'RETIRO';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const esProvisoria = processedData.tipo === 'PROVISORIA';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let content = `</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;html&gt;&lt;head&gt;&lt;title&gt;Etiquetas para Imprimir&lt;/title&gt;&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>body { margin: 0; font-family: sans-serif; }</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>.pagina { display: flex; flex-wrap: wrap; justify-content: space-around; align-content: flex-start; width: 21.59cm; height: 27.94cm; padding: 0.5cm; box-sizing: border-box; page-break-after: always; }</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>.etiqueta { display: flex; flex-direction: column; border: 1.5px dashed #777; padding: 6px 10px; box-sizing: border-box; line-height: 1.4; overflow-wrap: break-word; }</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>.etiqueta-envio { width: 49%; height: 48%; margin-bottom: 0.5cm; }</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>.etiqueta-retiro, .etiqueta-provisoria { width: 100%; height: 48%; margin-bottom: 2%; }</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>.titulo-etiqueta { text-align: center; font-weight: bold; font-size: 1.4em; margin-bottom: 5px; border-bottom: 1.5px solid #000; padding-bottom: 3px; }</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>.titulo-provisoria { background-color: #ffc; }</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>.bulto-manual { text-align: center; font-weight: bold; font-size: 1.2em; margin-bottom: 5px; border-bottom: 1.5px solid #000; padding-bottom: 3px; }</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>.seccion p { margin: 1px 0; }</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>.seccion-remitente { font-size: 8pt; }</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>.seccion-destinatario { font-size: 12pt; flex-grow: 2; display: flex; flex-direction: column; justify-content: center; }</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>.seccion-destinatario p, .seccion-envio .nota-venta, .retiro-main { text-transform: uppercase; }</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>.seccion-envio { font-size: 12pt; flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-end; }</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>.retiro-main { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; font-size: 16pt; }</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>.campo { font-weight: bold; }</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>.separador { border-top: 1.5px solid #000; margin: 5px 0; }</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>.nota-venta { font-weight: bold; font-size: 18pt !important; }</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>@media print { .no-imprimir { display: none; } }</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/style&gt;&lt;/head&gt;&lt;body&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="no-imprimir" style="text-align:center; padding:15px; background:#eee;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h2&gt;Vista Previa de Impresión&lt;/h2&gt;&lt;p&gt;Usa la función de imprimir (Ctrl+P) para generar las etiquetas.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onclick="window.print()"&gt;Imprimir Ahora&lt;/button&gt; &lt;button onclick="window.close()"&gt;Cerrar&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;`;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>let etiquetasHtml = '';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>for (let i = 1; i &lt;= processedData.bultos; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>let contenidoEtiqueta = '';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>let tituloEtiqueta = '';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (esRetiro) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tituloEtiqueta = '&lt;div class="titulo-etiqueta"&gt;ETIQUETA RETIRO&lt;/div&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>} else if (esProvisoria) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tituloEtiqueta = '&lt;div class="titulo-etiqueta titulo-provisoria"&gt;ETIQUETA PROVISORIA&lt;/div&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (esRetiro || esProvisoria) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>let mainContent = '&lt;div class="retiro-main"&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>processedData.datos.filter(f =&gt; f[0] === 'CLIENTE' || f[0] === 'NOTA DE VENTA').forEach(fila =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                         </span>mainContent += `&lt;p class="${fila[0].includes('NOTA') ? 'nota-venta' : ''}"&gt;&lt;span class="campo"&gt;${fila[0]}:&lt;/span&gt; ${fila[1]}&lt;/p&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>});</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>mainContent += '&lt;/div&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>let footerContent = `&lt;div class="seccion-remitente"&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>processedData.datos.filter(f =&gt; f[0] === 'FECHA' || f[0] === 'VENDEDOR' || f[0] === 'OBSERVACIONES').forEach(fila =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>if(fila[1]) footerContent += `&lt;p&gt;&lt;span class="campo"&gt;${fila[0]}:&lt;/span&gt; ${fila[1]}&lt;/p&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>});</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>footerContent += '&lt;/div&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>contenidoEtiqueta = `${tituloEtiqueta}${mainContent}${footerContent}`;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>let seccionRemitente = '&lt;div class="seccion seccion-remitente"&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>let seccionDestinatario = '&lt;div class="seccion seccion-destinatario"&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>let seccionEnvio = '&lt;div class="seccion seccion-envio"&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>let currentSection = 'remitente';</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>processedData.datos.forEach(fila =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>if (fila[0].startsWith('SEPARADOR')) { currentSection = (currentSection === 'remitente') ? 'destinatario' : 'envio'; return; }</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>if (!fila[0] || !fila[1]) return;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>let clase = fila[0].includes('NOTA DE VENTA') ? 'nota-venta' : '';</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>let linea = `&lt;p class="${clase}"&gt;&lt;span class="campo"&gt;${fila[0]}:&lt;/span&gt; ${fila[1]}&lt;/p&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>if (currentSection === 'remitente') seccionRemitente += linea;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>else if (currentSection === 'destinatario') seccionDestinatario += linea;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>else seccionEnvio += linea;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>});</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>seccionRemitente += '&lt;/div&gt;'; seccionDestinatario += '&lt;/div&gt;'; seccionEnvio += '&lt;/div&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>contenidoEtiqueta = `&lt;div class="bulto-manual"&gt;BULTOS: ______ / ______&lt;/div&gt;${seccionRemitente}&lt;div class="separador"&gt;&lt;/div&gt;${seccionDestinatario}&lt;div class="separador"&gt;&lt;/div&gt;${seccionEnvio}`;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>let claseTipo = esRetiro ? 'etiqueta-retiro' : esProvisoria ? 'etiqueta-provisoria' : 'etiqueta-envio';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>etiquetasHtml += `&lt;div class="etiqueta ${claseTipo}"&gt;${contenidoEtiqueta}&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const pageBreakTrigger = (esRetiro || esProvisoria) ? 2 : 4;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (i % pageBreakTrigger === 0 &amp;&amp; i &lt; processedData.bultos) { etiquetasHtml += `&lt;/div&gt;&lt;div class="pagina"&gt;`; }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>content += `&lt;div class="pagina"&gt;${etiquetasHtml}&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>printWindow.document.write(content);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>printWindow.document.close();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function generarExcel() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (!processedData) { alert('Primero debes procesar los datos.'); return; }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const wb = XLSX.utils.book_new();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const ws_data = [];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const datosBase = processedData.datos.filter(fila =&gt; !fila[0].startsWith('SEPARADOR') &amp;&amp; !fila[0].startsWith('*****'));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>for (let i = 1; i &lt;= processedData.bultos; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>datosBase.forEach((rowData, rowIndex) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (!ws_data[rowIndex]) ws_data[rowIndex] = [];</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const startCol = (i - 1) * 3;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>while (ws_data[rowIndex].length &lt; startCol) ws_data[rowIndex].push(null);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>ws_data[rowIndex].push(rowData[0], rowData[1]);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const ws = XLSX.utils.aoa_to_sheet(ws_data);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const colWidths = [];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>for (let i = 0; i &lt; processedData.bultos; i++) { colWidths.push({ wch: 35 }, { wch: 35 }, { wch: 5 }); }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>ws['!cols'] = colWidths;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>XLSX.utils.book_append_sheet(wb, ws, 'Etiquetas');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const nombreCliente = (processedData.datos.find(d =&gt; d[0] === 'CLIENTE' || d[0] === 'DESTINATARIO')[1]).replace(/ /g, '_');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>XLSX.writeFile(wb, `Etiquetas_${nombreCliente}_${new Date().toISOString().slice(0, 10)}.xlsx`);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function copiarParaSheets() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (!processedData) { alert('Primero debes procesar los datos.'); return; }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const sheet_data = [];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const datosBase = processedData.datos.filter(fila =&gt; !fila[0].startsWith('SEPARADOR') &amp;&amp; !fila[0].startsWith('*****'));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>for (let i = 1; i &lt;= processedData.bultos; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>datosBase.forEach((rowData, rowIndex) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (!sheet_data[rowIndex]) sheet_data[rowIndex] = [];</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const startCol = (i - 1) * 3;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>while (sheet_data[rowIndex].length &lt; startCol) sheet_data[rowIndex].push('');</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>sheet_data[rowIndex].push(rowData[0], rowData[1]);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const tsvContent = sheet_data.map(row =&gt; row.join('\t')).join('\n');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>navigator.clipboard.writeText(tsvContent).then(() =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>alert('Datos copiados en formato para Sheets. Abre una hoja de cálculo y pega los datos (Ctrl+V).');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}).catch(err =&gt; console.error('Error:', err));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function mostrarDatosCopiables() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const copySection = document.getElementById('copySection');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>copySection.classList.toggle('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (!copySection.classList.contains('hidden')) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const textarea = document.getElementById('copyTextarea');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>textarea.value = processedData.datos.map(fila =&gt; `${fila[0]}: ${fila[1]}`).join('\n').trim();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function copiarAlPortapapeles() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>navigator.clipboard.writeText(document.getElementById('copyTextarea').value).then(() =&gt; alert('¡Datos copiados!')).catch(err =&gt; console.error('Error:', err));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function volverInicio() { window.location.reload(); }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
