@@ -1,12 +1,3 @@
-¡Excelente\! Ya tengo la nueva URL.
-
-Aquí tienes el código HTML completo y final. Lo único que he cambiado es la constante `WEB_APP_URL` dentro del script para que apunte a tu nuevo despliegue.
-
-Solo copia y pega este código en tu archivo `ETIQUETAS.HTML`, súbelo a GitHub y todo estará funcionando.
-
-### Parte 2: Código HTML Completo (Listo para Usar)
-
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -22,7 +13,7 @@ Solo copia y pega este código en tu archivo `ETIQUETAS.HTML`, súbelo a GitHub 
         .header h1 { font-size: 2rem; margin-bottom: 10px; }
         .type-selector, .form-section, .preview-section { background: white; border-radius: 10px; padding: 30px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .type-buttons { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
-        .type-btn { padding: 15px 30px; border: 2px solid #e5e7eb; background: white; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; min-width: 150px; }
+        .type-btn { padding: 15px 30px; border: 2px solid #e5e7eb; background: white; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; min-width: 150px; text-align: center; }
         .type-btn.active { background: #2563eb; color: white; border-color: #2563eb; }
         .type-btn:hover:not(.active) { border-color: #2563eb; background: #f8fafc; }
         .form-section { display: none; }
@@ -73,22 +64,35 @@ Solo copia y pega este código en tu archivo `ETIQUETAS.HTML`, súbelo a GitHub 
             <div class="type-buttons">
                 <button class="type-btn" onclick="seleccionarTipo('RETIRO', this)">🏪 RETIRO</button>
                 <button class="type-btn" onclick="seleccionarTipo('ENVIO', this)">📦 ENVÍO</button>
+                <button class="type-btn" onclick="seleccionarTipo('PROVISORIA', this)">⏳ PROVISORIA</button>
             </div>
         </div>
 
-        <div id="formRetiro" class="form-section">
+        <div id="formRETIRO" class="form-section">
             <h2 style="margin-bottom: 20px; color: #1f2937;">📋 Formulario de Retiro</h2>
             <div class="form-grid">
                 <div class="form-group"><label for="retiroVendedor">Vendedor</label><select id="retiroVendedor"></select></div>
                 <div class="form-group"><label for="retiroCliente" class="required">Cliente</label><input type="text" id="retiroCliente"></div>
-                <div class="form-group"><label for="retiroNotaVenta">Nota de Venta</label><input type="text" id="retiroNotaVenta" placeholder="Opcional"></div>
-                <div class="form-group"><label for="retiroBultos">Bultos (N° de etiquetas)</label><input type="number" id="retiroBultos" min="1" value="1"></div>
+                <div class="form-group"><label for="retiroNotaVenta" class="required">Nota de Venta</label><input type="text" id="retiroNotaVenta"></div>
+                <div class="form-group"><label for="retiroBultos">Copias de Etiqueta</label><input type="number" id="retiroBultos" min="1" value="1"></div>
                 <div class="form-group"><label for="retiroObservaciones">Observaciones</label><textarea id="retiroObservaciones"></textarea></div>
             </div>
             <div class="btn-group"><button class="btn btn-primary" onclick="procesarRetiro()">Generar Vista Previa</button></div>
         </div>
 
-        <div id="formEnvio" class="form-section">
+        <div id="formPROVISORIA" class="form-section">
+            <h2 style="margin-bottom: 20px; color: #1f2937;">⏳ Formulario de Etiqueta Provisoria</h2>
+            <div class="form-grid">
+                <div class="form-group"><label for="provisoriaVendedor">Vendedor</label><select id="provisoriaVendedor"></select></div>
+                <div class="form-group"><label for="provisoriaCliente" class="required">Cliente</label><input type="text" id="provisoriaCliente"></div>
+                <div class="form-group"><label for="provisoriaNotaVenta" class="required">Nota de Venta</label><input type="text" id="provisoriaNotaVenta"></div>
+                <div class="form-group"><label for="provisoriaBultos">Copias de Etiqueta</label><input type="number" id="provisoriaBultos" min="1" value="1"></div>
+                <div class="form-group"><label for="provisoriaObservaciones">Observaciones</label><textarea id="provisoriaObservaciones"></textarea></div>
+            </div>
+            <div class="btn-group"><button class="btn btn-primary" onclick="procesarProvisoria()">Generar Vista Previa</button></div>
+        </div>
+
+        <div id="formENVIO" class="form-section">
             <h2 style="margin-bottom: 20px; color: #1f2937;">📦 Formulario de Envío</h2>
             <div class="form-group"><label for="envioVendedor">Vendedor (Remitente)</label><select id="envioVendedor"></select></div>
             <h3 style="margin-bottom: 15px; color: #374151;">Datos del Destinatario</h3>
@@ -102,9 +106,9 @@ Solo copia y pega este código en tu archivo `ETIQUETAS.HTML`, súbelo a GitHub 
             </div>
             <h3 style="margin: 25px 0 15px 0; color: #374151;">Datos del Envío</h3>
             <div class="form-grid">
-                <div class="form-group"><label for="envioNotaVenta">Nota de Venta</label><input type="text" id="envioNotaVenta" placeholder="Opcional"></div>
+                <div class="form-group"><label for="envioNotaVenta" class="required">Nota de Venta</label><input type="text" id="envioNotaVenta"></div>
                 <div class="form-group"><label for="envioBultos">Bultos (N° de etiquetas)</label><input type="number" id="envioBultos" min="1" value="1"></div>
-                <div class="form-group"><label for="envioTransporte">Transporte</label><select id="envioTransporte"><option value="">Seleccionar...</option><option value="TUTTO PETS">TUTTO PETS</option><option value="JULIO MILLAN">JULIO MILLAN</option><option value="Starken">Starken</option><option value="Chilexpress">Chilexpress</option><option value="Blue Express">Blue Express</option><option value="Correos de Chile">Correos de Chile</option><option value="Shipit">Shipit</option><option value="Shippify">Shippify</option><option value="VARMONTT">VARMONTT</option><option value="PULLMAN">PULLMAN</option><option value="CACEM">CACEM</option><option value="MERCOSUR">MERCOSUR</option><option value="TVP">TVP</option><option value="Otro">Otro</option></select></div>
+                <div class="form-group"><label for="envioTransporte">Transporte</label><select id="envioTransporte"><option value="">Seleccionar...</option><option value="TUTTO PETS">TUTTO PETS</option><option value="JULIO MILLAN">JULIO MILLAN</option><option value="CHRISTIAN ALIAGA">CHRISTIAN ALIAGA</option><option value="Starken">Starken</option><option value="Chilexpress">Chilexpress</option><option value="Blue Express">Blue Express</option><option value="Correos de Chile">Correos de Chile</option><option value="Shipit">Shipit</option><option value="Shippify">Shippify</option><option value="VARMONTT">VARMONTT</option><option value="PULLMAN">PULLMAN</option><option value="CACEM">CACEM</option><option value="MERCOSUR">MERCOSUR</option><option value="TVP">TVP</option><option value="Otro">Otro</option></select></div>
                 <div class="form-group hidden" id="transporteOtroGroup"><label for="envioTransporteOtro">Especificar Transporte</label><input type="text" id="envioTransporteOtro"></div>
                 <div class="form-group"><label for="envioPago">Pago</label><select id="envioPago"><option value="">Seleccionar...</option><option value="Pagado">Pagado</option><option value="Por Pagar">Por Pagar</option><option value="Contra Entrega">Contra Entrega</option></select></div>
             </div>
@@ -118,7 +122,7 @@ Solo copia y pega este código en tu archivo `ETIQUETAS.HTML`, súbelo a GitHub 
             <div class="btn-group">
                 <button class="btn btn-info" onclick="generarVistaImprimible()">🖨️ Imprimir Etiquetas</button>
                 <button class="btn btn-success" onclick="generarExcel()">📊 Exportar a Excel</button>
-                <button class="btn btn-success" onclick="copiarParaSheets()">📋 Copiar para Sheets (CSV)</button>
+                <button class="btn btn-success" onclick="copiarParaSheets()">📋 Copiar para Sheets</button>
                 <button class="btn btn-warning" onclick="mostrarDatosCopiables()">📝 Copiar Datos</button>
                 <button class="btn btn-secondary" onclick="volverInicio()">🔄 Nuevo</button>
             </div>
@@ -132,10 +136,10 @@ Solo copia y pega este código en tu archivo `ETIQUETAS.HTML`, súbelo a GitHub 
 
     <script>
         let processedData = null;
-        const vendedores = { "LEONARDO CASTRO": "+56 9 1234 5678", "ANDREA FUENTES": "+56 9 6863 7136", "JOSELYN GOMEZ GOMEZ": "+56 9 3096 8640", "YEIMY REALPE": "+56 9 8544 9261", "LESLIE RIOS": "+56 9 3457 2139" };
+        const vendedores = { "LEONARDO CASTRO": "2 3347 5040", "ANDREA FUENTES": "+56 9 6863 7136", "JOSELYN GOMEZ GOMEZ": "+56 9 3096 8640", "YEIMY REALPE": "+56 9 8544 9261", "LESLIE RIOS": "+56 9 3457 2139" };
         const comunasPorRegion = { "Arica y Parinacota": ["Arica", "Camarones", "Putre", "General Lagos"], "Tarapacá": ["Iquique", "Alto Hospicio", "Pozo Almonte", "Camiña", "Colchane", "Huara", "Pica"], "Antofagasta": ["Antofagasta", "Mejillones", "Sierra Gorda", "Taltal", "Calama", "Ollagüe", "San Pedro de Atacama", "Tocopilla", "María Elena"], "Atacama": ["Copiapó", "Caldera", "Tierra Amarilla", "Chañaral", "Diego de Almagro", "Vallenar", "Alto del Carmen", "Freirina", "Huasco"], "Coquimbo": ["La Serena", "Coquimbo", "Andacollo", "La Higuera", "Paiguano", "Vicuña", "Illapel", "Canela", "Los Vilos", "Salamanca", "Ovalle", "Combarbalá", "Monte Patria", "Punitaqui", "Río Hurtado"], "Valparaíso": ["Valparaíso", "Casablanca", "Concón", "Juan Fernández", "Puchuncaví", "Quintero", "Viña del Mar", "Isla de Pascua", "Los Andes", "Calle Larga", "Rinconada", "San Esteban", "La Ligua", "Cabildo", "Papudo", "Petorca", "Zapallar", "Quillota", "Calera", "Hijuelas", "La Cruz", "Nogales", "San Antonio", "Algarrobo", "Cartagena", "El Quisco", "El Tabo", "Santo Domingo", "San Felipe", "Catemu", "Llaillay", "Panquehue", "Putaendo", "Santa María", "Quilpué", "Limache", "Olmué", "Villa Alemana"], "Metropolitana de Santiago": ["Santiago", "Cerrillos", "Cerro Navia", "Conchalí", "El Bosque", "Estación Central", "Huechuraba", "Independencia", "La Cisterna", "La Florida", "La Granja", "La Pintana", "La Reina", "Las Condes", "Lo Barnechea", "Lo Espejo", "Lo Prado", "Macul", "Maipú", "Ñuñoa", "Pedro Aguirre Cerda", "Peñalolén", "Providencia", "Pudahuel", "Quilicura", "Quinta Normal", "Recoleta", "Renca", "San Joaquín", "San Miguel", "San Ramón", "Vitacura", "Puente Alto", "Pirque", "San José de Maipo", "Colina", "Lampa", "Tiltil", "San Bernardo", "Buin", "Calera de Tango", "Paine", "Melipilla", "Alhué", "Curacaví", "María Pinto", "San Pedro", "Talagante", "El Monte", "Isla de Maipo", "Padre Hurtado", "Peñaflor"], "Libertador General Bernardo O'Higgins": ["Rancagua", "Codegua", "Coinco", "Coltauco", "Doñihue", "Graneros", "Las Cabras", "Machalí", "Malloa", "Mostazal", "Olivar", "Peumo", "Pichidegua", "Quinta de Tilcoco", "Rengo", "Requínoa", "San Vicente", "Pichilemu", "La Estrella", "Litueche", "Marchihue", "Navidad", "Paredones", "San Fernando", "Chépica", "Chimbarongo", "Lolol", "Nancagua", "Palmilla", "Peralillo", "Placilla", "Pumanque", "Santa Cruz"], "Maule": ["Talca", "Constitución", "Curepto", "Empedrado", "Maule", "Pelarco", "Pencahue", "Río Claro", "San Clemente", "San Rafael", "Cauquenes", "Chanco", "Pelluhue", "Curicó", "Hualañé", "Licantén", "Molina", "Rauco", "Romeral", "Sagrada Familia", "Teno", "Vichuquén", "Linares", "Colbún", "Longaví", "Parral", "Retiro", "San Javier", "Villa Alegre", "Yerbas Buenas"], "Ñuble": ["Cobquecura", "Coelemu", "Ninhue", "Portezuelo", "Quirihue", "Ránquil", "Treguaco", "Bulnes", "Chillán Viejo", "Chillán", "El Carmen", "Pemuco", "Pinto", "Quillón", "San Ignacio", "Yungay", "Coihueco", "Ñiquén", "San Carlos", "San Fabián", "San Nicolás"], "Biobío": ["Concepción", "Coronel", "Chiguayante", "Florida", "Hualqui", "Lota", "Penco", "San Pedro de la Paz", "Santa Juana", "Talcahuano", "Tomé", "Hualpén", "Lebu", "Arauco", "Cañete", "Contulmo", "Curanilahue", "Los Álamos", "Tirúa", "Los Ángeles", "Antuco", "Cabrero", "Laja", "Mulchén", "Nacimiento", "Negrete", "Quilaco", "Quilleco", "San Rosendo", "Santa Bárbara", "Tucapel", "Yumbel", "Alto Biobío"], "La Araucanía": ["Temuco", "Carahue", "Cunco", "Curarrehue", "Freire", "Galvarino", "Gorbea", "Lautaro", "Loncoche", "Melipeuco", "Nueva Imperial", "Padre las Casas", "Perquenco", "Pitrufquén", "Pucón", "Saavedra", "Teodoro Schmidt", "Toltén", "Vilcún", "Villarrica", "Cholchol", "Angol", "Collipulli", "Curacautín", "Ercilla", "Lonquimay", "Los Sauces", "Lumaco", "Purén", "Renaico", "Traiguén", "Victoria"], "Los Ríos": ["Valdivia", "Corral", "Lanco", "Los Lagos", "Máfil", "Mariquina", "Paillaco", "Panguipulli", "La Unión", "Futrono", "Lago Ranco", "Río Bueno"], "Los Lagos": ["Puerto Montt", "Calbuco", "Cochamó", "Fresia", "Frutillar", "Los Muermos", "Llanquihue", "Maullín", "Puerto Varas", "Castro", "Ancud", "Chonchi", "Curaco de Vélez", "Dalcahue", "Puqueldón", "Queilén", "Quellón", "Quemchi", "Quinchao", "Osorno", "Puerto Octay", "Purranque", "Puyehue", "Río Negro", "San Juan de la Costa", "San Pablo", "Chaitén", "Futaleufú", "Hualaihué", "Palena"], "Aysén del General Carlos Ibáñez del Campo": ["Coyhaique", "Lago Verde", "Aysén", "Cisnes", "Guaitecas", "Cochrane", "O'Higgins", "Tortel", "Chile Chico", "Río Ibáñez"], "Magallanes y de la Antártica Chilena": ["Punta Arenas", "Laguna Blanca", "Río Verde", "San Gregorio", "Cabo de Hornos (Ex Navarino)", "Antártica", "Porvenir", "Primavera", "Timaukel", "Natales", "Torres del Paine"] };
         
-        function poblarSelect(selectId, data, useKeysAsValue = false) {
+        function poblarSelect(selectId, data, useKeysAsValue = true) {
             const select = document.getElementById(selectId);
             select.innerHTML = '';
             for (const key in data) {
@@ -161,7 +165,9 @@ Solo copia y pega este código en tu archivo `ETIQUETAS.HTML`, súbelo a GitHub 
                 selectComuna.appendChild(optgroup);
             }
             poblarSelect('retiroVendedor', vendedores, true);
+            poblarSelect('provisoriaVendedor', vendedores, true);
             poblarSelect('envioVendedor', vendedores, true);
+
             document.getElementById('envioTransporte').addEventListener('change', function() {
                 const pagoSelect = document.getElementById('envioPago');
                 document.getElementById('transporteOtroGroup').classList.toggle('hidden', this.value !== 'Otro');
@@ -170,8 +176,9 @@ Solo copia y pega este código en tu archivo `ETIQUETAS.HTML`, súbelo a GitHub 
                     pagoSelect.value = 'Pagado';
                     pagoSelect.disabled = true;
                     alert('ATENCIÓN: Envío por TUTTO PETS debe ser PAGADO y cobrado en la nota de venta.');
-                } else if (this.value === 'JULIO MILLAN') {
-                    alert('INFO: Para envíos con Julio Millán, si seleccionas "Por Pagar", el cobro lo gestiona directamente él.');
+                } else if (this.value === 'JULIO MILLAN' || this.value === 'CHRISTIAN ALIAGA') {
+                    const courierName = this.value;
+                    alert(`INFO: Para envíos con ${courierName}, si seleccionas "Por Pagar", el cobro lo gestiona directamente él.`);
                 }
             });
         });
@@ -180,40 +187,65 @@ Solo copia y pega este código en tu archivo `ETIQUETAS.HTML`, súbelo a GitHub 
             document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('active'));
             element.classList.add('active');
             document.querySelectorAll('.form-section, #previewSection').forEach(s => s.classList.remove('active'));
-            document.getElementById(tipo === 'RETIRO' ? 'formRetiro' : 'formEnvio').classList.add('active');
+            document.getElementById(`form${tipo}`).classList.add('active');
         }
-
-        function generarNotaVentaUnica() { return `NV-${Date.now().toString().slice(-6)}`; }
-
+        
         function procesarRetiro() {
             const cliente = document.getElementById('retiroCliente').value.trim();
-            if (!cliente) { alert('El campo Cliente es obligatorio.'); return; }
+            const notaVenta = document.getElementById('retiroNotaVenta').value.trim();
+            if (!cliente || !notaVenta) {
+                alert('Los campos Cliente y Nota de Venta son obligatorios.');
+                return;
+            }
             const vendedorSeleccionado = document.getElementById('retiroVendedor').value;
             const fecha = new Date();
             processedData = {
                 tipo: 'RETIRO',
                 bultos: parseInt(document.getElementById('retiroBultos').value) || 1,
                 datos: [
-                    ['*****VENTA CON RETIRO*****', ''],
                     ['CLIENTE', cliente],
-                    ['NOTA DE VENTA', document.getElementById('retiroNotaVenta').value.trim() || generarNotaVentaUnica()],
+                    ['NOTA DE VENTA', notaVenta],
                     ['FECHA', `${fecha.getDate().toString().padStart(2, '0')}/${(fecha.getMonth() + 1).toString().padStart(2, '0')}/${fecha.getFullYear()}`],
                     ['VENDEDOR', `${vendedorSeleccionado} - ${vendedores[vendedorSeleccionado]}`],
-                    ['OBSERVACIONES', document.getElementById('retiroObservaciones').value.trim()],
-                    ['*****NO ENVIAR*****', '']
+                    ['OBSERVACIONES', document.getElementById('retiroObservaciones').value.trim()]
+                ]
+            };
+            mostrarVistaPrevia();
+        }
+
+        function procesarProvisoria() {
+            const cliente = document.getElementById('provisoriaCliente').value.trim();
+            const notaVenta = document.getElementById('provisoriaNotaVenta').value.trim();
+            if (!cliente || !notaVenta) {
+                alert('Los campos Cliente y Nota de Venta son obligatorios.');
+                return;
+            }
+            const vendedorSeleccionado = document.getElementById('provisoriaVendedor').value;
+            const fecha = new Date();
+            processedData = {
+                tipo: 'PROVISORIA',
+                bultos: parseInt(document.getElementById('provisoriaBultos').value) || 1,
+                datos: [
+                    ['CLIENTE', cliente],
+                    ['NOTA DE VENTA', notaVenta],
+                    ['FECHA', `${fecha.getDate().toString().padStart(2, '0')}/${(fecha.getMonth() + 1).toString().padStart(2, '0')}/${fecha.getFullYear()}`],
+                    ['VENDEDOR', `${vendedorSeleccionado} - ${vendedores[vendedorSeleccionado]}`],
+                    ['OBSERVACIONES', document.getElementById('provisoriaObservaciones').value.trim()]
                 ]
             };
             mostrarVistaPrevia();
         }
 
         function procesarEnvio() {
-            const campos = { destinatario: document.getElementById('envioDestinatario').value.trim(), rut: document.getElementById('envioRut').value.trim(), telefono: document.getElementById('envioTelefono').value.trim(), direccion: document.getElementById('envioDireccion').value.trim(), comuna: document.getElementById('envioComuna').value };
+            const campos = { destinatario: document.getElementById('envioDestinatario').value.trim(), rut: document.getElementById('envioRut').value.trim(), telefono: document.getElementById('envioTelefono').value.trim(), direccion: document.getElementById('envioDireccion').value.trim(), comuna: document.getElementById('envioComuna').value, notaVenta: document.getElementById('envioNotaVenta').value.trim() };
             const faltantes = Object.keys(campos).filter(k => !campos[k]);
             if (faltantes.length > 0) { alert(`Faltan campos obligatorios: ${faltantes.join(', ')}`); return; }
             let transporte = document.getElementById('envioTransporte').value;
             if (transporte === 'Otro') { transporte = document.getElementById('envioTransporteOtro').value.trim() || 'Otro (sin especificar)'; }
             let region = 'No encontrada';
             for (const r in comunasPorRegion) { if (comunasPorRegion[r].includes(campos.comuna)) { region = r; break; } }
+            let ciudad = campos.comuna;
+            if (region === 'Metropolitana de Santiago') { ciudad = 'Santiago'; }
             const vendedorSeleccionado = document.getElementById('envioVendedor').value;
             processedData = {
                 tipo: 'ENVÍO',
@@ -229,13 +261,13 @@ Solo copia y pega este código en tu archivo `ETIQUETAS.HTML`, súbelo a GitHub 
                     ['TELÉFONO DESTINO', campos.telefono],
                     ['DIRECCIÓN DESTINO', campos.direccion],
                     ['COMUNA DESTINO', campos.comuna],
-                    ['CIUDAD DESTINO', campos.comuna],
+                    ['CIUDAD DESTINO', ciudad],
                     ['REGIÓN', region],
                     ['SEPARADOR_2', ''],
                     ['TIPO DE ENVÍO', document.getElementById('envioTipo').value],
                     ['MEDIO DE TRANSPORTE', transporte],
                     ['FORMA DE PAGO', document.getElementById('envioPago').value],
-                    ['NOTA DE VENTA', document.getElementById('envioNotaVenta').value.trim() || generarNotaVentaUnica()]
+                    ['NOTA DE VENTA', campos.notaVenta]
                 ]
             };
             mostrarVistaPrevia();
@@ -248,7 +280,7 @@ Solo copia y pega este código en tu archivo `ETIQUETAS.HTML`, súbelo a GitHub 
             document.getElementById('successMessage').classList.add('active');
             const tbody = document.getElementById('previewTable');
             tbody.innerHTML = '';
-            processedData.datos.filter(fila => !fila[0].startsWith('SEPARADOR')).forEach(fila => {
+            processedData.datos.filter(fila => !fila[0].startsWith('SEPARADOR') && !fila[0].startsWith('*****')).forEach(fila => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `<td style="font-weight: 600;">${fila[0] || ''}</td><td>${fila[1] || ''}</td>`;
                 tbody.appendChild(tr);
@@ -259,27 +291,24 @@ Solo copia y pega este código en tu archivo `ETIQUETAS.HTML`, súbelo a GitHub 
             if (!processedData) { alert('Primero debes procesar los datos.'); return; }
 
             // --- INICIO DE LA INTEGRACIÓN CON GOOGLE SHEETS ---
-
             // ¡URL YA CONFIGURADA! Esta es la dirección de tu script.
-            const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyBpLQoLd6rEcLLUcyPpWhCYKpAcIjvQ6MAOgWCFojtqgCr2vZ9hu-ddn7KgmXXMcEm/exec";
+            const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwI0zeKjgJybIunwJ4SYnIHqYxenypLJ1uqlIoIZHJs6Q9nwiot8resIXZ5l99md3_r/exec";
 
-            // 1. Preparamos un objeto simple con los datos a enviar
             const datosParaSheet = {
                 tipo: processedData.tipo,
                 bultos: processedData.bultos,
-                vendedor: processedData.datos.find(d => d[0] === 'VENDEDOR')?.[1] || '',
-                notaVenta: processedData.datos.find(d => d[0].toUpperCase() === 'NOTA DE VENTA')?.[1] || '',
-                cliente: (processedData.datos.find(d => d[0] === 'CLIENTE') || processedData.datos.find(d => d[0] === 'DESTINATARIO'))?.[1] || '',
-                rut: processedData.datos.find(d => d[0] === 'RUT DESTINATARIO')?.[1] || '',
-                telefono: processedData.datos.find(d => d[0] === 'TELÉFONO DESTINO')?.[1] || '',
-                direccion: processedData.datos.find(d => d[0] === 'DIRECCIÓN DESTINO')?.[1] || '',
-                comuna: processedData.datos.find(d => d[0] === 'COMUNA DESTINO')?.[1] || '',
-                transporte: processedData.datos.find(d => d[0] === 'MEDIO DE TRANSPORTE')?.[1] || '',
-                pago: processedData.datos.find(d => d[0] === 'FORMA DE PAGO')?.[1] || '',
-                observaciones: processedData.datos.find(d => d[0] === 'OBSERVACIONES')?.[1] || ''
+                vendedor: processedData.datos.find(d => d[0] === 'VENDEDOR')?. [1] || '',
+                notaVenta: processedData.datos.find(d => d[0].toUpperCase() === 'NOTA DE VENTA')?. [1] || '',
+                cliente: (processedData.datos.find(d => d[0] === 'CLIENTE') || processedData.datos.find(d => d[0] === 'DESTINATARIO'))?. [1] || '',
+                rut: processedData.datos.find(d => d[0] === 'RUT DESTINATARIO')?. [1] || '',
+                telefono: processedData.datos.find(d => d[0] === 'TELÉFONO DESTINO')?. [1] || '',
+                direccion: processedData.datos.find(d => d[0] === 'DIRECCIÓN DESTINO')?. [1] || '',
+                comuna: processedData.datos.find(d => d[0] === 'COMUNA DESTINO')?. [1] || '',
+                transporte: processedData.datos.find(d => d[0] === 'MEDIO DE TRANSPORTE')?. [1] || '',
+                pago: processedData.datos.find(d => d[0] === 'FORMA DE PAGO')?. [1] || '',
+                observaciones: processedData.datos.find(d => d[0] === 'OBSERVACIONES')?. [1] || ''
             };
 
-            // 2. Enviamos los datos a Google Sheets en segundo plano
             fetch(WEB_APP_URL, {
                 method: 'POST',
                 mode: 'no-cors',
@@ -289,25 +318,30 @@ Solo copia y pega este código en tu archivo `ETIQUETAS.HTML`, súbelo a GitHub 
             })
             .then(res => console.log("Solicitud de guardado enviada a Sheets."))
             .catch(error => console.error('Error al enviar datos a Sheets:', error));
-
             // --- FIN DE LA INTEGRACIÓN ---
 
-            // 3. El resto de la función sigue igual para generar la vista de impresión
             const printWindow = window.open('', '_blank');
+            const esRetiro = processedData.tipo === 'RETIRO';
+            const esProvisoria = processedData.tipo === 'PROVISORIA';
             let content = `
                 <html><head><title>Etiquetas para Imprimir</title><style>
                     body { margin: 0; font-family: sans-serif; }
-                    .pagina { display: flex; flex-wrap: wrap; justify-content: space-between; align-content: flex-start; width: 21.59cm; height: 27.94cm; padding: 0.5cm; box-sizing: border-box; page-break-after: always; }
-                    .etiqueta { display: flex; flex-direction: column; border: 1.5px dashed #777; padding: 6px 10px; width: 49%; height: 48%; margin-bottom: 0.5cm; box-sizing: border-box; line-height: 1.4; }
+                    .pagina { display: flex; flex-wrap: wrap; justify-content: space-around; align-content: flex-start; width: 21.59cm; height: 27.94cm; padding: 0.5cm; box-sizing: border-box; page-break-after: always; }
+                    .etiqueta { display: flex; flex-direction: column; border: 1.5px dashed #777; padding: 6px 10px; box-sizing: border-box; line-height: 1.4; overflow-wrap: break-word; }
+                    .etiqueta-envio { width: 49%; height: 48%; margin-bottom: 0.5cm; }
+                    .etiqueta-retiro, .etiqueta-provisoria { width: 100%; height: 48%; margin-bottom: 2%; }
+                    .titulo-etiqueta { text-align: center; font-weight: bold; font-size: 1.4em; margin-bottom: 5px; border-bottom: 1.5px solid #000; padding-bottom: 3px; }
+                    .titulo-provisoria { background-color: #ffc; }
                     .bulto-manual { text-align: center; font-weight: bold; font-size: 1.2em; margin-bottom: 5px; border-bottom: 1.5px solid #000; padding-bottom: 3px; }
                     .seccion p { margin: 1px 0; }
                     .seccion-remitente { font-size: 8pt; }
                     .seccion-destinatario { font-size: 12pt; flex-grow: 2; display: flex; flex-direction: column; justify-content: center; }
-                    .seccion-destinatario p, .seccion-envio .nota-venta { text-transform: uppercase; }
+                    .seccion-destinatario p, .seccion-envio .nota-venta, .retiro-main { text-transform: uppercase; }
                     .seccion-envio { font-size: 12pt; flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-end; }
+                    .retiro-main { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; font-size: 16pt; }
                     .campo { font-weight: bold; }
                     .separador { border-top: 1.5px solid #000; margin: 5px 0; }
-                    .nota-venta { font-weight: bold; font-size: 16pt !important; }
+                    .nota-venta { font-weight: bold; font-size: 18pt !important; }
                     @media print { .no-imprimir { display: none; } }
                 </style></head><body>
                 <div class="no-imprimir" style="text-align:center; padding:15px; background:#eee;">
@@ -317,22 +351,50 @@ Solo copia y pega este código en tu archivo `ETIQUETAS.HTML`, súbelo a GitHub 
             
             let etiquetasHtml = '';
             for (let i = 1; i <= processedData.bultos; i++) {
-                let seccionRemitente = '<div class="seccion seccion-remitente">';
-                let seccionDestinatario = '<div class="seccion seccion-destinatario">';
-                let seccionEnvio = '<div class="seccion seccion-envio">';
-                let currentSection = 'remitente';
-                processedData.datos.forEach(fila => {
-                    if (fila[0].startsWith('SEPARADOR')) { currentSection = (currentSection === 'remitente') ? 'destinatario' : 'envio'; return; }
-                    if (!fila[0] || !fila[1]) return;
-                    let clase = fila[0].toUpperCase().includes('NOTA DE VENTA') ? 'nota-venta' : '';
-                    let linea = `<p class="${clase}"><span class="campo">${fila[0]}:</span> ${fila[1]}</p>`;
-                    if (currentSection === 'remitente') seccionRemitente += linea;
-                    else if (currentSection === 'destinatario') seccionDestinatario += linea;
-                    else seccionEnvio += linea;
-                });
-                seccionRemitente += '</div>'; seccionDestinatario += '</div>'; seccionEnvio += '</div>';
-                etiquetasHtml += `<div class="etiqueta"><div class="bulto-manual">BULTOS: ______ / ______</div>${seccionRemitente}<div class="separador"></div>${seccionDestinatario}<div class="separador"></div>${seccionEnvio}</div>`;
-                if (i % 4 === 0 && i < processedData.bultos) { etiquetasHtml += `</div><div class="pagina">`; }
+                let contenidoEtiqueta = '';
+                let tituloEtiqueta = '';
+
+                if (esRetiro) {
+                    tituloEtiqueta = '<div class="titulo-etiqueta">ETIQUETA RETIRO</div>';
+                } else if (esProvisoria) {
+                    tituloEtiqueta = '<div class="titulo-etiqueta titulo-provisoria">ETIQUETA PROVISORIA</div>';
+                }
+
+                if (esRetiro || esProvisoria) {
+                    let mainContent = '<div class="retiro-main">';
+                    processedData.datos.filter(f => f[0] === 'CLIENTE' || f[0] === 'NOTA DE VENTA').forEach(fila => {
+                         mainContent += `<p class="${fila[0].includes('NOTA') ? 'nota-venta' : ''}"><span class="campo">${fila[0]}:</span> ${fila[1]}</p>`;
+                    });
+                    mainContent += '</div>';
+                    let footerContent = `<div class="seccion-remitente">`;
+                    processedData.datos.filter(f => f[0] === 'FECHA' || f[0] === 'VENDEDOR' || f[0] === 'OBSERVACIONES').forEach(fila => {
+                        if(fila[1]) footerContent += `<p><span class="campo">${fila[0]}:</span> ${fila[1]}</p>`;
+                    });
+                    footerContent += '</div>';
+                    contenidoEtiqueta = `${tituloEtiqueta}${mainContent}${footerContent}`;
+                } else { // Envío
+                    let seccionRemitente = '<div class="seccion seccion-remitente">';
+                    let seccionDestinatario = '<div class="seccion seccion-destinatario">';
+                    let seccionEnvio = '<div class="seccion seccion-envio">';
+                    let currentSection = 'remitente';
+                    processedData.datos.forEach(fila => {
+                        if (fila[0].startsWith('SEPARADOR')) { currentSection = (currentSection === 'remitente') ? 'destinatario' : 'envio'; return; }
+                        if (!fila[0] || !fila[1]) return;
+                        let clase = fila[0].includes('NOTA DE VENTA') ? 'nota-venta' : '';
+                        let linea = `<p class="${clase}"><span class="campo">${fila[0]}:</span> ${fila[1]}</p>`;
+                        if (currentSection === 'remitente') seccionRemitente += linea;
+                        else if (currentSection === 'destinatario') seccionDestinatario += linea;
+                        else seccionEnvio += linea;
+                    });
+                    seccionRemitente += '</div>'; seccionDestinatario += '</div>'; seccionEnvio += '</div>';
+                    contenidoEtiqueta = `<div class="bulto-manual">BULTOS: ______ / ______</div>${seccionRemitente}<div class="separador"></div>${seccionDestinatario}<div class="separador"></div>${seccionEnvio}`;
+                }
+                
+                let claseTipo = esRetiro ? 'etiqueta-retiro' : esProvisoria ? 'etiqueta-provisoria' : 'etiqueta-envio';
+                etiquetasHtml += `<div class="etiqueta ${claseTipo}">${contenidoEtiqueta}</div>`;
+                
+                const pageBreakTrigger = (esRetiro || esProvisoria) ? 2 : 4;
+                if (i % pageBreakTrigger === 0 && i < processedData.bultos) { etiquetasHtml += `</div><div class="pagina">`; }
             }
             content += `<div class="pagina">${etiquetasHtml}</div></body></html>`;
             printWindow.document.write(content);
@@ -343,7 +405,7 @@ Solo copia y pega este código en tu archivo `ETIQUETAS.HTML`, súbelo a GitHub 
             if (!processedData) { alert('Primero debes procesar los datos.'); return; }
             const wb = XLSX.utils.book_new();
             const ws_data = [];
-            const datosBase = processedData.datos.filter(fila => !fila[0].startsWith('SEPARADOR'));
+            const datosBase = processedData.datos.filter(fila => !fila[0].startsWith('SEPARADOR') && !fila[0].startsWith('*****'));
             for (let i = 1; i <= processedData.bultos; i++) {
                 datosBase.forEach((rowData, rowIndex) => {
                     if (!ws_data[rowIndex]) ws_data[rowIndex] = [];
@@ -363,11 +425,18 @@ Solo copia y pega este código en tu archivo `ETIQUETAS.HTML`, súbelo a GitHub 
         
         function copiarParaSheets() {
             if (!processedData) { alert('Primero debes procesar los datos.'); return; }
-            const headers = processedData.datos.map(fila => fila[0]).filter(h => h && !h.startsWith('SEPARADOR'));
-            let csvContent = headers.join('\t') + '\n';
-            const values = processedData.datos.map(fila => fila[1]).filter(v => v !== undefined && v !== '');
-            for (let i = 0; i < processedData.bultos; i++) { csvContent += values.join('\t') + '\n'; }
-            navigator.clipboard.writeText(csvContent).then(() => {
+            const sheet_data = [];
+            const datosBase = processedData.datos.filter(fila => !fila[0].startsWith('SEPARADOR') && !fila[0].startsWith('*****'));
+            for (let i = 1; i <= processedData.bultos; i++) {
+                datosBase.forEach((rowData, rowIndex) => {
+                    if (!sheet_data[rowIndex]) sheet_data[rowIndex] = [];
+                    const startCol = (i - 1) * 3;
+                    while (sheet_data[rowIndex].length < startCol) sheet_data[rowIndex].push('');
+                    sheet_data[rowIndex].push(rowData[0], rowData[1]);
+                });
+            }
+            const tsvContent = sheet_data.map(row => row.join('\t')).join('\n');
+            navigator.clipboard.writeText(tsvContent).then(() => {
                 alert('Datos copiados en formato para Sheets. Abre una hoja de cálculo y pega los datos (Ctrl+V).');
             }).catch(err => console.error('Error:', err));
         }
@@ -389,4 +458,3 @@ Solo copia y pega este código en tu archivo `ETIQUETAS.HTML`, súbelo a GitHub 
     </script>
 </body>
 </html>
-```
