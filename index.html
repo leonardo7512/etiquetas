@@ -49,6 +49,14 @@
         .copy-section { background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 8px; padding: 20px; margin-top: 20px; }
         .copy-textarea { width: 100%; height: 200px; padding: 15px; border: 1px solid #e5e7eb; border-radius: 6px; font-family: monospace; font-size: 12px; background: white; resize: vertical; }
         .hidden { display: none !important; }
+        
+        /* Estilos para el modal de importación */
+        .modal-importar { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: white; padding: 30px; border-radius: 10px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; }
+        .upload-mini { border: 2px dashed #cbd5e1; border-radius: 8px; padding: 20px; text-align: center; background: #f8fafc; }
+        .upload-mini input[type="file"] { display: none; }
+        .upload-mini label { cursor: pointer; display: inline-block; }
+
         @media (max-width: 768px) {
             .container { padding: 10px; }
             .form-grid { grid-template-columns: 1fr; }
@@ -98,7 +106,13 @@
             <h3 style="margin-bottom: 15px; color: #374151;">Datos del Destinatario</h3>
             <div class="form-grid">
                 <div class="form-group"><label for="envioDestinatario" class="required">Destinatario</label><input type="text" id="envioDestinatario"></div>
-                <div class="form-group"><label for="envioRut" class="required">RUT</label><input type="text" id="envioRut"></div>
+                <div class="form-group">    
+                    <label for="envioRut" class="required">RUT</label>    
+                    <input type="text" id="envioRut" onblur="buscarClientePorRut()">    
+                    <button type="button" class="btn btn-warning" onclick="mostrarImportarCliente()" style="margin-top: 5px; font-size: 12px;">
+                        📂 Importar desde Excel
+                    </button>
+                </div>
                 <div class="form-group"><label for="envioTelefono" class="required">Teléfono</label><input type="text" id="envioTelefono"></div>
                 <div class="form-group"><label for="envioDireccion" class="required">Dirección</label><input type="text" id="envioDireccion"></div>
                 <div class="form-group"><label for="envioComuna" class="required">Comuna</label><select id="envioComuna"><option value="">Seleccionar...</option></select></div>
@@ -113,6 +127,24 @@
                 <div class="form-group"><label for="envioPago">Pago</label><select id="envioPago"><option value="">Seleccionar...</option><option value="Pagado">Pagado</option><option value="Por Pagar">Por Pagar</option><option value="Contra Entrega">Contra Entrega</option></select></div>
             </div>
             <div class="btn-group"><button class="btn btn-primary" onclick="procesarEnvio()">Generar Vista Previa</button></div>
+        </div>
+        
+        <div id="modalImportarCliente" class="modal-importar" style="display: none;">
+            <div class="modal-content">
+                <h3>📂 Importar Cliente desde Excel</h3>
+                <p>Sube un archivo Excel de etiquetas previas para cargar automáticamente los datos del cliente.</p>
+                <div class="upload-mini">
+                    <input type="file" id="fileImportCliente" accept=".xlsx,.xls" onchange="procesarArchivoImportado(event)">
+                    <label for="fileImportCliente" class="btn btn-primary">Seleccionar Archivo Excel</label>
+                </div>
+                <div id="resultadoImportacion" style="margin-top: 15px; display: none;">
+                    <div id="datosImportados"></div>
+                    <div style="margin-top: 10px; display: flex; justify-content: center; gap: 10px;">
+                        <button class="btn btn-success" onclick="aplicarDatosImportados()">✅ Usar estos datos</button>
+                        <button class="btn btn-secondary" onclick="cerrarImportarCliente()">❌ Cancelar</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="previewSection" class="preview-section">
@@ -139,6 +171,154 @@
         const vendedores = { "LEONARDO CASTRO": "2 3347 5040", "ANDREA FUENTES": "+56 9 6863 7136", "JOSELYN GOMEZ GOMEZ": "+56 9 3096 8640", "YEIMY REALPE": "+56 9 8544 9261", "LESLIE RIOS": "+56 9 3457 2139" };
         const comunasPorRegion = { "Arica y Parinacota": ["Arica", "Camarones", "Putre", "General Lagos"], "Tarapacá": ["Iquique", "Alto Hospicio", "Pozo Almonte", "Camiña", "Colchane", "Huara", "Pica"], "Antofagasta": ["Antofagasta", "Mejillones", "Sierra Gorda", "Taltal", "Calama", "Ollagüe", "San Pedro de Atacama", "Tocopilla", "María Elena"], "Atacama": ["Copiapó", "Caldera", "Tierra Amarilla", "Chañaral", "Diego de Almagro", "Vallenar", "Alto del Carmen", "Freirina", "Huasco"], "Coquimbo": ["La Serena", "Coquimbo", "Andacollo", "La Higuera", "Paiguano", "Vicuña", "Illapel", "Canela", "Los Vilos", "Salamanca", "Ovalle", "Combarbalá", "Monte Patria", "Punitaqui", "Río Hurtado"], "Valparaíso": ["Valparaíso", "Casablanca", "Concón", "Juan Fernández", "Puchuncaví", "Quintero", "Viña del Mar", "Isla de Pascua", "Los Andes", "Calle Larga", "Rinconada", "San Esteban", "La Ligua", "Cabildo", "Papudo", "Petorca", "Zapallar", "Quillota", "Calera", "Hijuelas", "La Cruz", "Nogales", "San Antonio", "Algarrobo", "Cartagena", "El Quisco", "El Tabo", "Santo Domingo", "San Felipe", "Catemu", "Llaillay", "Panquehue", "Putaendo", "Santa María", "Quilpué", "Limache", "Olmué", "Villa Alemana"], "Metropolitana de Santiago": ["Santiago", "Cerrillos", "Cerro Navia", "Conchalí", "El Bosque", "Estación Central", "Huechuraba", "Independencia", "La Cisterna", "La Florida", "La Granja", "La Pintana", "La Reina", "Las Condes", "Lo Barnechea", "Lo Espejo", "Lo Prado", "Macul", "Maipú", "Ñuñoa", "Pedro Aguirre Cerda", "Peñalolén", "Providencia", "Pudahuel", "Quilicura", "Quinta Normal", "Recoleta", "Renca", "San Joaquín", "San Miguel", "San Ramón", "Vitacura", "Puente Alto", "Pirque", "San José de Maipo", "Colina", "Lampa", "Tiltil", "San Bernardo", "Buin", "Calera de Tango", "Paine", "Melipilla", "Alhué", "Curacaví", "María Pinto", "San Pedro", "Talagante", "El Monte", "Isla de Maipo", "Padre Hurtado", "Peñaflor"], "Libertador General Bernardo O'Higgins": ["Rancagua", "Codegua", "Coinco", "Coltauco", "Doñihue", "Graneros", "Las Cabras", "Machalí", "Malloa", "Mostazal", "Olivar", "Peumo", "Pichidegua", "Quinta de Tilcoco", "Rengo", "Requínoa", "San Vicente", "Pichilemu", "La Estrella", "Litueche", "Marchihue", "Navidad", "Paredones", "San Fernando", "Chépica", "Chimbarongo", "Lolol", "Nancagua", "Palmilla", "Peralillo", "Placilla", "Pumanque", "Santa Cruz"], "Maule": ["Talca", "Constitución", "Curepto", "Empedrado", "Maule", "Pelarco", "Pencahue", "Río Claro", "San Clemente", "San Rafael", "Cauquenes", "Chanco", "Pelluhue", "Curicó", "Hualañé", "Licantén", "Molina", "Rauco", "Romeral", "Sagrada Familia", "Teno", "Vichuquén", "Linares", "Colbún", "Longaví", "Parral", "Retiro", "San Javier", "Villa Alegre", "Yerbas Buenas"], "Ñuble": ["Cobquecura", "Coelemu", "Ninhue", "Portezuelo", "Quirihue", "Ránquil", "Treguaco", "Bulnes", "Chillán Viejo", "Chillán", "El Carmen", "Pemuco", "Pinto", "Quillón", "San Ignacio", "Yungay", "Coihueco", "Ñiquén", "San Carlos", "San Fabián", "San Nicolás"], "Biobío": ["Concepción", "Coronel", "Chiguayante", "Florida", "Hualqui", "Lota", "Penco", "San Pedro de la Paz", "Santa Juana", "Talcahuano", "Tomé", "Hualpén", "Lebu", "Arauco", "Cañete", "Contulmo", "Curanilahue", "Los Álamos", "Tirúa", "Los Ángeles", "Antuco", "Cabrero", "Laja", "Mulchén", "Nacimiento", "Negrete", "Quilaco", "Quilleco", "San Rosendo", "Santa Bárbara", "Tucapel", "Yumbel", "Alto Biobío"], "La Araucanía": ["Temuco", "Carahue", "Cunco", "Curarrehue", "Freire", "Galvarino", "Gorbea", "Lautaro", "Loncoche", "Melipeuco", "Nueva Imperial", "Padre las Casas", "Perquenco", "Pitrufquén", "Pucón", "Saavedra", "Teodoro Schmidt", "Toltén", "Vilcún", "Villarrica", "Cholchol", "Angol", "Collipulli", "Curacautín", "Ercilla", "Lonquimay", "Los Sauces", "Lumaco", "Purén", "Renaico", "Traiguén", "Victoria"], "Los Ríos": ["Valdivia", "Corral", "Lanco", "Los Lagos", "Máfil", "Mariquina", "Paillaco", "Panguipulli", "La Unión", "Futrono", "Lago Ranco", "Río Bueno"], "Los Lagos": ["Puerto Montt", "Calbuco", "Cochamó", "Fresia", "Frutillar", "Los Muermos", "Llanquihue", "Maullín", "Puerto Varas", "Castro", "Ancud", "Chonchi", "Curaco de Vélez", "Dalcahue", "Puqueldón", "Queilén", "Quellón", "Quemchi", "Quinchao", "Osorno", "Puerto Octay", "Purranque", "Puyehue", "Río Negro", "San Juan de la Costa", "San Pablo", "Chaitén", "Futaleufú", "Hualaihué", "Palena"], "Aysén del General Carlos Ibáñez del Campo": ["Coyhaique", "Lago Verde", "Aysén", "Cisnes", "Guaitecas", "Cochrane", "O'Higgins", "Tortel", "Chile Chico", "Río Ibáñez"], "Magallanes y de la Antártica Chilena": ["Punta Arenas", "Laguna Blanca", "Río Verde", "San Gregorio", "Cabo de Hornos (Ex Navarino)", "Antártica", "Porvenir", "Primavera", "Timaukel", "Natales", "Torres del Paine"] };
         
+        // --- INICIO CÓDIGO DE IMPORTACIÓN DE CLIENTE ---
+        let datosClienteImportado = null;
+
+        function mostrarImportarCliente() {
+            document.getElementById('modalImportarCliente').style.display = 'flex';
+        }
+
+        function cerrarImportarCliente() {
+            document.getElementById('modalImportarCliente').style.display = 'none';
+            document.getElementById('resultadoImportacion').style.display = 'none';
+            document.getElementById('fileImportCliente').value = '';
+            datosClienteImportado = null;
+        }
+
+        async function procesarArchivoImportado(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer);
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                datosClienteImportado = extraerDatosClienteExcel(jsonData);
+                if (datosClienteImportado && datosClienteImportado.nombre) {
+                    mostrarDatosImportados(datosClienteImportado);
+                } else {
+                    alert('No se pudieron extraer datos válidos del archivo Excel. Asegúrate de que es un archivo de etiquetas generado por este sistema.');
+                }
+            } catch (error) {
+                console.error('Error procesando archivo:', error);
+                alert('Error al leer el archivo: ' + error.message);
+            }
+        }
+
+        function extraerDatosClienteExcel(jsonData) {
+            const cliente = {};
+            const camposMapeados = {
+                'DESTINATARIO': 'nombre',
+                'RUT DESTINATARIO': 'rut',
+                'TELÉFONO DESTINO': 'telefono',
+                'DIRECCIÓN DESTINO': 'direccion',
+                'COMUNA DESTINO': 'comuna',
+                'REGIÓN': 'region',
+                'VENDEDOR': 'vendedor'
+            };
+            for (let i = 0; i < jsonData.length; i++) {
+                const fila = jsonData[i];
+                if (fila && fila.length >= 2 && fila[0] && fila[1]) {
+                    const campo = fila[0].toString().trim().toUpperCase();
+                    const valor = fila[1].toString().trim();
+                    if (camposMapeados[campo]) {
+                        cliente[camposMapeados[campo]] = valor;
+                    }
+                }
+            }
+            return cliente;
+        }
+
+        function mostrarDatosImportados(datos) {
+            const container = document.getElementById('datosImportados');
+            container.innerHTML = `
+                <div style="background: #f0f9ff; padding: 15px; border-radius: 6px; border: 1px solid #0ea5e9;">
+                    <h4 style="margin-bottom: 10px;">📋 Datos encontrados:</h4>
+                    <p><strong>Cliente:</strong> ${datos.nombre || 'No encontrado'}</p>
+                    <p><strong>RUT:</strong> ${datos.rut || 'No encontrado'}</p>
+                    <p><strong>Teléfono:</strong> ${datos.telefono || 'No encontrado'}</p>
+                    <p><strong>Dirección:</strong> ${datos.direccion || 'No encontrado'}</p>
+                    <p><strong>Comuna:</strong> ${datos.comuna || 'No encontrado'}</p>
+                </div>
+            `;
+            document.getElementById('resultadoImportacion').style.display = 'block';
+        }
+
+        function aplicarDatosImportados() {
+            if (!datosClienteImportado) {
+                alert('No hay datos para aplicar');
+                return;
+            }
+            document.getElementById('envioDestinatario').value = datosClienteImportado.nombre || '';
+            document.getElementById('envioRut').value = datosClienteImportado.rut || '';
+            document.getElementById('envioTelefono').value = datosClienteImportado.telefono || '';
+            document.getElementById('envioDireccion').value = datosClienteImportado.direccion || '';
+            document.getElementById('envioComuna').value = datosClienteImportado.comuna || '';
+            alert('✅ Datos del cliente cargados exitosamente desde el archivo Excel');
+            cerrarImportarCliente();
+            if (datosClienteImportado.rut) {
+                const clienteCache = {
+                    rut: datosClienteImportado.rut,
+                    nombre: datosClienteImportado.nombre,
+                    telefono: datosClienteImportado.telefono,
+                    direccion: datosClienteImportado.direccion,
+                    comuna: datosClienteImportado.comuna,
+                    fechaImportacion: new Date().toISOString()
+                };
+                let clientesGuardados = JSON.parse(localStorage.getItem('clientesImportados') || '[]');
+                clientesGuardados = clientesGuardados.filter(c => c.rut !== clienteCache.rut);
+                clientesGuardados.push(clienteCache);
+                if (clientesGuardados.length > 50) {
+                    clientesGuardados = clientesGuardados.slice(-50);
+                }
+                localStorage.setItem('clientesImportados', JSON.stringify(clientesGuardados));
+            }
+        }
+
+        function buscarClientePorRut() {
+            const rut = document.getElementById('envioRut').value.trim();
+            if (!rut || rut.length < 8) {
+                limpiarCamposCliente();
+                return;
+            }
+            const clientesImportados = JSON.parse(localStorage.getItem('clientesImportados') || '[]');
+            const clienteEncontrado = clientesImportados.find(c =>
+                c.rut.replace(/[.-]/g, '') === rut.replace(/[.-]/g, '')
+            );
+            if (clienteEncontrado) {
+                document.getElementById('envioDestinatario').value = clienteEncontrado.nombre || '';
+                document.getElementById('envioTelefono').value = clienteEncontrado.telefono || '';
+                document.getElementById('envioDireccion').value = clienteEncontrado.direccion || '';
+                document.getElementById('envioComuna').value = clienteEncontrado.comuna || '';
+                mostrarMensajeTemporalCliente(`✅ Cliente encontrado en caché: ${clienteEncontrado.nombre}`);
+                return;
+            }
+        }
+
+        function mostrarMensajeTemporalCliente(mensaje) {
+            let msgDiv = document.getElementById('mensajeCliente');
+            if (!msgDiv) {
+                msgDiv = document.createElement('div');
+                msgDiv.id = 'mensajeCliente';
+                msgDiv.style.cssText = `background-color: #d1fae5; border: 1px solid #10b981; color: #065f46; padding: 8px 12px; border-radius: 6px; margin-top: 5px; font-size: 14px;`;
+                document.getElementById('envioRut').parentNode.appendChild(msgDiv);
+            }
+            msgDiv.innerHTML = mensaje;
+            msgDiv.style.display = 'block';
+            setTimeout(() => { msgDiv.style.display = 'none'; }, 4000);
+        }
+
+        function limpiarCamposCliente() {
+            document.getElementById('envioDestinatario').value = '';
+            document.getElementById('envioTelefono').value = '';
+            document.getElementById('envioDireccion').value = '';
+            document.getElementById('envioComuna').value = '';
+            const msgDiv = document.getElementById('mensajeCliente');
+            if (msgDiv) { msgDiv.style.display = 'none'; }
+        }
+        // --- FIN CÓDIGO DE IMPORTACIÓN DE CLIENTE ---
+
         function poblarSelect(selectId, data, useKeysAsValue = true) {
             const select = document.getElementById(selectId);
             select.innerHTML = '';
@@ -280,7 +460,7 @@
             document.getElementById('successMessage').classList.add('active');
             const tbody = document.getElementById('previewTable');
             tbody.innerHTML = '';
-            processedData.datos.filter(fila => !fila[0].startsWith('SEPARADOR') && !fila[0].startsWith('*****')).forEach(fila => {
+            processedData.datos.filter(fila => !fila[0].startsWith('SEPARADOR')).forEach(fila => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `<td style="font-weight: 600;">${fila[0] || ''}</td><td>${fila[1] || ''}</td>`;
                 tbody.appendChild(tr);
@@ -289,11 +469,7 @@
 
         function generarVistaImprimible() {
             if (!processedData) { alert('Primero debes procesar los datos.'); return; }
-
-            // --- INICIO DE LA INTEGRACIÓN CON GOOGLE SHEETS ---
-            // ¡URL YA CONFIGURADA! Esta es la dirección de tu script.
             const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwI0zeKjgJybIunwJ4SYnIHqYxenypLJ1uqlIoIZHJs6Q9nwiot8resIXZ5l99md3_r/exec";
-
             const datosParaSheet = {
                 tipo: processedData.tipo,
                 bultos: processedData.bultos,
@@ -308,18 +484,10 @@
                 pago: processedData.datos.find(d => d[0] === 'FORMA DE PAGO')?. [1] || '',
                 observaciones: processedData.datos.find(d => d[0] === 'OBSERVACIONES')?. [1] || ''
             };
-
-            fetch(WEB_APP_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                cache: 'no-cache',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(datosParaSheet)
-            })
+            fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', cache: 'no-cache', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(datosParaSheet) })
             .then(res => console.log("Solicitud de guardado enviada a Sheets."))
             .catch(error => console.error('Error al enviar datos a Sheets:', error));
-            // --- FIN DE LA INTEGRACIÓN ---
-
+            
             const printWindow = window.open('', '_blank');
             const esRetiro = processedData.tipo === 'RETIRO';
             const esProvisoria = processedData.tipo === 'PROVISORIA';
@@ -352,15 +520,8 @@
             let etiquetasHtml = '';
             for (let i = 1; i <= processedData.bultos; i++) {
                 let contenidoEtiqueta = '';
-                let tituloEtiqueta = '';
-
-                if (esRetiro) {
-                    tituloEtiqueta = '<div class="titulo-etiqueta">ETIQUETA RETIRO</div>';
-                } else if (esProvisoria) {
-                    tituloEtiqueta = '<div class="titulo-etiqueta titulo-provisoria">ETIQUETA PROVISORIA</div>';
-                }
-
                 if (esRetiro || esProvisoria) {
+                    let tituloEtiqueta = `<div class="titulo-etiqueta ${esProvisoria ? 'titulo-provisoria' : ''}">ETIQUETA ${processedData.tipo}</div>`;
                     let mainContent = '<div class="retiro-main">';
                     processedData.datos.filter(f => f[0] === 'CLIENTE' || f[0] === 'NOTA DE VENTA').forEach(fila => {
                          mainContent += `<p class="${fila[0].includes('NOTA') ? 'nota-venta' : ''}"><span class="campo">${fila[0]}:</span> ${fila[1]}</p>`;
@@ -405,7 +566,7 @@
             if (!processedData) { alert('Primero debes procesar los datos.'); return; }
             const wb = XLSX.utils.book_new();
             const ws_data = [];
-            const datosBase = processedData.datos.filter(fila => !fila[0].startsWith('SEPARADOR') && !fila[0].startsWith('*****'));
+            const datosBase = processedData.datos.filter(fila => !fila[0].startsWith('SEPARADOR'));
             for (let i = 1; i <= processedData.bultos; i++) {
                 datosBase.forEach((rowData, rowIndex) => {
                     if (!ws_data[rowIndex]) ws_data[rowIndex] = [];
@@ -426,7 +587,7 @@
         function copiarParaSheets() {
             if (!processedData) { alert('Primero debes procesar los datos.'); return; }
             const sheet_data = [];
-            const datosBase = processedData.datos.filter(fila => !fila[0].startsWith('SEPARADOR') && !fila[0].startsWith('*****'));
+            const datosBase = processedData.datos.filter(fila => !fila[0].startsWith('SEPARADOR'));
             for (let i = 1; i <= processedData.bultos; i++) {
                 datosBase.forEach((rowData, rowIndex) => {
                     if (!sheet_data[rowIndex]) sheet_data[rowIndex] = [];
