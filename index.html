@@ -115,7 +115,12 @@
                 </div>
                 <div class="form-group"><label for="envioTelefono" class="required">Teléfono</label><input type="text" id="envioTelefono"></div>
                 <div class="form-group"><label for="envioDireccion" class="required">Dirección</label><input type="text" id="envioDireccion"></div>
-                <div class="form-group"><label for="envioComuna" class="required">Comuna</label><select id="envioComuna"><option value="">Seleccionar...</option></select></div>
+                <div class="form-group"><label for="envioReferencia">Referencia (Opcional)</label><input type="text" id="envioReferencia" placeholder="Ej: Casa rejas verdes, al lado de..."></div>
+                <div class="form-group">
+                    <label for="envioComuna" class="required">Comuna</label>
+                    <input type="text" id="envioComuna" list="comunasList" placeholder="Escribe para buscar...">
+                    <datalist id="comunasList"></datalist>
+                </div>
                 <div class="form-group"><label for="envioTipo">Tipo de Envío</label><select id="envioTipo"><option value="Domicilio">Domicilio</option><option value="Oficina">Oficina</option></select></div>
             </div>
             <h3 style="margin: 25px 0 15px 0; color: #374151;">Datos del Envío</h3>
@@ -213,6 +218,7 @@
                 'RUT DESTINATARIO': 'rut',
                 'TELÉFONO DESTINO': 'telefono',
                 'DIRECCIÓN DESTINO': 'direccion',
+                'REFERENCIA': 'referencia', // <-- NUEVO
                 'COMUNA DESTINO': 'comuna',
                 'REGIÓN': 'region',
                 'VENDEDOR': 'vendedor'
@@ -239,6 +245,7 @@
                     <p><strong>RUT:</strong> ${datos.rut || 'No encontrado'}</p>
                     <p><strong>Teléfono:</strong> ${datos.telefono || 'No encontrado'}</p>
                     <p><strong>Dirección:</strong> ${datos.direccion || 'No encontrado'}</p>
+                    <p><strong>Referencia:</strong> ${datos.referencia || 'No encontrado'}</p>
                     <p><strong>Comuna:</strong> ${datos.comuna || 'No encontrado'}</p>
                 </div>
             `;
@@ -254,6 +261,7 @@
             document.getElementById('envioRut').value = datosClienteImportado.rut || '';
             document.getElementById('envioTelefono').value = datosClienteImportado.telefono || '';
             document.getElementById('envioDireccion').value = datosClienteImportado.direccion || '';
+            document.getElementById('envioReferencia').value = datosClienteImportado.referencia || ''; // <-- NUEVO
             document.getElementById('envioComuna').value = datosClienteImportado.comuna || '';
             alert('✅ Datos del cliente cargados exitosamente desde el archivo Excel');
             cerrarImportarCliente();
@@ -263,6 +271,7 @@
                     nombre: datosClienteImportado.nombre,
                     telefono: datosClienteImportado.telefono,
                     direccion: datosClienteImportado.direccion,
+                    referencia: datosClienteImportado.referencia, // <-- NUEVO
                     comuna: datosClienteImportado.comuna,
                     fechaImportacion: new Date().toISOString()
                 };
@@ -290,6 +299,7 @@
                 document.getElementById('envioDestinatario').value = clienteEncontrado.nombre || '';
                 document.getElementById('envioTelefono').value = clienteEncontrado.telefono || '';
                 document.getElementById('envioDireccion').value = clienteEncontrado.direccion || '';
+                document.getElementById('envioReferencia').value = clienteEncontrado.referencia || ''; // <-- NUEVO
                 document.getElementById('envioComuna').value = clienteEncontrado.comuna || '';
                 mostrarMensajeTemporalCliente(`✅ Cliente encontrado en caché: ${clienteEncontrado.nombre}`);
                 return;
@@ -313,6 +323,7 @@
             document.getElementById('envioDestinatario').value = '';
             document.getElementById('envioTelefono').value = '';
             document.getElementById('envioDireccion').value = '';
+            document.getElementById('envioReferencia').value = ''; // <-- NUEVO
             document.getElementById('envioComuna').value = '';
             const msgDiv = document.getElementById('mensajeCliente');
             if (msgDiv) { msgDiv.style.display = 'none'; }
@@ -331,19 +342,26 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const selectComuna = document.getElementById('envioComuna');
-            selectComuna.innerHTML = '<option value="">Seleccionar...</option>';
+            // --- NUEVA LÓGICA PARA COMUNAS ---
+            const datalistComunas = document.getElementById('comunasList');
+            let todasLasComunas = [];
             for (const region in comunasPorRegion) {
-                const optgroup = document.createElement('optgroup');
-                optgroup.label = region;
                 comunasPorRegion[region].forEach(comuna => {
-                    const option = document.createElement('option');
-                    option.value = comuna;
-                    option.textContent = comuna;
-                    optgroup.appendChild(option);
+                    todasLasComunas.push({
+                        nombre: comuna,
+                        textoCompleto: `${comuna} (${region})`
+                    });
                 });
-                selectComuna.appendChild(optgroup);
             }
+            todasLasComunas.sort((a, b) => a.nombre.localeCompare(b.nombre));
+            
+            todasLasComunas.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.textoCompleto;
+                datalistComunas.appendChild(option);
+            });
+            // --- FIN NUEVA LÓGICA PARA COMUNAS ---
+
             poblarSelect('retiroVendedor', vendedores, true);
             poblarSelect('provisoriaVendedor', vendedores, true);
             poblarSelect('envioVendedor', vendedores, true);
@@ -417,38 +435,65 @@
         }
 
         function procesarEnvio() {
-            const campos = { destinatario: document.getElementById('envioDestinatario').value.trim(), rut: document.getElementById('envioRut').value.trim(), telefono: document.getElementById('envioTelefono').value.trim(), direccion: document.getElementById('envioDireccion').value.trim(), comuna: document.getElementById('envioComuna').value, notaVenta: document.getElementById('envioNotaVenta').value.trim() };
+            const campos = { 
+                destinatario: document.getElementById('envioDestinatario').value.trim(), 
+                rut: document.getElementById('envioRut').value.trim(), 
+                telefono: document.getElementById('envioTelefono').value.trim(), 
+                direccion: document.getElementById('envioDireccion').value.trim(),
+                comuna: document.getElementById('envioComuna').value.trim(),
+                notaVenta: document.getElementById('envioNotaVenta').value.trim()
+            };
+            const referencia = document.getElementById('envioReferencia').value.trim(); // <-- NUEVO
+            
             const faltantes = Object.keys(campos).filter(k => !campos[k]);
             if (faltantes.length > 0) { alert(`Faltan campos obligatorios: ${faltantes.join(', ')}`); return; }
+
             let transporte = document.getElementById('envioTransporte').value;
             if (transporte === 'Otro') { transporte = document.getElementById('envioTransporteOtro').value.trim() || 'Otro (sin especificar)'; }
+            
+            // --- LÓGICA DE COMUNA ACTUALIZADA ---
+            const comunaCompleta = campos.comuna;
+            const nombreComuna = comunaCompleta.includes(' (') ? comunaCompleta.substring(0, comunaCompleta.lastIndexOf(' (')) : comunaCompleta;
             let region = 'No encontrada';
-            for (const r in comunasPorRegion) { if (comunasPorRegion[r].includes(campos.comuna)) { region = r; break; } }
-            let ciudad = campos.comuna;
+            for (const r in comunasPorRegion) { if (comunasPorRegion[r].includes(nombreComuna)) { region = r; break; } }
+            // --- FIN LÓGICA DE COMUNA ACTUALIZADA ---
+
+            let ciudad = nombreComuna;
             if (region === 'Metropolitana de Santiago') { ciudad = 'Santiago'; }
+
             const vendedorSeleccionado = document.getElementById('envioVendedor').value;
+            
+            const datosEnvio = [
+                ['DE', 'SOC INV FUCAS SPA - RUT: 76.230.392-2'],
+                ['VENDEDOR', `${vendedorSeleccionado} - ${vendedores[vendedorSeleccionado]}`],
+                ['DIRECCIÓN', 'AV LO ESPEJO 02360, SAN BERNARDO, SANTIAGO'],
+                ['TELÉFONO', '2 3347 5040'],
+                ['SEPARADOR_1', ''],
+                ['DESTINATARIO', campos.destinatario],
+                ['RUT DESTINATARIO', campos.rut],
+                ['TELÉFONO DESTINO', campos.telefono],
+                ['DIRECCIÓN DESTINO', campos.direccion]
+            ];
+            
+            if (referencia) { // <-- NUEVO
+                datosEnvio.push(['REFERENCIA', referencia]);
+            }
+
+            datosEnvio.push(
+                ['COMUNA DESTINO', comunaCompleta], // Usamos la comuna completa
+                ['CIUDAD DESTINO', ciudad],
+                ['REGIÓN', region],
+                ['SEPARADOR_2', ''],
+                ['TIPO DE ENVÍO', document.getElementById('envioTipo').value],
+                ['MEDIO DE TRANSPORTE', transporte],
+                ['FORMA DE PAGO', document.getElementById('envioPago').value],
+                ['NOTA DE VENTA', campos.notaVenta]
+            );
+
             processedData = {
                 tipo: 'ENVÍO',
                 bultos: parseInt(document.getElementById('envioBultos').value) || 1,
-                datos: [
-                    ['DE', 'SOC INV FUCAS SPA - RUT: 76.230.392-2'],
-                    ['VENDEDOR', `${vendedorSeleccionado} - ${vendedores[vendedorSeleccionado]}`],
-                    ['DIRECCIÓN', 'AV LO ESPEJO 02360, SAN BERNARDO, SANTIAGO'],
-                    ['TELÉFONO', '2 3347 5040'],
-                    ['SEPARADOR_1', ''],
-                    ['DESTINATARIO', campos.destinatario],
-                    ['RUT DESTINATARIO', campos.rut],
-                    ['TELÉFONO DESTINO', campos.telefono],
-                    ['DIRECCIÓN DESTINO', campos.direccion],
-                    ['COMUNA DESTINO', campos.comuna],
-                    ['CIUDAD DESTINO', ciudad],
-                    ['REGIÓN', region],
-                    ['SEPARADOR_2', ''],
-                    ['TIPO DE ENVÍO', document.getElementById('envioTipo').value],
-                    ['MEDIO DE TRANSPORTE', transporte],
-                    ['FORMA DE PAGO', document.getElementById('envioPago').value],
-                    ['NOTA DE VENTA', campos.notaVenta]
-                ]
+                datos: datosEnvio
             };
             mostrarVistaPrevia();
         }
@@ -479,6 +524,7 @@
                 rut: processedData.datos.find(d => d[0] === 'RUT DESTINATARIO')?. [1] || '',
                 telefono: processedData.datos.find(d => d[0] === 'TELÉFONO DESTINO')?. [1] || '',
                 direccion: processedData.datos.find(d => d[0] === 'DIRECCIÓN DESTINO')?. [1] || '',
+                referencia: processedData.datos.find(d => d[0] === 'REFERENCIA')?. [1] || '', // <-- NUEVO
                 comuna: processedData.datos.find(d => d[0] === 'COMUNA DESTINO')?. [1] || '',
                 transporte: processedData.datos.find(d => d[0] === 'MEDIO DE TRANSPORTE')?. [1] || '',
                 pago: processedData.datos.find(d => d[0] === 'FORMA DE PAGO')?. [1] || '',
@@ -495,7 +541,7 @@
                 <html><head><title>Etiquetas para Imprimir</title><style>
                     body { margin: 0; font-family: sans-serif; }
                     .pagina { display: flex; flex-wrap: wrap; justify-content: space-around; align-content: flex-start; width: 21.59cm; height: 27.94cm; padding: 0.5cm; box-sizing: border-box; page-break-after: always; }
-                    .etiqueta { display: flex; flex-direction: column; border: 1.5px dashed #777; padding: 6px 10px; box-sizing: border-box; line-height: 1.4; overflow-wrap: break-word; }
+                    .etiqueta { display: flex; flex-direction: column; border: 1.5px dashed #777; padding: 6px 10px; box-sizing: border-box; line-height: 1.3; overflow-wrap: break-word; }
                     .etiqueta-envio { width: 49%; height: 48%; margin-bottom: 0.5cm; }
                     .etiqueta-retiro, .etiqueta-provisoria { width: 100%; height: 48%; margin-bottom: 2%; }
                     .titulo-etiqueta { text-align: center; font-weight: bold; font-size: 1.4em; margin-bottom: 5px; border-bottom: 1.5px solid #000; padding-bottom: 3px; }
@@ -503,9 +549,9 @@
                     .bulto-manual { text-align: center; font-weight: bold; font-size: 1.2em; margin-bottom: 5px; border-bottom: 1.5px solid #000; padding-bottom: 3px; }
                     .seccion p { margin: 1px 0; }
                     .seccion-remitente { font-size: 8pt; }
-                    .seccion-destinatario { font-size: 12pt; flex-grow: 2; display: flex; flex-direction: column; justify-content: center; }
+                    .seccion-destinatario { font-size: 11pt; flex-grow: 2; display: flex; flex-direction: column; justify-content: center; }
                     .seccion-destinatario p, .seccion-envio .nota-venta, .retiro-main { text-transform: uppercase; }
-                    .seccion-envio { font-size: 12pt; flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-end; }
+                    .seccion-envio { font-size: 11pt; flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-end; }
                     .retiro-main { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; font-size: 16pt; }
                     .campo { font-weight: bold; }
                     .separador { border-top: 1.5px solid #000; margin: 5px 0; }
