@@ -156,7 +156,7 @@
             </div>
 
             <div id="batchSection">
-                <h3 style="margin-bottom: 15px; color: #374151;">📋 Lote de Etiquetas Agregadas (<span id="batchCount">0</span>)</h3>
+                <h3 style="margin-bottom: 15px; color: #374151;">📋 Lote de Etiquetas Agregadas (<span id="batchCount">0 Entradas / 0 Etiquetas</span>)</h3>
                 <ul id="batchList" class="batch-list">
                     </ul>
                 <div class="btn-group" style="margin-top: 20px;">
@@ -262,7 +262,7 @@
                 'COMUNA DESTINO': 'comuna',
                 'REGIÓN': 'region',
                 'VENDEDOR': 'vendedor',
-                'MEDIO DE TRANSPORTE': 'transporte' // <-- NUEVO
+                'MEDIO DE TRANSPORTE': 'transporte'
             };
             for (let i = 0; i < jsonData.length; i++) {
                 const fila = jsonData[i];
@@ -306,7 +306,6 @@
             document.getElementById('envioReferencia').value = datosClienteImportado.referencia || '';
             document.getElementById('envioComuna').value = datosClienteImportado.comuna || '';
             
-            // --- NUEVO: Aplicar transporte ---
             if (datosClienteImportado.transporte) {
                 const selectTransporte = document.getElementById('envioTransporte');
                 const optionExists = [...selectTransporte.options].some(opt => opt.value === datosClienteImportado.transporte);
@@ -319,7 +318,6 @@
                     document.getElementById('envioTransporteOtro').value = datosClienteImportado.transporte;
                 }
             }
-            // --- FIN NUEVO ---
 
             alert('✅ Datos del cliente cargados exitosamente desde el archivo Excel');
             cerrarImportarCliente();
@@ -331,7 +329,7 @@
                     direccion: datosClienteImportado.direccion,
                     referencia: datosClienteImportado.referencia,
                     comuna: datosClienteImportado.comuna,
-                    transporte: datosClienteImportado.transporte, // <-- NUEVO
+                    transporte: datosClienteImportado.transporte,
                     fechaImportacion: new Date().toISOString()
                 };
                 let clientesGuardados = JSON.parse(localStorage.getItem('clientesImportados') || '[]');
@@ -360,7 +358,7 @@
                 document.getElementById('envioDireccion').value = clienteEncontrado.direccion || '';
                 document.getElementById('envioReferencia').value = clienteEncontrado.referencia || '';
                 document.getElementById('envioComuna').value = clienteEncontrado.comuna || '';
-                if (clienteEncontrado.transporte) { // <-- NUEVO
+                if (clienteEncontrado.transporte) {
                     document.getElementById('envioTransporte').value = clienteEncontrado.transporte;
                 }
                 mostrarMensajeTemporalCliente(`✅ Cliente encontrado en caché: ${clienteEncontrado.nombre}`);
@@ -457,7 +455,6 @@
                 btnProcesar.textContent = 'Generar Vista Previa';
                 batchSection.style.display = 'none';
             }
-            // Limpiar lote si se cambia de modo
             batchData = [];
             renderizarLote();
         }
@@ -465,21 +462,23 @@
         function renderizarLote() {
             const list = document.getElementById('batchList');
             const count = document.getElementById('batchCount');
+            let totalBultos = 0;
             list.innerHTML = '';
             batchData.forEach((item, index) => {
+                totalBultos += item.bultos;
                 const destinatario = item.datos.find(d => d[0] === 'DESTINATARIO')?.[1] || 'N/A';
                 const nv = item.datos.find(d => d[0] === 'NOTA DE VENTA')?.[1] || 'N/A';
                 const li = document.createElement('li');
                 li.className = 'batch-item';
                 li.innerHTML = `
                     <div class="batch-item-info">
-                        <strong>${index + 1}.</strong> ${destinatario} (NV: ${nv})
+                        <strong>${index + 1}.</strong> ${destinatario} (NV: ${nv}) - <strong>${item.bultos} bulto(s)</strong>
                     </div>
                     <button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;" onclick="eliminarDelLote(${index})">Eliminar</button>
                 `;
                 list.appendChild(li);
             });
-            count.textContent = batchData.length;
+            count.textContent = `${batchData.length} Entradas / ${totalBultos} Etiquetas Totales`;
         }
 
         function eliminarDelLote(index) {
@@ -488,7 +487,6 @@
         }
 
         function limpiarFormularioEnvio() {
-            // Limpia campos específicos para la siguiente etiqueta, pero mantiene el vendedor
             document.getElementById('envioDestinatario').value = '';
             document.getElementById('envioRut').value = '';
             document.getElementById('envioTelefono').value = '';
@@ -509,7 +507,6 @@
             const modoSelector = document.getElementById('modoSelectorSection');
             if (tipo === 'ENVIO') {
                 modoSelector.classList.remove('hidden');
-                // Forzar selección de modo si no hay uno activo
                 if (!document.querySelector('#modoSelectorSection .flex-btn.active')) {
                     document.querySelector('#modoSelectorSection .flex-btn').click();
                 }
@@ -636,7 +633,7 @@
                 batchData.push(datosEtiqueta);
                 renderizarLote();
                 limpiarFormularioEnvio();
-                alert(`✅ Etiqueta para "${datosEtiqueta.datos.find(d=>d[0]==='DESTINATARIO')[1]}" agregada al lote.`);
+                alert(`✅ Entrada para "${datosEtiqueta.datos.find(d=>d[0]==='DESTINATARIO')[1]}" (${datosEtiqueta.bultos} bultos) agregada al lote.`);
             } else {
                 processedData = datosEtiqueta;
                 mostrarVistaPrevia();
@@ -710,9 +707,6 @@
         function generarVistaImprimible() {
             if (!processedData) { alert('Primero debes procesar los datos.'); return; }
             
-            // Lógica para enviar datos a Sheets (se mantiene igual, se podría adaptar para lotes)
-            // fetch(...);
-
             const printWindow = window.open('', '_blank');
             let content = `
                 <html><head><title>Etiquetas para Imprimir</title><style>
@@ -743,12 +737,18 @@
             let etiquetasHtml = '';
             
             if (processedData.tipo === 'ENVIO_LOTE') {
-                processedData.lote.forEach((etiquetaData, index) => {
-                    const contenidoEtiqueta = generarContenidoEtiquetaHTML(etiquetaData);
-                    etiquetasHtml += `<div class="etiqueta etiqueta-envio">${contenidoEtiqueta}</div>`;
+                let totalEtiquetasGeneradas = 0;
+                const totalEtiquetasEnLote = processedData.lote.reduce((sum, item) => sum + item.bultos, 0);
 
-                    if ((index + 1) % 4 === 0 && (index + 1) < processedData.lote.length) {
-                        etiquetasHtml += `</div><div class="pagina">`;
+                processedData.lote.forEach(etiquetaData => {
+                    const contenidoEtiqueta = generarContenidoEtiquetaHTML(etiquetaData);
+                    for (let i = 0; i < etiquetaData.bultos; i++) {
+                        etiquetasHtml += `<div class="etiqueta etiqueta-envio">${contenidoEtiqueta}</div>`;
+                        totalEtiquetasGeneradas++;
+                        
+                        if (totalEtiquetasGeneradas % 4 === 0 && totalEtiquetasGeneradas < totalEtiquetasEnLote) {
+                            etiquetasHtml += `</div><div class="pagina">`;
+                        }
                     }
                 });
 
@@ -839,4 +839,3 @@
     </script>
 </body>
 </html>
-```
