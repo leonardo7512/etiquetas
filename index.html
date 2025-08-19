@@ -740,12 +740,16 @@
                 let totalEtiquetasGeneradas = 0;
                 const totalEtiquetasEnLote = processedData.lote.reduce((sum, item) => sum + item.bultos, 0);
 
+                // <-- BUCLE PRINCIPAL: Itera sobre cada ENTRADA del lote (ej. RPM, Marta, etc.)
                 processedData.lote.forEach(etiquetaData => {
                     const contenidoEtiqueta = generarContenidoEtiquetaHTML(etiquetaData);
+                    
+                    // <-- BUCLE INTERNO: Genera las COPIAS (bultos) para esta entrada específica
                     for (let i = 0; i < etiquetaData.bultos; i++) {
                         etiquetasHtml += `<div class="etiqueta etiqueta-envio">${contenidoEtiqueta}</div>`;
                         totalEtiquetasGeneradas++;
                         
+                        // Lógica para saltar de página cada 4 etiquetas
                         if (totalEtiquetasGeneradas % 4 === 0 && totalEtiquetasGeneradas < totalEtiquetasEnLote) {
                             etiquetasHtml += `</div><div class="pagina">`;
                         }
