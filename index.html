@@ -51,8 +51,6 @@
         .copy-section { background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 8px; padding: 20px; margin-top: 20px; }
         .copy-textarea { width: 100%; height: 200px; padding: 15px; border: 1px solid #e5e7eb; border-radius: 6px; font-family: monospace; font-size: 12px; background: white; resize: vertical; }
         .hidden { display: none !important; }
-        
-        /* Estilos para el modal de importación */
         .modal-importar { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; }
         .modal-content { position: relative; background: white; padding: 30px; border-radius: 10px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; }
         .modal-close { position: absolute; top: 10px; right: 15px; font-size: 28px; font-weight: bold; cursor: pointer; color: #888; }
@@ -60,8 +58,6 @@
         .upload-mini { border: 2px dashed #cbd5e1; border-radius: 8px; padding: 20px; text-align: center; background: #f8fafc; }
         .upload-mini input[type="file"] { display: none; }
         .upload-mini label { cursor: pointer; display: inline-block; }
-
-        /* Estilos para Lote */
         #batchSection { display: none; background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-top: 25px; }
         .batch-list { list-style: none; padding: 0; max-height: 300px; overflow-y: auto; }
         .batch-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: white; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: 8px; }
@@ -158,8 +154,7 @@
         
         <div id="batchSection">
             <h3 style="margin-bottom: 15px; color: #374151;">📋 Lote de Etiquetas Agregadas (<span id="batchCount">0 Entradas / 0 Etiquetas</span>)</h3>
-            <ul id="batchList" class="batch-list">
-            </ul>
+            <ul id="batchList" class="batch-list"></ul>
             <div class="btn-group" style="margin-top: 20px;">
                 <button class="btn btn-success" onclick="procesarLote()">🖨️ Procesar Lote e Imprimir</button>
             </div>
@@ -210,7 +205,6 @@
         const vendedores = { "LEONARDO CASTRO": "2 3347 5040", "ANDREA FUENTES": "+56 9 6863 7136", "JOSELYN GOMEZ": "+56 9 3096 8640", "YEIMY REALPE": "+56 9 8544 9261", "LESLIE RIOS": "+56 9 3457 2139", "ADM": "+56 9 4755 4045" };
         const comunasPorRegion = { "Arica y Parinacota": ["Arica", "Camarones", "Putre", "General Lagos"], "Tarapacá": ["Iquique", "Alto Hospicio", "Pozo Almonte", "Camiña", "Colchane", "Huara", "Pica"], "Antofagasta": ["Antofagasta", "Mejillones", "Sierra Gorda", "Taltal", "Calama", "Ollagüe", "San Pedro de Atacama", "Tocopilla", "María Elena"], "Atacama": ["Copiapó", "Caldera", "Tierra Amarilla", "Chañaral", "Diego de Almagro", "Vallenar", "Alto del Carmen", "Freirina", "Huasco"], "Coquimbo": ["La Serena", "Coquimbo", "Andacollo", "La Higuera", "Paiguano", "Vicuña", "Illapel", "Canela", "Los Vilos", "Salamanca", "Ovalle", "Combarbalá", "Monte Patria", "Punitaqui", "Río Hurtado"], "Valparaíso": ["Valparaíso", "Casablanca", "Concón", "Juan Fernández", "Puchuncaví", "Quintero", "Viña del Mar", "Isla de Pascua", "Los Andes", "Calle Larga", "Rinconada", "San Esteban", "La Ligua", "Cabildo", "Papudo", "Petorca", "Zapallar", "Quillota", "Calera", "Hijuelas", "La Cruz", "Nogales", "San Antonio", "Algarrobo", "Cartagena", "El Quisco", "El Tabo", "Santo Domingo", "San Felipe", "Catemu", "Llaillay", "Panquehue", "Putaendo", "Santa María", "Quilpué", "Limache", "Olmué", "Villa Alemana"], "Metropolitana de Santiago": ["Santiago", "Cerrillos", "Cerro Navia", "Conchalí", "El Bosque", "Estación Central", "Huechuraba", "Independencia", "La Cisterna", "La Florida", "La Granja", "La Pintana", "La Reina", "Las Condes", "Lo Barnechea", "Lo Espejo", "Lo Prado", "Macul", "Maipú", "Ñuñoa", "Pedro Aguirre Cerda", "Peñalén", "Providencia", "Pudahuel", "Quilicura", "Quinta Normal", "Recoleta", "Renca", "San Joaquín", "San Miguel", "San Ramón", "Vitacura", "Puente Alto", "Pirque", "San José de Maipo", "Colina", "Lampa", "Tiltil", "San Bernardo", "Buin", "Calera de Tango", "Paine", "Melipilla", "Alhué", "Curacaví", "María Pinto", "San Pedro", "Talagante", "El Monte", "Isla de Maipo", "Padre Hurtado", "Peñaflor"], "Libertador General Bernardo O'Higgins": ["Rancagua", "Codegua", "Coinco", "Coltauco", "Doñihue", "Graneros", "Las Cabras", "Machalí", "Malloa", "Mostazal", "Olivar", "Peumo", "Pichidegua", "Quinta de Tilcoco", "Rengo", "Requínoa", "San Vicente", "Pichilemu", "La Estrella", "Litueche", "Marchihue", "Navidad", "Paredones", "San Fernando", "Chépica", "Chimbarongo", "Lolol", "Nancagua", "Palmilla", "Peralillo", "Placilla", "Pumanque", "Santa Cruz"], "Maule": ["Talca", "Constitución", "Curepto", "Empedrado", "Maule", "Pelarco", "Pencahue", "Río Claro", "San Clemente", "San Rafael", "Cauquenes", "Chanco", "Pelluhue", "Curicó", "Hualañé", "Licantén", "Molina", "Rauco", "Romeral", "Sagrada Familia", "Teno", "Vichuquén", "Linares", "Colbún", "Longaví", "Parral", "Retiro", "San Javier", "Villa Alegre", "Yerbas Buenas"], "Ñuble": ["Cobquecura", "Coelemu", "Ninhue", "Portezuelo", "Quirihue", "Ránquil", "Treguaco", "Bulnes", "Chillán Viejo", "Chillán", "El Carmen", "Pemuco", "Pinto", "Quillón", "San Ignacio", "Yungay", "Coihueco", "Ñiquén", "San Carlos", "San Fabián", "San Nicolás"], "Biobío": ["Concepción", "Coronel", "Chiguayante", "Florida", "Hualqui", "Lota", "Penco", "San Pedro de la Paz", "Santa Juana", "Talcahuano", "Tomé", "Hualpén", "Lebu", "Arauco", "Cañete", "Contulmo", "Curanilahue", "Los Álamos", "Tirúa", "Los Ángeles", "Antuco", "Cabrero", "Laja", "Mulchén", "Nacimiento", "Negrete", "Quilaco", "Quilleco", "San Rosendo", "Santa Bárbara", "Tucapel", "Yumbel", "Alto Biobío"], "La Araucanía": ["Temuco", "Carahue", "Cunco", "Curarrehue", "Freire", "Galvarino", "Gorbea", "Lautaro", "Loncoche", "Melipeuco", "Nueva Imperial", "Padre las Casas", "Perquenco", "Pitrufquén", "Pucón", "Saavedra", "Teodoro Schmidt", "Toltén", "Vilcún", "Villarrica", "Cholchol", "Angol", "Collipulli", "Curacautín", "Ercilla", "Lonquimay", "Los Sauces", "Lumaco", "Purén", "Renaico", "Traiguén", "Victoria"], "Los Ríos": ["Valdivia", "Corral", "Lanco", "Los Lagos", "Máfil", "Mariquina", "Paillaco", "Panguipulli", "La Unión", "Futrono", "Lago Ranco", "Río Bueno"], "Los Lagos": ["Puerto Montt", "Calbuco", "Cochamó", "Fresia", "Frutillar", "Los Muermos", "Llanquihue", "Maullín", "Puerto Varas", "Castro", "Ancud", "Chonchi", "Curaco de Vélez", "Dalcahue", "Puqueldón", "Queilén", "Quellón", "Quemchi", "Quinchao", "Osorno", "Puerto Octay", "Purranque", "Puyehue", "Río Negro", "San Juan de la Costa", "San Pablo", "Chaitén", "Futaleufú", "Hualaihué", "Palena"], "Aysén del General Carlos Ibáñez del Campo": ["Coyhaique", "Lago Verde", "Aysén", "Cisnes", "Guaitecas", "Cochrane", "O'Higgins", "Tortel", "Chile Chico", "Río Ibáñez"], "Magallanes y de la Antártica Chilena": ["Punta Arenas", "Laguna Blanca", "Río Verde", "San Gregorio", "Cabo de Hornos (Ex Navarino)", "Antártica", "Porvenir", "Primavera", "Timaukel", "Natales", "Torres del Paine"] };
         
-        // --- INICIO CÓDIGO GOOGLE SHEETS ---
         const googleScriptURL = 'https://script.google.com/macros/s/AKfycbwiIfve9GDgaYuvsnB30wUaXei0psTS7fCpMA5ntr8TdRZjKjkm-fEkdum0aElPD_3a/exec';
 
         function obtenerValor(datos, clave) {
@@ -223,12 +217,16 @@
             if (etiquetasAEnviar.length === 0) return;
 
             etiquetasAEnviar.forEach(etiqueta => {
+                const vendedorCompleto = obtenerValor(etiqueta.datos, 'VENDEDOR');
+                const nombreVendedorLimpio = vendedorCompleto.split(' - ')[0].trim();
+
                 const payload = {
+                    sheet_name: nombreVendedorLimpio,
                     ultima_actualizacion: new Date().toLocaleString("es-CL", { timeZone: "America/Santiago" }),
                     nota_venta: obtenerValor(etiqueta.datos, 'NOTA DE VENTA'),
                     estado: 'Creado',
                     tipo_operacion: etiqueta.tipo,
-                    vendedor: obtenerValor(etiqueta.datos, 'VENDEDOR'),
+                    vendedor: vendedorCompleto,
                     cliente_destinatario: obtenerValor(etiqueta.datos, 'CLIENTE') || obtenerValor(etiqueta.datos, 'DESTINATARIO'),
                     rut: obtenerValor(etiqueta.datos, 'RUT DESTINATARIO'),
                     telefono: obtenerValor(etiqueta.datos, 'TELÉFONO DESTINO') || obtenerValor(etiqueta.datos, 'TELÉFONO'),
@@ -250,558 +248,260 @@
                     body: formData,
                     mode: 'no-cors'
                 })
-                .then(response => console.log('Intento de envío a Google Sheets realizado. Verifica la hoja de cálculo.'))
+                .then(response => console.log(`Intento de envío a la hoja "${nombreVendedorLimpio}" realizado.`))
                 .catch(error => console.error('Error al intentar enviar datos a Google Sheets:', error));
             });
         }
-        // --- FIN CÓDIGO GOOGLE SHEETS ---
-
-        // --- INICIO CÓDIGO DE IMPORTACIÓN DE CLIENTE ---
+        
         let datosClienteImportado = null;
-
-        function mostrarImportarCliente() {
-            document.getElementById('modalImportarCliente').style.display = 'flex';
-        }
-
+        function mostrarImportarCliente() { document.getElementById('modalImportarCliente').style.display = 'flex'; }
         function cerrarImportarCliente() {
             document.getElementById('modalImportarCliente').style.display = 'none';
             document.getElementById('resultadoImportacion').style.display = 'none';
             document.getElementById('fileImportCliente').value = '';
             datosClienteImportado = null;
         }
-        
-        function cerrarModalSiEsAfuera(event) {
-            if (event.target === document.getElementById('modalImportarCliente')) {
-                cerrarImportarCliente();
-            }
-        }
-
+        function cerrarModalSiEsAfuera(event) { if (event.target === document.getElementById('modalImportarCliente')) { cerrarImportarCliente(); } }
         async function procesarArchivoImportado(event) {
             const file = event.target.files[0];
             if (!file) return;
             try {
-                const arrayBuffer = await file.arrayBuffer();
-                const workbook = XLSX.read(arrayBuffer);
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
-                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                datosClienteImportado = extraerDatosClienteExcel(jsonData);
-                if (datosClienteImportado && datosClienteImportado.nombre) {
-                    mostrarDatosImportados(datosClienteImportado);
-                } else {
-                    alert('No se pudieron extraer datos válidos del archivo Excel. Asegúrate de que es un archivo de etiquetas generado por este sistema.');
-                }
-            } catch (error) {
-                console.error('Error procesando archivo:', error);
-                alert('Error al leer el archivo: ' + error.message);
-            }
+                const d = await file.arrayBuffer(), w = XLSX.read(d), s = w.Sheets[w.SheetNames[0]], j = XLSX.utils.sheet_to_json(s, { header: 1 });
+                datosClienteImportado = extraerDatosClienteExcel(j);
+                if (datosClienteImportado && datosClienteImportado.nombre) { mostrarDatosImportados(datosClienteImportado); } 
+                else { alert('No se pudieron extraer datos válidos del archivo Excel.'); }
+            } catch (error) { console.error('Error:', error); alert('Error al leer el archivo: ' + error.message); }
         }
-
         function extraerDatosClienteExcel(jsonData) {
-            const cliente = {};
-            const camposMapeados = {
-                'DESTINATARIO': 'nombre', 'RUT DESTINATARIO': 'rut', 'TELÉFONO DESTINO': 'telefono',
-                'DIRECCIÓN DESTINO': 'direccion', 'REFERENCIA': 'referencia', 'COMUNA DESTINO': 'comuna',
-                'REGIÓN': 'region', 'VENDEDOR': 'vendedor', 'MEDIO DE TRANSPORTE': 'transporte'
-            };
-            for (let i = 0; i < jsonData.length; i++) {
-                const fila = jsonData[i];
-                if (fila && fila.length >= 2 && fila[0] && fila[1]) {
-                    const campo = fila[0].toString().trim().toUpperCase();
-                    const valor = fila[1].toString().trim();
-                    if (camposMapeados[campo]) {
-                        cliente[camposMapeados[campo]] = valor;
-                    }
-                }
-            }
-            return cliente;
+            const c = {}, m = {'DESTINATARIO': 'nombre','RUT DESTINATARIO': 'rut','TELÉFONO DESTINO': 'telefono','DIRECCIÓN DESTINO': 'direccion','REFERENCIA': 'referencia','COMUNA DESTINO': 'comuna','VENDEDOR': 'vendedor','MEDIO DE TRANSPORTE': 'transporte'};
+            jsonData.forEach(f => { if (f && f.length >= 2 && f[0] && f[1]) { const k = f[0].toString().trim().toUpperCase(), v = f[1].toString().trim(); if (m[k]) c[m[k]] = v; } });
+            return c;
         }
-
-        function mostrarDatosImportados(datos) {
-            const container = document.getElementById('datosImportados');
-            container.innerHTML = `
-                <div style="background: #f0f9ff; padding: 15px; border-radius: 6px; border: 1px solid #0ea5e9;">
-                    <h4 style="margin-bottom: 10px;">📋 Datos encontrados:</h4>
-                    <p><strong>Cliente:</strong> ${datos.nombre || 'No encontrado'}</p>
-                    <p><strong>RUT:</strong> ${datos.rut || 'No encontrado'}</p>
-                    <p><strong>Teléfono:</strong> ${datos.telefono || 'No encontrado'}</p>
-                    <p><strong>Dirección:</strong> ${datos.direccion || 'No encontrado'}</p>
-                    <p><strong>Comuna:</strong> ${datos.comuna || 'No encontrado'}</p>
-                </div>`;
+        function mostrarDatosImportados(d) {
+            document.getElementById('datosImportados').innerHTML = `<div style="background:#f0f9ff;padding:15px;border-radius:6px;border:1px solid #0ea5e9;"><h4 style="margin-bottom:10px;">📋 Datos:</h4><p><strong>Cliente:</strong> ${d.nombre||'N/A'}</p><p><strong>RUT:</strong> ${d.rut||'N/A'}</p><p><strong>Teléfono:</strong> ${d.telefono||'N/A'}</p></div>`;
             document.getElementById('resultadoImportacion').style.display = 'block';
         }
-
         function aplicarDatosImportados() {
-            if (!datosClienteImportado) { alert('No hay datos para aplicar'); return; }
-            document.getElementById('envioDestinatario').value = datosClienteImportado.nombre || '';
-            document.getElementById('envioRut').value = datosClienteImportado.rut || '';
-            document.getElementById('envioTelefono').value = datosClienteImportado.telefono || '';
-            document.getElementById('envioDireccion').value = datosClienteImportado.direccion || '';
-            document.getElementById('envioReferencia').value = datosClienteImportado.referencia || '';
-            document.getElementById('envioComuna').value = datosClienteImportado.comuna || '';
-            
-            if (datosClienteImportado.transporte) {
-                const selectTransporte = document.getElementById('envioTransporte');
-                const optionExists = [...selectTransporte.options].some(opt => opt.value === datosClienteImportado.transporte);
-                if (optionExists) {
-                    selectTransporte.value = datosClienteImportado.transporte;
-                    document.getElementById('transporteOtroGroup').classList.add('hidden');
-                } else {
-                    selectTransporte.value = 'Otro';
-                    document.getElementById('transporteOtroGroup').classList.remove('hidden');
-                    document.getElementById('envioTransporteOtro').value = datosClienteImportado.transporte;
-                }
+            if (!datosClienteImportado) return;
+            const d = datosClienteImportado;
+            document.getElementById('envioDestinatario').value = d.nombre || '';
+            document.getElementById('envioRut').value = d.rut || '';
+            document.getElementById('envioTelefono').value = d.telefono || '';
+            document.getElementById('envioDireccion').value = d.direccion || '';
+            document.getElementById('envioReferencia').value = d.referencia || '';
+            document.getElementById('envioComuna').value = d.comuna || '';
+            if (d.transporte) {
+                const s = document.getElementById('envioTransporte'), o = [...s.options].some(opt => opt.value === d.transporte);
+                if (o) { s.value = d.transporte; document.getElementById('transporteOtroGroup').classList.add('hidden'); }
+                else { s.value = 'Otro'; document.getElementById('transporteOtroGroup').classList.remove('hidden'); document.getElementById('envioTransporteOtro').value = d.transporte; }
             }
-            alert('✅ Datos del cliente cargados exitosamente desde el archivo Excel');
+            alert('✅ Datos del cliente cargados.');
             cerrarImportarCliente();
-            if (datosClienteImportado.rut) {
-                const clienteCache = { ...datosClienteImportado, fechaImportacion: new Date().toISOString() };
-                let clientesGuardados = JSON.parse(localStorage.getItem('clientesImportados') || '[]');
-                clientesGuardados = clientesGuardados.filter(c => c.rut !== clienteCache.rut);
-                clientesGuardados.push(clienteCache);
-                if (clientesGuardados.length > 50) { clientesGuardados = clientesGuardados.slice(-50); }
-                localStorage.setItem('clientesImportados', JSON.stringify(clientesGuardados));
+            if (d.rut) {
+                const c = { ...d, fecha: new Date().toISOString() };
+                let l = JSON.parse(localStorage.getItem('clientesImportados') || '[]');
+                l = l.filter(i => i.rut !== c.rut);
+                l.push(c);
+                if (l.length > 50) l = l.slice(-50);
+                localStorage.setItem('clientesImportados', JSON.stringify(l));
             }
         }
-
         function buscarClientePorRut() {
-            const rut = document.getElementById('envioRut').value.trim();
-            if (!rut || rut.length < 8) { return; }
-            const clientesImportados = JSON.parse(localStorage.getItem('clientesImportados') || '[]');
-            const clienteEncontrado = clientesImportados.find(c => c.rut.replace(/[.-]/g, '') === rut.replace(/[.-]/g, ''));
-            if (clienteEncontrado) {
-                document.getElementById('envioDestinatario').value = clienteEncontrado.nombre || '';
-                document.getElementById('envioTelefono').value = clienteEncontrado.telefono || '';
-                document.getElementById('envioDireccion').value = clienteEncontrado.direccion || '';
-                document.getElementById('envioReferencia').value = clienteEncontrado.referencia || '';
-                document.getElementById('envioComuna').value = clienteEncontrado.comuna || '';
-                if (clienteEncontrado.transporte) { document.getElementById('envioTransporte').value = clienteEncontrado.transporte; }
-                mostrarMensajeTemporalCliente(`✅ Cliente encontrado en caché: ${clienteEncontrado.nombre}`);
+            const r = document.getElementById('envioRut').value.trim();
+            if (!r || r.length < 8) return;
+            const l = JSON.parse(localStorage.getItem('clientesImportados') || '[]'), f = l.find(c => c.rut.replace(/[.-]/g, '') === r.replace(/[.-]/g, ''));
+            if (f) {
+                document.getElementById('envioDestinatario').value = f.nombre || '';
+                document.getElementById('envioTelefono').value = f.telefono || '';
+                document.getElementById('envioDireccion').value = f.direccion || '';
+                document.getElementById('envioReferencia').value = f.referencia || '';
+                document.getElementById('envioComuna').value = f.comuna || '';
+                if (f.transporte) document.getElementById('envioTransporte').value = f.transporte;
+                mostrarMensajeTemporalCliente(`✅ Cliente encontrado en caché: ${f.nombre}`);
             }
         }
-
-        function mostrarMensajeTemporalCliente(mensaje) {
-            let msgDiv = document.getElementById('mensajeCliente');
-            if (!msgDiv) {
-                msgDiv = document.createElement('div');
-                msgDiv.id = 'mensajeCliente';
-                msgDiv.style.cssText = `background-color: #d1fae5; border: 1px solid #10b981; color: #065f46; padding: 8px 12px; border-radius: 6px; margin-top: 5px; font-size: 14px;`;
-                document.getElementById('envioRut').parentNode.appendChild(msgDiv);
+        function mostrarMensajeTemporalCliente(m) {
+            let d = document.getElementById('mensajeCliente');
+            if (!d) {
+                d = document.createElement('div');
+                d.id = 'mensajeCliente';
+                d.style.cssText = `background-color:#d1fae5;border:1px solid #10b981;color:#065f46;padding:8px 12px;border-radius:6px;margin-top:5px;font-size:14px;`;
+                document.getElementById('envioRut').parentNode.appendChild(d);
             }
-            msgDiv.innerHTML = mensaje;
-            msgDiv.style.display = 'block';
-            setTimeout(() => { msgDiv.style.display = 'none'; }, 4000);
+            d.innerHTML = m;
+            d.style.display = 'block';
+            setTimeout(() => { d.style.display = 'none'; }, 4000);
         }
-        // --- FIN CÓDIGO DE IMPORTACIÓN DE CLIENTE ---
-
-        function poblarSelect(selectId, data, useKeysAsValue = true) {
-            const select = document.getElementById(selectId);
-            select.innerHTML = '';
-            for (const key in data) {
-                const option = document.createElement('option');
-                option.value = useKeysAsValue ? key : data[key];
-                option.textContent = key;
-                select.appendChild(option);
-            }
+        function poblarSelect(id, data) {
+            const s = document.getElementById(id);
+            s.innerHTML = '';
+            for (const k in data) { const o = document.createElement('option'); o.value = k; o.textContent = k; s.appendChild(o); }
         }
-
         document.addEventListener('DOMContentLoaded', () => {
-            const datalistComunas = document.getElementById('comunasList');
-            let todasLasComunas = [];
-            for (const region in comunasPorRegion) {
-                comunasPorRegion[region].forEach(comuna => {
-                    todasLasComunas.push({ nombre: comuna, textoCompleto: `${comuna} (${region})` });
-                });
-            }
-            todasLasComunas.sort((a, b) => a.nombre.localeCompare(b.nombre));
-            todasLasComunas.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item.textoCompleto;
-                datalistComunas.appendChild(option);
-            });
-
-            poblarSelect('retiroVendedor', vendedores, true);
-            poblarSelect('provisoriaVendedor', vendedores, true);
-            poblarSelect('envioVendedor', vendedores, true);
-
+            const d = document.getElementById('comunasList');
+            let c = [];
+            for (const r in comunasPorRegion) { comunasPorRegion[r].forEach(com => c.push({ n: com, t: `${com} (${r})` })); }
+            c.sort((a, b) => a.n.localeCompare(b.n)).forEach(i => { const o = document.createElement('option'); o.value = i.t; d.appendChild(o); });
+            ['retiroVendedor', 'provisoriaVendedor', 'envioVendedor'].forEach(id => poblarSelect(id, vendedores));
             document.getElementById('envioTransporte').addEventListener('change', function() {
-                const pagoSelect = document.getElementById('envioPago');
+                const p = document.getElementById('envioPago');
                 document.getElementById('transporteOtroGroup').classList.toggle('hidden', this.value !== 'Otro');
-                pagoSelect.disabled = false;
-                if (this.value === 'TUTTO PETS') {
-                    pagoSelect.value = 'Pagado';
-                    pagoSelect.disabled = true;
-                    alert('ATENCIÓN: Envío por TUTTO PETS debe ser PAGADO y cobrado en la nota de venta.');
-                } else if (this.value === 'JULIO MILLAN' || this.value === 'CHRISTIAN ALIAGA') {
-                    alert(`INFO: Para envíos con ${this.value}, si seleccionas "Por Pagar", el cobro lo gestiona directamente el transporte.`);
-                }
+                p.disabled = false;
+                if (this.value === 'TUTTO PETS') { p.value = 'Pagado'; p.disabled = true; alert('ATENCIÓN: Envío por TUTTO PETS debe ser PAGADO.'); }
+                else if (this.value === 'JULIO MILLAN' || this.value === 'CHRISTIAN ALIAGA') { alert(`INFO: Para envíos con ${this.value}, el cobro "Por Pagar" lo gestiona el transporte.`); }
             });
         });
-        
-        // --- INICIO LÓGICA MODO MÚLTIPLE ---
-        function seleccionarModo(modo, element) {
-            modoActual = modo;
-            document.querySelectorAll('#modoSelectorSection .flex-btn').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
-
-            const activeForm = document.querySelector('.form-section.active');
-            if (activeForm) {
-                const btnProcesar = activeForm.querySelector('.btn-primary');
-                const batchSection = document.getElementById('batchSection');
-                
-                if (modo === 'multiple') {
-                    btnProcesar.textContent = '➕ Agregar Etiqueta al Lote';
-                    activeForm.appendChild(batchSection); // Mueve la sección del lote al formulario activo
-                    batchSection.style.display = 'block';
-                } else {
-                    btnProcesar.textContent = 'Generar Vista Previa';
-                    batchSection.style.display = 'none';
-                }
+        function seleccionarModo(m, e) {
+            modoActual = m;
+            document.querySelectorAll('#modoSelectorSection .flex-btn').forEach(b => b.classList.remove('active'));
+            e.classList.add('active');
+            const f = document.querySelector('.form-section.active');
+            if (f) {
+                const b = f.querySelector('.btn-primary'), s = document.getElementById('batchSection');
+                if (m === 'multiple') { b.textContent = '➕ Agregar Etiqueta al Lote'; f.appendChild(s); s.style.display = 'block'; }
+                else { b.textContent = 'Generar Vista Previa'; s.style.display = 'none'; }
             }
             if(batchData.length > 0) { batchData = []; renderizarLote(); }
         }
-
         function renderizarLote() {
-            const list = document.getElementById('batchList');
-            const count = document.getElementById('batchCount');
-            let totalBultos = 0;
-            list.innerHTML = '';
-            batchData.forEach((item, index) => {
-                totalBultos += item.bultos;
-                const nombreCliente = (obtenerValor(item.datos, 'DESTINATARIO') || obtenerValor(item.datos, 'CLIENTE')).toUpperCase();
-                const nv = obtenerValor(item.datos, 'NOTA DE VENTA');
-                const li = document.createElement('li');
-                li.className = 'batch-item';
-                li.innerHTML = `
-                    <div class="batch-item-info">
-                        <strong>${index + 1}.</strong> [${item.tipo}] ${nombreCliente} (NV: ${nv}) - <strong>${item.bultos} bulto(s)</strong>
-                    </div>
-                    <button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;" onclick="eliminarDelLote(${index})">Eliminar</button>`;
-                list.appendChild(li);
+            const l = document.getElementById('batchList'), c = document.getElementById('batchCount');
+            let t = 0;
+            l.innerHTML = '';
+            batchData.forEach((i, x) => {
+                t += i.bultos;
+                const n = (obtenerValor(i.datos, 'DESTINATARIO') || obtenerValor(i.datos, 'CLIENTE')).toUpperCase(), v = obtenerValor(i.datos, 'NOTA DE VENTA');
+                const e = document.createElement('li');
+                e.className = 'batch-item';
+                e.innerHTML = `<div class="batch-item-info"><strong>${x + 1}.</strong> [${i.tipo}] ${n} (NV: ${v}) - <strong>${i.bultos} bulto(s)</strong></div><button class="btn btn-danger" style="padding:5px 10px;font-size:12px;" onclick="eliminarDelLote(${x})">Eliminar</button>`;
+                l.appendChild(e);
             });
-            count.textContent = `${batchData.length} Entradas / ${totalBultos} Etiquetas Totales`;
+            c.textContent = `${batchData.length} Entradas / ${t} Etiquetas Totales`;
         }
-
-        function eliminarDelLote(index) {
-            batchData.splice(index, 1);
-            renderizarLote();
-        }
-
-        function limpiarFormularioEnvio() {
-            ['envioDestinatario', 'envioRut', 'envioTelefono', 'envioDireccion', 'envioReferencia', 'envioComuna', 'envioNotaVenta'].forEach(id => document.getElementById(id).value = '');
-            document.getElementById('envioBultos').value = '1';
-        }
-        function limpiarFormularioRetiro() {
-            ['retiroCliente', 'retiroNotaVenta', 'retiroObservaciones'].forEach(id => document.getElementById(id).value = '');
-            document.getElementById('retiroBultos').value = '1';
-        }
-        function limpiarFormularioProvisoria() {
-            ['provisoriaCliente', 'provisoriaNotaVenta', 'provisoriaObservaciones'].forEach(id => document.getElementById(id).value = '');
-            document.getElementById('provisoriaBultos').value = '1';
-        }
-        // --- FIN LÓGICA MODO MÚLTIPLE ---
-
-        function seleccionarTipo(tipo, element) {
-            document.querySelectorAll('.selector-section:first-child .flex-btn').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
+        function eliminarDelLote(i) { batchData.splice(i, 1); renderizarLote(); }
+        function limpiarFormularioEnvio() { ['envioDestinatario','envioRut','envioTelefono','envioDireccion','envioReferencia','envioComuna','envioNotaVenta'].forEach(id => document.getElementById(id).value = ''); document.getElementById('envioBultos').value = '1'; }
+        function limpiarFormularioRetiro() { ['retiroCliente','retiroNotaVenta','retiroObservaciones'].forEach(id => document.getElementById(id).value = ''); document.getElementById('retiroBultos').value = '1'; }
+        function limpiarFormularioProvisoria() { ['provisoriaCliente','provisoriaNotaVenta','provisoriaObservaciones'].forEach(id => document.getElementById(id).value = ''); document.getElementById('provisoriaBultos').value = '1'; }
+        function seleccionarTipo(t, e) {
+            document.querySelectorAll('.selector-section:first-child .flex-btn').forEach(b => b.classList.remove('active'));
+            e.classList.add('active');
             document.querySelectorAll('.form-section, #previewSection').forEach(s => s.classList.remove('active'));
-            document.getElementById(`form${tipo}`).classList.add('active');
-            
-            const modoSelector = document.getElementById('modoSelectorSection');
-            modoSelector.classList.remove('hidden');
-
-            if (batchData.length > 0 && (!batchData[0] || batchData[0].tipo !== tipo)) {
-                if (confirm('Al cambiar de tipo de operación se limpiará el lote actual. ¿Desea continuar?')) {
-                    batchData = [];
-                    renderizarLote();
-                }
-            }
-            
-            const currentModeButton = document.querySelector('#modoSelectorSection .flex-btn.active') || document.querySelector('#modoSelectorSection .flex-btn');
-            seleccionarModo(modoActual, currentModeButton);
+            document.getElementById(`form${t}`).classList.add('active');
+            document.getElementById('modoSelectorSection').classList.remove('hidden');
+            if (batchData.length > 0 && (!batchData[0] || batchData[0].tipo !== t)) { if (confirm('Al cambiar de tipo se limpiará el lote actual. ¿Continuar?')) { batchData = []; renderizarLote(); } }
+            const b = document.querySelector('#modoSelectorSection .flex-btn.active') || document.querySelector('#modoSelectorSection .flex-btn');
+            seleccionarModo(modoActual, b);
         }
-        
         function procesarRetiro() {
-            const cliente = document.getElementById('retiroCliente').value.trim();
-            const notaVenta = document.getElementById('retiroNotaVenta').value.trim();
-            if (!cliente || !notaVenta) { alert('Los campos Cliente y Nota de Venta son obligatorios.'); return; }
-            const vendedorSeleccionado = document.getElementById('retiroVendedor').value;
-            const fecha = new Date();
-            const datosEtiqueta = {
-                tipo: 'RETIRO',
-                bultos: parseInt(document.getElementById('retiroBultos').value) || 1,
-                datos: [
-                    ['CLIENTE', cliente], ['NOTA DE VENTA', notaVenta],
-                    ['FECHA', `${fecha.getDate().toString().padStart(2, '0')}/${(fecha.getMonth() + 1).toString().padStart(2, '0')}/${fecha.getFullYear()}`],
-                    ['VENDEDOR', `${vendedorSeleccionado} - ${vendedores[vendedorSeleccionado]}`],
-                    ['OBSERVACIONES', document.getElementById('retiroObservaciones').value.trim()]
-                ]
-            };
-            if (modoActual === 'multiple') {
-                batchData.push(datosEtiqueta);
-                renderizarLote();
-                limpiarFormularioRetiro();
-                alert(`✅ Entrada para "${cliente}" (${datosEtiqueta.bultos} bultos) agregada al lote.`);
-            } else {
-                processedData = datosEtiqueta;
-                mostrarVistaPrevia();
-            }
+            const c = document.getElementById('retiroCliente').value.trim(), n = document.getElementById('retiroNotaVenta').value.trim();
+            if (!c || !n) { alert('Cliente y Nota de Venta son obligatorios.'); return; }
+            const v = document.getElementById('retiroVendedor').value, d = new Date();
+            const e = { tipo: 'RETIRO', bultos: parseInt(document.getElementById('retiroBultos').value) || 1, datos: [['CLIENTE', c],['NOTA DE VENTA', n],['FECHA', `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()}`],['VENDEDOR', `${v} - ${vendedores[v]}`],['OBSERVACIONES', document.getElementById('retiroObservaciones').value.trim()]] };
+            if (modoActual === 'multiple') { batchData.push(e); renderizarLote(); limpiarFormularioRetiro(); alert(`✅ Entrada para "${c}" agregada.`); }
+            else { processedData = e; mostrarVistaPrevia(); }
         }
-
         function procesarProvisoria() {
-            const cliente = document.getElementById('provisoriaCliente').value.trim();
-            const notaVenta = document.getElementById('provisoriaNotaVenta').value.trim();
-            if (!cliente || !notaVenta) { alert('Los campos Cliente y Nota de Venta son obligatorios.'); return; }
-            const vendedorSeleccionado = document.getElementById('provisoriaVendedor').value;
-            const fecha = new Date();
-            const datosEtiqueta = {
-                tipo: 'PROVISORIA',
-                bultos: parseInt(document.getElementById('provisoriaBultos').value) || 1,
-                datos: [
-                    ['CLIENTE', cliente], ['NOTA DE VENTA', notaVenta],
-                    ['FECHA', `${fecha.getDate().toString().padStart(2, '0')}/${(fecha.getMonth() + 1).toString().padStart(2, '0')}/${fecha.getFullYear()}`],
-                    ['VENDEDOR', `${vendedorSeleccionado} - ${vendedores[vendedorSeleccionado]}`],
-                    ['OBSERVACIONES', document.getElementById('provisoriaObservaciones').value.trim()]
-                ]
-            };
-            if (modoActual === 'multiple') {
-                batchData.push(datosEtiqueta);
-                renderizarLote();
-                limpiarFormularioProvisoria();
-                alert(`✅ Entrada para "${cliente}" (${datosEtiqueta.bultos} bultos) agregada al lote.`);
-            } else {
-                processedData = datosEtiqueta;
-                mostrarVistaPrevia();
-            }
+            const c = document.getElementById('provisoriaCliente').value.trim(), n = document.getElementById('provisoriaNotaVenta').value.trim();
+            if (!c || !n) { alert('Cliente y Nota de Venta son obligatorios.'); return; }
+            const v = document.getElementById('provisoriaVendedor').value, d = new Date();
+            const e = { tipo: 'PROVISORIA', bultos: parseInt(document.getElementById('provisoriaBultos').value) || 1, datos: [['CLIENTE', c],['NOTA DE VENTA', n],['FECHA', `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()}`],['VENDEDOR', `${v} - ${vendedores[v]}`],['OBSERVACIONES', document.getElementById('provisoriaObservaciones').value.trim()]] };
+            if (modoActual === 'multiple') { batchData.push(e); renderizarLote(); limpiarFormularioProvisoria(); alert(`✅ Entrada para "${c}" agregada.`); }
+            else { processedData = e; mostrarVistaPrevia(); }
         }
-        
         function obtenerDatosEnvioDelFormulario() {
-            const campos = { destinatario: 'envioDestinatario', rut: 'envioRut', telefono: 'envioTelefono', direccion: 'envioDireccion', comuna: 'envioComuna', notaVenta: 'envioNotaVenta' };
-            const datosForm = {};
-            for (const key in campos) { datosForm[key] = document.getElementById(campos[key]).value.trim(); }
-            const faltantes = Object.keys(datosForm).filter(k => !datosForm[k]);
-            if (faltantes.length > 0) { alert(`Faltan campos obligatorios: ${faltantes.join(', ')}`); return null; }
-
-            let transporte = document.getElementById('envioTransporte').value;
-            if (transporte === 'Otro') { transporte = document.getElementById('envioTransporteOtro').value.trim() || 'Otro (sin especificar)'; }
-            
-            const nombreComuna = datosForm.comuna.includes(' (') ? datosForm.comuna.substring(0, datosForm.comuna.lastIndexOf(' (')) : datosForm.comuna;
-            let region = 'No encontrada';
-            for (const r in comunasPorRegion) { if (comunasPorRegion[r].includes(nombreComuna)) { region = r; break; } }
-            let ciudad = (region === 'Metropolitana de Santiago') ? 'Santiago' : nombreComuna;
-            
-            const vendedorSeleccionado = document.getElementById('envioVendedor').value;
-            const referencia = document.getElementById('envioReferencia').value.trim();
-            
-            const datosEnvio = [
-                ['DE', 'SOC INV FUCAS SPA - RUT: 76.230.392-2'], ['VENDEDOR', `${vendedorSeleccionado} - ${vendedores[vendedorSeleccionado]}`],
-                ['DIRECCIÓN', 'AV LO ESPEJO 02360, SAN BERNARDO, SANTIAGO'], ['TELÉFONO', '2 3347 5040'], ['SEPARADOR_1', ''],
-                ['DESTINATARIO', datosForm.destinatario], ['RUT DESTINATARIO', datosForm.rut], ['TELÉFONO DESTINO', datosForm.telefono],
-                ['DIRECCIÓN DESTINO', datosForm.direccion], ...(referencia ? [['REFERENCIA', referencia]] : []),
-                ['COMUNA DESTINO', datosForm.comuna], ['CIUDAD DESTINO', ciudad], ['REGIÓN', region], ['SEPARADOR_2', ''],
-                ['TIPO DE ENVÍO', document.getElementById('envioTipo').value], ['MEDIO DE TRANSPORTE', transporte],
-                ['FORMA DE PAGO', document.getElementById('envioPago').value], ['NOTA DE VENTA', datosForm.notaVenta]
-            ];
-            return { tipo: 'ENVIO', bultos: parseInt(document.getElementById('envioBultos').value) || 1, datos: datosEnvio };
+            const c = {d:'envioDestinatario',r:'envioRut',t:'envioTelefono',a:'envioDireccion',o:'envioComuna',n:'envioNotaVenta'}, f = {};
+            for (const k in c) { f[k] = document.getElementById(c[k]).value.trim(); }
+            if (Object.values(f).some(v => !v)) { alert('Faltan campos obligatorios.'); return null; }
+            let t = document.getElementById('envioTransporte').value;
+            if (t === 'Otro') t = document.getElementById('envioTransporteOtro').value.trim() || 'Otro';
+            const m = f.o.includes('(') ? f.o.substring(0, f.o.lastIndexOf('(') -1) : f.o;
+            let g = 'No encontrada';
+            for (const r in comunasPorRegion) { if (comunasPorRegion[r].includes(m)) { g = r; break; } }
+            const u = (g === 'Metropolitana de Santiago') ? 'Santiago' : m, v = document.getElementById('envioVendedor').value, e = document.getElementById('envioReferencia').value.trim();
+            const d = [['DE','SOC INV FUCAS SPA - RUT: 76.230.392-2'],['VENDEDOR',`${v} - ${vendedores[v]}`],['DIRECCIÓN','AV LO ESPEJO 02360, SAN BERNARDO, SANTIAGO'],['TELÉFONO','2 3347 5040'],['SEPARADOR_1',''],['DESTINATARIO',f.d],['RUT DESTINATARIO',f.r],['TELÉFONO DESTINO',f.t],['DIRECCIÓN DESTINO',f.a],...(e ? [['REFERENCIA', e]] : []),['COMUNA DESTINO',f.o],['CIUDAD DESTINO',u],['REGIÓN',g],['SEPARADOR_2',''],['TIPO DE ENVÍO',document.getElementById('envioTipo').value],['MEDIO DE TRANSPORTE',t],['FORMA DE PAGO',document.getElementById('envioPago').value],['NOTA DE VENTA',f.n]];
+            return { tipo: 'ENVIO', bultos: parseInt(document.getElementById('envioBultos').value) || 1, datos: d };
         }
-
         function procesarEnvio() {
-            const datosEtiqueta = obtenerDatosEnvioDelFormulario();
-            if (!datosEtiqueta) return;
-            if (modoActual === 'multiple') {
-                batchData.push(datosEtiqueta);
-                renderizarLote();
-                limpiarFormularioEnvio();
-                alert(`✅ Entrada para "${datosEtiqueta.datos.find(d=>d[0]==='DESTINATARIO')[1]}" (${datosEtiqueta.bultos} bultos) agregada al lote.`);
-            } else {
-                processedData = datosEtiqueta;
-                mostrarVistaPrevia();
-            }
+            const d = obtenerDatosEnvioDelFormulario();
+            if (!d) return;
+            if (modoActual === 'multiple') { batchData.push(d); renderizarLote(); limpiarFormularioEnvio(); alert(`✅ Entrada para "${d.datos.find(i=>i[0]==='DESTINATARIO')[1]}" agregada.`); }
+            else { processedData = d; mostrarVistaPrevia(); }
         }
-        
-        function procesarLote() {
-            if (batchData.length === 0) { alert('No hay etiquetas en el lote para procesar.'); return; }
-            processedData = { tipo: 'LOTE', lote: batchData };
-            generarVistaImprimible();
-        }
-
+        function procesarLote() { if (batchData.length === 0) { alert('No hay etiquetas en el lote.'); return; } processedData = { tipo: 'LOTE', lote: batchData }; generarVistaImprimible(); }
         function mostrarVistaPrevia() {
             if (!processedData) return;
             document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
             document.getElementById('previewSection').classList.add('active');
             document.getElementById('successMessage').classList.add('active');
-            const tbody = document.getElementById('previewTable');
-            tbody.innerHTML = '';
-            processedData.datos.filter(fila => !fila[0].startsWith('SEPARADOR')).forEach(fila => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td style="font-weight: 600;">${fila[0] || ''}</td><td>${fila[1] || ''}</td>`;
-                tbody.appendChild(tr);
-            });
+            const t = document.getElementById('previewTable');
+            t.innerHTML = '';
+            processedData.datos.filter(f => !f[0].startsWith('SEPARADOR')).forEach(f => { t.innerHTML += `<tr><td style="font-weight:600;">${f[0]||''}</td><td>${f[1]||''}</td></tr>`; });
         }
-        
-        function generarContenidoEtiquetaHTML(datosEtiqueta) {
-            let contenidoEtiqueta = '';
-            const esRetiroOProvisoria = datosEtiqueta.tipo === 'RETIRO' || datosEtiqueta.tipo === 'PROVISORIA';
-
-            if (esRetiroOProvisoria) {
-                let tituloEtiqueta = `<div class="titulo-etiqueta ${datosEtiqueta.tipo === 'PROVISORIA' ? 'titulo-provisoria' : ''}">ETIQUETA ${datosEtiqueta.tipo}</div>`;
-                let mainContent = '<div class="retiro-main">';
-                datosEtiqueta.datos.filter(f => f[0] === 'CLIENTE' || f[0] === 'NOTA DE VENTA').forEach(fila => {
-                    mainContent += `<p class="${fila[0].includes('NOTA') ? 'nota-venta' : ''}"><span class="campo">${fila[0]}:</span> ${fila[1]}</p>`;
+        function generarContenidoEtiquetaHTML(d) {
+            if (d.tipo === 'RETIRO' || d.tipo === 'PROVISORIA') {
+                let t = `<div class="titulo-etiqueta ${d.tipo==='PROVISORIA'?'titulo-provisoria':''}">${'ETIQUETA '+d.tipo}</div>`, m = '<div class="retiro-main">';
+                d.datos.filter(f => f[0]==='CLIENTE'||f[0]==='NOTA DE VENTA').forEach(f => { m += `<p class="${f[0].includes('NOTA')?'nota-venta':''}"><span class="campo">${f[0]}:</span> ${f[1]}</p>`; });
+                m += '</div>';
+                let f = `<div class="seccion-remitente">`;
+                d.datos.filter(i => i[0]==='FECHA'||i[0]==='VENDEDOR'||i[0]==='OBSERVACIONES').forEach(i => { if(i[1]) f += `<p><span class="campo">${i[0]}:</span> ${i[1]}</p>`; });
+                f += '</div>';
+                return `${t}${m}${f}`;
+            } else {
+                let r='<div class="seccion seccion-remitente">', a='<div class="seccion seccion-destinatario">', e='<div class="seccion seccion-envio">', c='remitente';
+                d.datos.forEach(f => {
+                    if (f[0].startsWith('SEPARADOR')) { c = (c==='remitente')?'destinatario':'envio'; return; }
+                    if (!f[0]||!f[1]) return;
+                    let l = `<p class="${f[0].includes('NOTA')?'nota-venta':''}"><span class="campo">${f[0]}:</span> ${f[1]}</p>`;
+                    if(c==='remitente') r+=l; else if(c==='destinatario') a+=l; else e+=l;
                 });
-                mainContent += '</div>';
-                let footerContent = `<div class="seccion-remitente">`;
-                datosEtiqueta.datos.filter(f => f[0] === 'FECHA' || f[0] === 'VENDEDOR' || f[0] === 'OBSERVACIONES').forEach(fila => {
-                    if(fila[1]) footerContent += `<p><span class="campo">${fila[0]}:</span> ${fila[1]}</p>`;
-                });
-                footerContent += '</div>';
-                contenidoEtiqueta = `${tituloEtiqueta}${mainContent}${footerContent}`;
-            } else { // Envío
-                let seccionRemitente = '<div class="seccion seccion-remitente">';
-                let seccionDestinatario = '<div class="seccion seccion-destinatario">';
-                let seccionEnvio = '<div class="seccion seccion-envio">';
-                let currentSection = 'remitente';
-                datosEtiqueta.datos.forEach(fila => {
-                    if (fila[0].startsWith('SEPARADOR')) { currentSection = (currentSection === 'remitente') ? 'destinatario' : 'envio'; return; }
-                    if (!fila[0] || !fila[1]) return;
-                    let clase = fila[0].includes('NOTA DE VENTA') ? 'nota-venta' : '';
-                    let linea = `<p class="${clase}"><span class="campo">${fila[0]}:</span> ${fila[1]}</p>`;
-                    if (currentSection === 'remitente') seccionRemitente += linea;
-                    else if (currentSection === 'destinatario') seccionDestinatario += linea;
-                    else seccionEnvio += linea;
-                });
-                seccionRemitente += '</div>'; seccionDestinatario += '</div>'; seccionEnvio += '</div>';
-                contenidoEtiqueta = `<div class="bulto-manual">BULTOS: ______ / ______</div>${seccionRemitente}<div class="separador"></div>${seccionDestinatario}<div class="separador"></div>${seccionEnvio}`;
+                return `<div class="bulto-manual">BULTOS: ______ / ______</div>${r}</div><div class="separador"></div>${a}</div><div class="separador"></div>${e}</div>`;
             }
-            return contenidoEtiqueta;
         }
-
         function generarVistaImprimible() {
             if (!processedData) { alert('Primero debes procesar los datos.'); return; }
-            
             enviarAGoogleSheets(processedData);
-
-            const printWindow = window.open('', '_blank');
-            let content = `
-                <html><head><title>Etiquetas para Imprimir</title><style>
-                    body { margin: 0; font-family: sans-serif; }
-                    .pagina { display: flex; flex-wrap: wrap; justify-content: space-around; align-content: flex-start; width: 21.59cm; height: 27.94cm; padding: 0.5cm; box-sizing: border-box; page-break-after: always; }
-                    .etiqueta { display: flex; flex-direction: column; border: 1.5px dashed #777; padding: 6px 10px; box-sizing: border-box; line-height: 1.3; overflow-wrap: break-word; }
-                    .etiqueta-envio { width: 49%; height: 48%; margin-bottom: 0.5cm; }
-                    .etiqueta-retiro, .etiqueta-provisoria { width: 100%; height: 48%; margin-bottom: 2%; }
-                    .titulo-etiqueta { text-align: center; font-weight: bold; font-size: 1.4em; margin-bottom: 5px; border-bottom: 1.5px solid #000; padding-bottom: 3px; }
-                    .titulo-provisoria { background-color: #ffc; }
-                    .bulto-manual { text-align: center; font-weight: bold; font-size: 1.2em; margin-bottom: 5px; border-bottom: 1.5px solid #000; padding-bottom: 3px; }
-                    .seccion p { margin: 1px 0; }
-                    .seccion-remitente { font-size: 8pt; }
-                    .seccion-destinatario { font-size: 11pt; flex-grow: 2; display: flex; flex-direction: column; justify-content: center; }
-                    .seccion-destinatario p, .seccion-envio .nota-venta, .retiro-main { text-transform: uppercase; }
-                    .seccion-envio { font-size: 11pt; flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-end; }
-                    .retiro-main { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; font-size: 16pt; }
-                    .campo { font-weight: bold; }
-                    .separador { border-top: 1.5px solid #000; margin: 5px 0; }
-                    .nota-venta { font-weight: bold; font-size: 18pt !important; }
-                    @media print { .no-imprimir { display: none; } }
-                </style></head><body>
-                <div class="no-imprimir" style="text-align:center; padding:15px; background:#eee;">
-                    <h2>Vista Previa de Impresión</h2><p>Usa la función de imprimir (Ctrl+P) para generar las etiquetas.</p>
-                    <button onclick="window.print()">Imprimir Ahora</button> <button onclick="window.close()">Cerrar</button>
-                </div>`;
-            
-            let etiquetasHtml = '';
-            
+            const w = window.open('', '_blank');
+            let c = `<html><head><title>Etiquetas</title><style>body{margin:0;font-family:sans-serif}.pagina{display:flex;flex-wrap:wrap;justify-content:space-around;align-content:flex-start;width:21.59cm;height:27.94cm;padding:0.5cm;box-sizing:border-box;page-break-after:always}.etiqueta{display:flex;flex-direction:column;border:1.5px dashed #777;padding:6px 10px;box-sizing:border-box;line-height:1.3;overflow-wrap:break-word}.etiqueta-envio{width:49%;height:48%;margin-bottom:.5cm}.etiqueta-retiro,.etiqueta-provisoria{width:100%;height:48%;margin-bottom:2%}.titulo-etiqueta{text-align:center;font-weight:700;font-size:1.4em;margin-bottom:5px;border-bottom:1.5px solid #000;padding-bottom:3px}.titulo-provisoria{background-color:#ffc}.bulto-manual{text-align:center;font-weight:700;font-size:1.2em;margin-bottom:5px;border-bottom:1.5px solid #000;padding-bottom:3px}.seccion p{margin:1px 0}.seccion-remitente{font-size:8pt}.seccion-destinatario{font-size:11pt;flex-grow:2;display:flex;flex-direction:column;justify-content:center}.seccion-destinatario p,.seccion-envio .nota-venta,.retiro-main{text-transform:uppercase}.seccion-envio{font-size:11pt;flex-grow:1;display:flex;flex-direction:column;justify-content:flex-end}.retiro-main{flex-grow:1;display:flex;flex-direction:column;justify-content:center;font-size:16pt}.campo{font-weight:700}.separador{border-top:1.5px solid #000;margin:5px 0}.nota-venta{font-weight:700;font-size:18pt!important}@media print{.no-imprimir{display:none}}</style></head><body><div class="no-imprimir" style="text-align:center;padding:15px;background:#eee;"><h2>Vista de Impresión</h2><button onclick="window.print()">Imprimir</button> <button onclick="window.close()">Cerrar</button></div>`;
+            let h = '';
             if (processedData.tipo === 'LOTE' && processedData.lote) {
-                let totalEtiquetasGeneradas = 0;
-                const lote = processedData.lote;
-                const totalEtiquetasEnLote = lote.reduce((sum, item) => sum + item.bultos, 0);
-                const tipoLote = lote.length > 0 ? lote[0].tipo : 'ENVIO';
-                const esRetiroOProvisoria = tipoLote === 'RETIRO' || tipoLote === 'PROVISORIA';
-                const pageBreakTrigger = esRetiroOProvisoria ? 2 : 4;
-                const claseTipoCSS = `etiqueta-${tipoLote.toLowerCase()}`;
-
-                lote.forEach(etiquetaData => {
-                    const contenidoEtiqueta = generarContenidoEtiquetaHTML(etiquetaData);
-                    for (let i = 0; i < etiquetaData.bultos; i++) {
-                        etiquetasHtml += `<div class="etiqueta ${claseTipoCSS}">${contenidoEtiqueta}</div>`;
-                        totalEtiquetasGeneradas++;
-                        if (totalEtiquetasGeneradas % pageBreakTrigger === 0 && totalEtiquetasGeneradas < totalEtiquetasEnLote) {
-                            etiquetasHtml += `</div><div class="pagina">`;
-                        }
-                    }
-                });
-            } else { // Modo individual
+                let g = 0, l = processedData.lote, t = l.reduce((s, i) => s + i.bultos, 0), o = l.length > 0 ? l[0].tipo : 'ENVIO';
+                const p = (o === 'RETIRO' || o === 'PROVISORIA') ? 2 : 4, s = `etiqueta-${o.toLowerCase()}`;
+                l.forEach(d => { const e = generarContenidoEtiquetaHTML(d); for (let i = 0; i < d.bultos; i++) { h += `<div class="etiqueta ${s}">${e}</div>`; g++; if (g % p === 0 && g < t) h += `</div><div class="pagina">`; } });
+            } else {
                 for (let i = 1; i <= processedData.bultos; i++) {
-                    const contenidoEtiqueta = generarContenidoEtiquetaHTML(processedData);
-                    const esRetiroOProvisoria = processedData.tipo === 'RETIRO' || processedData.tipo === 'PROVISORIA';
-                    let claseTipo = `etiqueta-${processedData.tipo.toLowerCase()}`;
-                    etiquetasHtml += `<div class="etiqueta ${claseTipo}">${contenidoEtiqueta}</div>`;
-                    
-                    const pageBreakTrigger = esRetiroOProvisoria ? 2 : 4;
-                    if (i % pageBreakTrigger === 0 && i < processedData.bultos) {
-                        etiquetasHtml += `</div><div class="pagina">`;
-                    }
+                    const e = generarContenidoEtiquetaHTML(processedData), r = processedData.tipo === 'RETIRO' || processedData.tipo === 'PROVISORIA', s = `etiqueta-${processedData.tipo.toLowerCase()}`;
+                    h += `<div class="etiqueta ${s}">${e}</div>`;
+                    if (i % (r ? 2 : 4) === 0 && i < processedData.bultos) h += `</div><div class="pagina">`;
                 }
             }
-            
-            content += `<div class="pagina">${etiquetasHtml}</div></body></html>`;
-            printWindow.document.write(content);
-            printWindow.document.close();
+            w.document.write(c + `<div class="pagina">${h}</div></body></html>`);
+            w.document.close();
         }
-
         function generarExcel() {
-            if (!processedData || processedData.tipo === 'LOTE') { alert('La exportación a Excel solo está disponible en modo individual.'); return; }
-            const wb = XLSX.utils.book_new();
-            const ws_data = [];
-            const datosBase = processedData.datos.filter(fila => !fila[0].startsWith('SEPARADOR'));
-            for (let i = 1; i <= processedData.bultos; i++) {
-                datosBase.forEach((rowData, rowIndex) => {
-                    if (!ws_data[rowIndex]) ws_data[rowIndex] = [];
-                    const startCol = (i - 1) * 3;
-                    while (ws_data[rowIndex].length < startCol) ws_data[rowIndex].push(null);
-                    ws_data[rowIndex].push(rowData[0], rowData[1]);
-                });
-            }
-            const ws = XLSX.utils.aoa_to_sheet(ws_data);
-            const colWidths = [];
-            for (let i = 0; i < processedData.bultos; i++) { colWidths.push({ wch: 35 }, { wch: 35 }, { wch: 5 }); }
-            ws['!cols'] = colWidths;
-            XLSX.utils.book_append_sheet(wb, ws, 'Etiquetas');
-            const nombreCliente = (obtenerValor(processedData.datos, 'CLIENTE') || obtenerValor(processedData.datos, 'DESTINATARIO')).replace(/ /g, '_');
-            XLSX.writeFile(wb, `Etiquetas_${nombreCliente}_${new Date().toISOString().slice(0, 10)}.xlsx`);
+            if (!processedData || processedData.tipo === 'LOTE') { alert('Función solo para modo individual.'); return; }
+            const w = XLSX.utils.book_new(), d = [];
+            const b = processedData.datos.filter(f => !f[0].startsWith('SEPARADOR'));
+            for (let i = 1; i <= processedData.bultos; i++) { b.forEach((r, x) => { if (!d[x]) d[x] = []; const s = (i-1)*3; while (d[x].length < s) d[x].push(null); d[x].push(r[0], r[1]); }); }
+            const s = XLSX.utils.aoa_to_sheet(d), c = [];
+            for (let i=0; i<processedData.bultos; i++) c.push({wch:35},{wch:35},{wch:5});
+            s['!cols'] = c;
+            XLSX.utils.book_append_sheet(w, s, 'Etiquetas');
+            const n = (obtenerValor(processedData.datos, 'CLIENTE') || obtenerValor(processedData.datos, 'DESTINATARIO')).replace(/ /g, '_');
+            XLSX.writeFile(w, `Etiquetas_${n}_${new Date().toISOString().slice(0, 10)}.xlsx`);
         }
-        
         function copiarParaSheets() {
-             if (!processedData || processedData.tipo === 'LOTE') { alert('Esta función solo está disponible en modo individual.'); return; }
-            const sheet_data = [];
-            const datosBase = processedData.datos.filter(fila => !fila[0].startsWith('SEPARADOR'));
-            for (let i = 1; i <= processedData.bultos; i++) {
-                datosBase.forEach((rowData, rowIndex) => {
-                    if (!sheet_data[rowIndex]) sheet_data[rowIndex] = [];
-                    const startCol = (i - 1) * 3;
-                    while (sheet_data[rowIndex].length < startCol) sheet_data[rowIndex].push('');
-                    sheet_data[rowIndex].push(rowData[0], rowData[1]);
-                });
-            }
-            const tsvContent = sheet_data.map(row => row.join('\t')).join('\n');
-            navigator.clipboard.writeText(tsvContent).then(() => {
-                alert('Datos copiados. Abre una hoja de cálculo y pega los datos (Ctrl+V).');
-            }).catch(err => console.error('Error:', err));
+             if (!processedData || processedData.tipo === 'LOTE') { alert('Función solo para modo individual.'); return; }
+            const d = [];
+            const b = processedData.datos.filter(f => !f[0].startsWith('SEPARADOR'));
+            for (let i = 1; i <= processedData.bultos; i++) { b.forEach((r, x) => { if (!d[x]) d[x] = []; const s = (i-1)*3; while (d[x].length < s) d[x].push(''); d[x].push(r[0], r[1]); }); }
+            navigator.clipboard.writeText(d.map(r => r.join('\t')).join('\n')).then(() => alert('Datos copiados para Sheets.')).catch(e => console.error(e));
         }
-
         function mostrarDatosCopiables() {
-            if (processedData.tipo === 'LOTE') { alert('Esta función solo está disponible en modo individual.'); return; }
-            const copySection = document.getElementById('copySection');
-            copySection.classList.toggle('hidden');
-            if (!copySection.classList.contains('hidden')) {
-                const textarea = document.getElementById('copyTextarea');
-                textarea.value = processedData.datos.map(fila => `${fila[0]}: ${fila[1]}`).join('\n').trim();
-            }
+            if (processedData.tipo === 'LOTE') { alert('Función solo para modo individual.'); return; }
+            const c = document.getElementById('copySection');
+            c.classList.toggle('hidden');
+            if (!c.classList.contains('hidden')) { document.getElementById('copyTextarea').value = processedData.datos.map(f => `${f[0]}: ${f[1]}`).join('\n').trim(); }
         }
-        
-        function copiarAlPortapapeles() {
-            navigator.clipboard.writeText(document.getElementById('copyTextarea').value).then(() => alert('¡Datos copiados!')).catch(err => console.error('Error:', err));
-        }
-
+        function copiarAlPortapapeles() { navigator.clipboard.writeText(document.getElementById('copyTextarea').value).then(() => alert('¡Datos copiados!')).catch(e => console.error(e)); }
         function volverInicio() { window.location.reload(); }
     </script>
 </body>
