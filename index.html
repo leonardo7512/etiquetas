@@ -154,14 +154,14 @@
             <div id="envioBtnGroup" class="btn-group">
                 <button id="btnProcesarEnvio" class="btn btn-primary" onclick="procesarEnvio()">Generar Vista Previa</button>
             </div>
-
-            <div id="batchSection">
-                <h3 style="margin-bottom: 15px; color: #374151;">📋 Lote de Etiquetas Agregadas (<span id="batchCount">0 Entradas / 0 Etiquetas</span>)</h3>
-                <ul id="batchList" class="batch-list">
-                    </ul>
-                <div class="btn-group" style="margin-top: 20px;">
-                    <button class="btn btn-success" onclick="procesarLote()">🖨️ Procesar Lote e Imprimir</button>
-                </div>
+        </div>
+        
+        <div id="batchSection">
+            <h3 style="margin-bottom: 15px; color: #374151;">📋 Lote de Etiquetas Agregadas (<span id="batchCount">0 Entradas / 0 Etiquetas</span>)</h3>
+            <ul id="batchList" class="batch-list">
+            </ul>
+            <div class="btn-group" style="margin-top: 20px;">
+                <button class="btn btn-success" onclick="procesarLote()">🖨️ Procesar Lote e Imprimir</button>
             </div>
         </div>
         
@@ -210,6 +210,43 @@
         const vendedores = { "LEONARDO CASTRO": "2 3347 5040", "ANDREA FUENTES": "+56 9 6863 7136", "JOSELYN GOMEZ": "+56 9 3096 8640", "YEIMY REALPE": "+56 9 8544 9261", "LESLIE RIOS": "+56 9 3457 2139", "ADM": "+56 9 4755 4045" };
         const comunasPorRegion = { "Arica y Parinacota": ["Arica", "Camarones", "Putre", "General Lagos"], "Tarapacá": ["Iquique", "Alto Hospicio", "Pozo Almonte", "Camiña", "Colchane", "Huara", "Pica"], "Antofagasta": ["Antofagasta", "Mejillones", "Sierra Gorda", "Taltal", "Calama", "Ollagüe", "San Pedro de Atacama", "Tocopilla", "María Elena"], "Atacama": ["Copiapó", "Caldera", "Tierra Amarilla", "Chañaral", "Diego de Almagro", "Vallenar", "Alto del Carmen", "Freirina", "Huasco"], "Coquimbo": ["La Serena", "Coquimbo", "Andacollo", "La Higuera", "Paiguano", "Vicuña", "Illapel", "Canela", "Los Vilos", "Salamanca", "Ovalle", "Combarbalá", "Monte Patria", "Punitaqui", "Río Hurtado"], "Valparaíso": ["Valparaíso", "Casablanca", "Concón", "Juan Fernández", "Puchuncaví", "Quintero", "Viña del Mar", "Isla de Pascua", "Los Andes", "Calle Larga", "Rinconada", "San Esteban", "La Ligua", "Cabildo", "Papudo", "Petorca", "Zapallar", "Quillota", "Calera", "Hijuelas", "La Cruz", "Nogales", "San Antonio", "Algarrobo", "Cartagena", "El Quisco", "El Tabo", "Santo Domingo", "San Felipe", "Catemu", "Llaillay", "Panquehue", "Putaendo", "Santa María", "Quilpué", "Limache", "Olmué", "Villa Alemana"], "Metropolitana de Santiago": ["Santiago", "Cerrillos", "Cerro Navia", "Conchalí", "El Bosque", "Estación Central", "Huechuraba", "Independencia", "La Cisterna", "La Florida", "La Granja", "La Pintana", "La Reina", "Las Condes", "Lo Barnechea", "Lo Espejo", "Lo Prado", "Macul", "Maipú", "Ñuñoa", "Pedro Aguirre Cerda", "Peñalén", "Providencia", "Pudahuel", "Quilicura", "Quinta Normal", "Recoleta", "Renca", "San Joaquín", "San Miguel", "San Ramón", "Vitacura", "Puente Alto", "Pirque", "San José de Maipo", "Colina", "Lampa", "Tiltil", "San Bernardo", "Buin", "Calera de Tango", "Paine", "Melipilla", "Alhué", "Curacaví", "María Pinto", "San Pedro", "Talagante", "El Monte", "Isla de Maipo", "Padre Hurtado", "Peñaflor"], "Libertador General Bernardo O'Higgins": ["Rancagua", "Codegua", "Coinco", "Coltauco", "Doñihue", "Graneros", "Las Cabras", "Machalí", "Malloa", "Mostazal", "Olivar", "Peumo", "Pichidegua", "Quinta de Tilcoco", "Rengo", "Requínoa", "San Vicente", "Pichilemu", "La Estrella", "Litueche", "Marchihue", "Navidad", "Paredones", "San Fernando", "Chépica", "Chimbarongo", "Lolol", "Nancagua", "Palmilla", "Peralillo", "Placilla", "Pumanque", "Santa Cruz"], "Maule": ["Talca", "Constitución", "Curepto", "Empedrado", "Maule", "Pelarco", "Pencahue", "Río Claro", "San Clemente", "San Rafael", "Cauquenes", "Chanco", "Pelluhue", "Curicó", "Hualañé", "Licantén", "Molina", "Rauco", "Romeral", "Sagrada Familia", "Teno", "Vichuquén", "Linares", "Colbún", "Longaví", "Parral", "Retiro", "San Javier", "Villa Alegre", "Yerbas Buenas"], "Ñuble": ["Cobquecura", "Coelemu", "Ninhue", "Portezuelo", "Quirihue", "Ránquil", "Treguaco", "Bulnes", "Chillán Viejo", "Chillán", "El Carmen", "Pemuco", "Pinto", "Quillón", "San Ignacio", "Yungay", "Coihueco", "Ñiquén", "San Carlos", "San Fabián", "San Nicolás"], "Biobío": ["Concepción", "Coronel", "Chiguayante", "Florida", "Hualqui", "Lota", "Penco", "San Pedro de la Paz", "Santa Juana", "Talcahuano", "Tomé", "Hualpén", "Lebu", "Arauco", "Cañete", "Contulmo", "Curanilahue", "Los Álamos", "Tirúa", "Los Ángeles", "Antuco", "Cabrero", "Laja", "Mulchén", "Nacimiento", "Negrete", "Quilaco", "Quilleco", "San Rosendo", "Santa Bárbara", "Tucapel", "Yumbel", "Alto Biobío"], "La Araucanía": ["Temuco", "Carahue", "Cunco", "Curarrehue", "Freire", "Galvarino", "Gorbea", "Lautaro", "Loncoche", "Melipeuco", "Nueva Imperial", "Padre las Casas", "Perquenco", "Pitrufquén", "Pucón", "Saavedra", "Teodoro Schmidt", "Toltén", "Vilcún", "Villarrica", "Cholchol", "Angol", "Collipulli", "Curacautín", "Ercilla", "Lonquimay", "Los Sauces", "Lumaco", "Purén", "Renaico", "Traiguén", "Victoria"], "Los Ríos": ["Valdivia", "Corral", "Lanco", "Los Lagos", "Máfil", "Mariquina", "Paillaco", "Panguipulli", "La Unión", "Futrono", "Lago Ranco", "Río Bueno"], "Los Lagos": ["Puerto Montt", "Calbuco", "Cochamó", "Fresia", "Frutillar", "Los Muermos", "Llanquihue", "Maullín", "Puerto Varas", "Castro", "Ancud", "Chonchi", "Curaco de Vélez", "Dalcahue", "Puqueldón", "Queilén", "Quellón", "Quemchi", "Quinchao", "Osorno", "Puerto Octay", "Purranque", "Puyehue", "Río Negro", "San Juan de la Costa", "San Pablo", "Chaitén", "Futaleufú", "Hualaihué", "Palena"], "Aysén del General Carlos Ibáñez del Campo": ["Coyhaique", "Lago Verde", "Aysén", "Cisnes", "Guaitecas", "Cochrane", "O'Higgins", "Tortel", "Chile Chico", "Río Ibáñez"], "Magallanes y de la Antártica Chilena": ["Punta Arenas", "Laguna Blanca", "Río Verde", "San Gregorio", "Cabo de Hornos (Ex Navarino)", "Antártica", "Porvenir", "Primavera", "Timaukel", "Natales", "Torres del Paine"] };
         
+        // --- INICIO CÓDIGO GOOGLE SHEETS ---
+        const googleScriptURL = 'https://script.google.com/macros/s/AKfycbwI0zeKjgJybIunwJ4SYnIHqYxenypLJ1uqlIoIZHJs6Q9nwiot8resIXZ5l99md3_r/exec';
+
+        function obtenerValor(datos, clave) {
+            const campo = datos.find(d => d[0].toUpperCase().trim() === clave.toUpperCase().trim());
+            return campo ? campo[1] : '';
+        }
+
+        function enviarAGoogleSheets(data) {
+            const etiquetasAEnviar = data.lote ? data.lote : [data];
+            if (etiquetasAEnviar.length === 0) return;
+
+            etiquetasAEnviar.forEach(etiqueta => {
+                const payload = {
+                    timestamp: new Date().toLocaleString("es-CL", { timeZone: "America/Santiago" }),
+                    tipo: etiqueta.tipo,
+                    vendedor: obtenerValor(etiqueta.datos, 'VENDEDOR'),
+                    cliente_destinatario: obtenerValor(etiqueta.datos, 'CLIENTE') || obtenerValor(etiqueta.datos, 'DESTINATARIO'),
+                    nv: obtenerValor(etiqueta.datos, 'NOTA DE VENTA'),
+                    bultos: etiqueta.bultos,
+                    transporte: obtenerValor(etiqueta.datos, 'MEDIO DE TRANSPORTE'),
+                    comuna: obtenerValor(etiqueta.datos, 'COMUNA DESTINO'),
+                    datos_completos: JSON.stringify(etiqueta.datos)
+                };
+
+                const formData = new FormData();
+                for (const key in payload) {
+                    formData.append(key, payload[key]);
+                }
+                
+                fetch(googleScriptURL, { method: 'POST', body: formData })
+                .then(response => console.log('Intento de envío a Google Sheets realizado.'))
+                .catch(error => console.error('Error al enviar datos a Google Sheets:', error));
+            });
+        }
+        // --- FIN CÓDIGO GOOGLE SHEETS ---
+
         // --- INICIO CÓDIGO DE IMPORTACIÓN DE CLIENTE ---
         let datosClienteImportado = null;
 
@@ -254,15 +291,9 @@
         function extraerDatosClienteExcel(jsonData) {
             const cliente = {};
             const camposMapeados = {
-                'DESTINATARIO': 'nombre',
-                'RUT DESTINATARIO': 'rut',
-                'TELÉFONO DESTINO': 'telefono',
-                'DIRECCIÓN DESTINO': 'direccion',
-                'REFERENCIA': 'referencia',
-                'COMUNA DESTINO': 'comuna',
-                'REGIÓN': 'region',
-                'VENDEDOR': 'vendedor',
-                'MEDIO DE TRANSPORTE': 'transporte'
+                'DESTINATARIO': 'nombre', 'RUT DESTINATARIO': 'rut', 'TELÉFONO DESTINO': 'telefono',
+                'DIRECCIÓN DESTINO': 'direccion', 'REFERENCIA': 'referencia', 'COMUNA DESTINO': 'comuna',
+                'REGIÓN': 'region', 'VENDEDOR': 'vendedor', 'MEDIO DE TRANSPORTE': 'transporte'
             };
             for (let i = 0; i < jsonData.length; i++) {
                 const fila = jsonData[i];
@@ -286,19 +317,13 @@
                     <p><strong>RUT:</strong> ${datos.rut || 'No encontrado'}</p>
                     <p><strong>Teléfono:</strong> ${datos.telefono || 'No encontrado'}</p>
                     <p><strong>Dirección:</strong> ${datos.direccion || 'No encontrado'}</p>
-                    <p><strong>Referencia:</strong> ${datos.referencia || 'No encontrado'}</p>
                     <p><strong>Comuna:</strong> ${datos.comuna || 'No encontrado'}</p>
-                    <p><strong>Transporte:</strong> ${datos.transporte || 'No encontrado'}</p> 
-                </div>
-            `;
+                </div>`;
             document.getElementById('resultadoImportacion').style.display = 'block';
         }
 
         function aplicarDatosImportados() {
-            if (!datosClienteImportado) {
-                alert('No hay datos para aplicar');
-                return;
-            }
+            if (!datosClienteImportado) { alert('No hay datos para aplicar'); return; }
             document.getElementById('envioDestinatario').value = datosClienteImportado.nombre || '';
             document.getElementById('envioRut').value = datosClienteImportado.rut || '';
             document.getElementById('envioTelefono').value = datosClienteImportado.telefono || '';
@@ -318,51 +343,31 @@
                     document.getElementById('envioTransporteOtro').value = datosClienteImportado.transporte;
                 }
             }
-
             alert('✅ Datos del cliente cargados exitosamente desde el archivo Excel');
             cerrarImportarCliente();
             if (datosClienteImportado.rut) {
-                const clienteCache = {
-                    rut: datosClienteImportado.rut,
-                    nombre: datosClienteImportado.nombre,
-                    telefono: datosClienteImportado.telefono,
-                    direccion: datosClienteImportado.direccion,
-                    referencia: datosClienteImportado.referencia,
-                    comuna: datosClienteImportado.comuna,
-                    transporte: datosClienteImportado.transporte,
-                    fechaImportacion: new Date().toISOString()
-                };
+                const clienteCache = { ...datosClienteImportado, fechaImportacion: new Date().toISOString() };
                 let clientesGuardados = JSON.parse(localStorage.getItem('clientesImportados') || '[]');
                 clientesGuardados = clientesGuardados.filter(c => c.rut !== clienteCache.rut);
                 clientesGuardados.push(clienteCache);
-                if (clientesGuardados.length > 50) {
-                    clientesGuardados = clientesGuardados.slice(-50);
-                }
+                if (clientesGuardados.length > 50) { clientesGuardados = clientesGuardados.slice(-50); }
                 localStorage.setItem('clientesImportados', JSON.stringify(clientesGuardados));
             }
         }
 
         function buscarClientePorRut() {
             const rut = document.getElementById('envioRut').value.trim();
-            if (!rut || rut.length < 8) {
-                limpiarCamposCliente();
-                return;
-            }
+            if (!rut || rut.length < 8) { return; }
             const clientesImportados = JSON.parse(localStorage.getItem('clientesImportados') || '[]');
-            const clienteEncontrado = clientesImportados.find(c =>
-                c.rut.replace(/[.-]/g, '') === rut.replace(/[.-]/g, '')
-            );
+            const clienteEncontrado = clientesImportados.find(c => c.rut.replace(/[.-]/g, '') === rut.replace(/[.-]/g, ''));
             if (clienteEncontrado) {
                 document.getElementById('envioDestinatario').value = clienteEncontrado.nombre || '';
                 document.getElementById('envioTelefono').value = clienteEncontrado.telefono || '';
                 document.getElementById('envioDireccion').value = clienteEncontrado.direccion || '';
                 document.getElementById('envioReferencia').value = clienteEncontrado.referencia || '';
                 document.getElementById('envioComuna').value = clienteEncontrado.comuna || '';
-                if (clienteEncontrado.transporte) {
-                    document.getElementById('envioTransporte').value = clienteEncontrado.transporte;
-                }
+                if (clienteEncontrado.transporte) { document.getElementById('envioTransporte').value = clienteEncontrado.transporte; }
                 mostrarMensajeTemporalCliente(`✅ Cliente encontrado en caché: ${clienteEncontrado.nombre}`);
-                return;
             }
         }
 
@@ -377,16 +382,6 @@
             msgDiv.innerHTML = mensaje;
             msgDiv.style.display = 'block';
             setTimeout(() => { msgDiv.style.display = 'none'; }, 4000);
-        }
-
-        function limpiarCamposCliente() {
-            document.getElementById('envioDestinatario').value = '';
-            document.getElementById('envioTelefono').value = '';
-            document.getElementById('envioDireccion').value = '';
-            document.getElementById('envioReferencia').value = '';
-            document.getElementById('envioComuna').value = '';
-            const msgDiv = document.getElementById('mensajeCliente');
-            if (msgDiv) { msgDiv.style.display = 'none'; }
         }
         // --- FIN CÓDIGO DE IMPORTACIÓN DE CLIENTE ---
 
@@ -406,14 +401,10 @@
             let todasLasComunas = [];
             for (const region in comunasPorRegion) {
                 comunasPorRegion[region].forEach(comuna => {
-                    todasLasComunas.push({
-                        nombre: comuna,
-                        textoCompleto: `${comuna} (${region})`
-                    });
+                    todasLasComunas.push({ nombre: comuna, textoCompleto: `${comuna} (${region})` });
                 });
             }
             todasLasComunas.sort((a, b) => a.nombre.localeCompare(b.nombre));
-            
             todasLasComunas.forEach(item => {
                 const option = document.createElement('option');
                 option.value = item.textoCompleto;
@@ -433,30 +424,32 @@
                     pagoSelect.disabled = true;
                     alert('ATENCIÓN: Envío por TUTTO PETS debe ser PAGADO y cobrado en la nota de venta.');
                 } else if (this.value === 'JULIO MILLAN' || this.value === 'CHRISTIAN ALIAGA') {
-                    const courierName = this.value;
-                    alert(`INFO: Para envíos con ${courierName}, si seleccionas "Por Pagar", el cobro lo gestiona directamente él.`);
+                    alert(`INFO: Para envíos con ${this.value}, si seleccionas "Por Pagar", el cobro lo gestiona directamente el transporte.`);
                 }
             });
         });
         
-        // --- NUEVAS FUNCIONES PARA MODO MÚLTIPLE ---
+        // --- INICIO LÓGICA MODO MÚLTIPLE ---
         function seleccionarModo(modo, element) {
             modoActual = modo;
             document.querySelectorAll('#modoSelectorSection .flex-btn').forEach(btn => btn.classList.remove('active'));
             element.classList.add('active');
 
-            const btnProcesar = document.getElementById('btnProcesarEnvio');
-            const batchSection = document.getElementById('batchSection');
-            
-            if (modo === 'multiple') {
-                btnProcesar.textContent = '➕ Agregar Etiqueta al Lote';
-                batchSection.style.display = 'block';
-            } else {
-                btnProcesar.textContent = 'Generar Vista Previa';
-                batchSection.style.display = 'none';
+            const activeForm = document.querySelector('.form-section.active');
+            if (activeForm) {
+                const btnProcesar = activeForm.querySelector('.btn-primary');
+                const batchSection = document.getElementById('batchSection');
+                
+                if (modo === 'multiple') {
+                    btnProcesar.textContent = '➕ Agregar Etiqueta al Lote';
+                    activeForm.appendChild(batchSection); // Mueve la sección del lote al formulario activo
+                    batchSection.style.display = 'block';
+                } else {
+                    btnProcesar.textContent = 'Generar Vista Previa';
+                    batchSection.style.display = 'none';
+                }
             }
-            batchData = [];
-            renderizarLote();
+            if(batchData.length > 0) { batchData = []; renderizarLote(); }
         }
 
         function renderizarLote() {
@@ -466,16 +459,15 @@
             list.innerHTML = '';
             batchData.forEach((item, index) => {
                 totalBultos += item.bultos;
-                const destinatario = item.datos.find(d => d[0] === 'DESTINATARIO')?.[1] || 'N/A';
-                const nv = item.datos.find(d => d[0] === 'NOTA DE VENTA')?.[1] || 'N/A';
+                const nombreCliente = (obtenerValor(item.datos, 'DESTINATARIO') || obtenerValor(item.datos, 'CLIENTE')).toUpperCase();
+                const nv = obtenerValor(item.datos, 'NOTA DE VENTA');
                 const li = document.createElement('li');
                 li.className = 'batch-item';
                 li.innerHTML = `
                     <div class="batch-item-info">
-                        <strong>${index + 1}.</strong> ${destinatario} (NV: ${nv}) - <strong>${item.bultos} bulto(s)</strong>
+                        <strong>${index + 1}.</strong> [${item.tipo}] ${nombreCliente} (NV: ${nv}) - <strong>${item.bultos} bulto(s)</strong>
                     </div>
-                    <button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;" onclick="eliminarDelLote(${index})">Eliminar</button>
-                `;
+                    <button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;" onclick="eliminarDelLote(${index})">Eliminar</button>`;
                 list.appendChild(li);
             });
             count.textContent = `${batchData.length} Entradas / ${totalBultos} Etiquetas Totales`;
@@ -487,148 +479,126 @@
         }
 
         function limpiarFormularioEnvio() {
-            document.getElementById('envioDestinatario').value = '';
-            document.getElementById('envioRut').value = '';
-            document.getElementById('envioTelefono').value = '';
-            document.getElementById('envioDireccion').value = '';
-            document.getElementById('envioReferencia').value = '';
-            document.getElementById('envioComuna').value = '';
-            document.getElementById('envioNotaVenta').value = '';
+            ['envioDestinatario', 'envioRut', 'envioTelefono', 'envioDireccion', 'envioReferencia', 'envioComuna', 'envioNotaVenta'].forEach(id => document.getElementById(id).value = '');
             document.getElementById('envioBultos').value = '1';
         }
-        // --- FIN NUEVAS FUNCIONES ---
+        function limpiarFormularioRetiro() {
+            ['retiroCliente', 'retiroNotaVenta', 'retiroObservaciones'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('retiroBultos').value = '1';
+        }
+        function limpiarFormularioProvisoria() {
+            ['provisoriaCliente', 'provisoriaNotaVenta', 'provisoriaObservaciones'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('provisoriaBultos').value = '1';
+        }
+        // --- FIN LÓGICA MODO MÚLTIPLE ---
 
         function seleccionarTipo(tipo, element) {
-            document.querySelectorAll('.selector-section .flex-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.selector-section:first-child .flex-btn').forEach(btn => btn.classList.remove('active'));
             element.classList.add('active');
             document.querySelectorAll('.form-section, #previewSection').forEach(s => s.classList.remove('active'));
             document.getElementById(`form${tipo}`).classList.add('active');
             
             const modoSelector = document.getElementById('modoSelectorSection');
-            if (tipo === 'ENVIO') {
-                modoSelector.classList.remove('hidden');
-                if (!document.querySelector('#modoSelectorSection .flex-btn.active')) {
-                    document.querySelector('#modoSelectorSection .flex-btn').click();
+            modoSelector.classList.remove('hidden');
+
+            if (batchData.length > 0 && (!batchData[0] || batchData[0].tipo !== tipo)) {
+                if (confirm('Al cambiar de tipo de operación se limpiará el lote actual. ¿Desea continuar?')) {
+                    batchData = [];
+                    renderizarLote();
                 }
-            } else {
-                modoSelector.classList.add('hidden');
             }
+            
+            const currentModeButton = document.querySelector('#modoSelectorSection .flex-btn.active') || document.querySelector('#modoSelectorSection .flex-btn');
+            seleccionarModo(modoActual, currentModeButton);
         }
         
         function procesarRetiro() {
             const cliente = document.getElementById('retiroCliente').value.trim();
             const notaVenta = document.getElementById('retiroNotaVenta').value.trim();
-            if (!cliente || !notaVenta) {
-                alert('Los campos Cliente y Nota de Venta son obligatorios.');
-                return;
-            }
+            if (!cliente || !notaVenta) { alert('Los campos Cliente y Nota de Venta son obligatorios.'); return; }
             const vendedorSeleccionado = document.getElementById('retiroVendedor').value;
             const fecha = new Date();
-            processedData = {
+            const datosEtiqueta = {
                 tipo: 'RETIRO',
                 bultos: parseInt(document.getElementById('retiroBultos').value) || 1,
                 datos: [
-                    ['CLIENTE', cliente],
-                    ['NOTA DE VENTA', notaVenta],
+                    ['CLIENTE', cliente], ['NOTA DE VENTA', notaVenta],
                     ['FECHA', `${fecha.getDate().toString().padStart(2, '0')}/${(fecha.getMonth() + 1).toString().padStart(2, '0')}/${fecha.getFullYear()}`],
                     ['VENDEDOR', `${vendedorSeleccionado} - ${vendedores[vendedorSeleccionado]}`],
                     ['OBSERVACIONES', document.getElementById('retiroObservaciones').value.trim()]
                 ]
             };
-            mostrarVistaPrevia();
+            if (modoActual === 'multiple') {
+                batchData.push(datosEtiqueta);
+                renderizarLote();
+                limpiarFormularioRetiro();
+                alert(`✅ Entrada para "${cliente}" (${datosEtiqueta.bultos} bultos) agregada al lote.`);
+            } else {
+                processedData = datosEtiqueta;
+                mostrarVistaPrevia();
+            }
         }
 
         function procesarProvisoria() {
             const cliente = document.getElementById('provisoriaCliente').value.trim();
             const notaVenta = document.getElementById('provisoriaNotaVenta').value.trim();
-            if (!cliente || !notaVenta) {
-                alert('Los campos Cliente y Nota de Venta son obligatorios.');
-                return;
-            }
+            if (!cliente || !notaVenta) { alert('Los campos Cliente y Nota de Venta son obligatorios.'); return; }
             const vendedorSeleccionado = document.getElementById('provisoriaVendedor').value;
             const fecha = new Date();
-            processedData = {
+            const datosEtiqueta = {
                 tipo: 'PROVISORIA',
                 bultos: parseInt(document.getElementById('provisoriaBultos').value) || 1,
                 datos: [
-                    ['CLIENTE', cliente],
-                    ['NOTA DE VENTA', notaVenta],
+                    ['CLIENTE', cliente], ['NOTA DE VENTA', notaVenta],
                     ['FECHA', `${fecha.getDate().toString().padStart(2, '0')}/${(fecha.getMonth() + 1).toString().padStart(2, '0')}/${fecha.getFullYear()}`],
                     ['VENDEDOR', `${vendedorSeleccionado} - ${vendedores[vendedorSeleccionado]}`],
                     ['OBSERVACIONES', document.getElementById('provisoriaObservaciones').value.trim()]
                 ]
             };
-            mostrarVistaPrevia();
+            if (modoActual === 'multiple') {
+                batchData.push(datosEtiqueta);
+                renderizarLote();
+                limpiarFormularioProvisoria();
+                alert(`✅ Entrada para "${cliente}" (${datosEtiqueta.bultos} bultos) agregada al lote.`);
+            } else {
+                processedData = datosEtiqueta;
+                mostrarVistaPrevia();
+            }
         }
         
         function obtenerDatosEnvioDelFormulario() {
-            const campos = { 
-                destinatario: document.getElementById('envioDestinatario').value.trim(), 
-                rut: document.getElementById('envioRut').value.trim(), 
-                telefono: document.getElementById('envioTelefono').value.trim(), 
-                direccion: document.getElementById('envioDireccion').value.trim(),
-                comuna: document.getElementById('envioComuna').value.trim(),
-                notaVenta: document.getElementById('envioNotaVenta').value.trim()
-            };
-            const referencia = document.getElementById('envioReferencia').value.trim();
-            
-            const faltantes = Object.keys(campos).filter(k => !campos[k]);
-            if (faltantes.length > 0) {
-                alert(`Faltan campos obligatorios: ${faltantes.join(', ')}`);
-                return null;
-            }
+            const campos = { destinatario: 'envioDestinatario', rut: 'envioRut', telefono: 'envioTelefono', direccion: 'envioDireccion', comuna: 'envioComuna', notaVenta: 'envioNotaVenta' };
+            const datosForm = {};
+            for (const key in campos) { datosForm[key] = document.getElementById(campos[key]).value.trim(); }
+            const faltantes = Object.keys(datosForm).filter(k => !datosForm[k]);
+            if (faltantes.length > 0) { alert(`Faltan campos obligatorios: ${faltantes.join(', ')}`); return null; }
 
             let transporte = document.getElementById('envioTransporte').value;
             if (transporte === 'Otro') { transporte = document.getElementById('envioTransporteOtro').value.trim() || 'Otro (sin especificar)'; }
             
-            const comunaCompleta = campos.comuna;
-            const nombreComuna = comunaCompleta.includes(' (') ? comunaCompleta.substring(0, comunaCompleta.lastIndexOf(' (')) : comunaCompleta;
+            const nombreComuna = datosForm.comuna.includes(' (') ? datosForm.comuna.substring(0, datosForm.comuna.lastIndexOf(' (')) : datosForm.comuna;
             let region = 'No encontrada';
             for (const r in comunasPorRegion) { if (comunasPorRegion[r].includes(nombreComuna)) { region = r; break; } }
+            let ciudad = (region === 'Metropolitana de Santiago') ? 'Santiago' : nombreComuna;
             
-            let ciudad = nombreComuna;
-            if (region === 'Metropolitana de Santiago') { ciudad = 'Santiago'; }
-
             const vendedorSeleccionado = document.getElementById('envioVendedor').value;
+            const referencia = document.getElementById('envioReferencia').value.trim();
             
             const datosEnvio = [
-                ['DE', 'SOC INV FUCAS SPA - RUT: 76.230.392-2'],
-                ['VENDEDOR', `${vendedorSeleccionado} - ${vendedores[vendedorSeleccionado]}`],
-                ['DIRECCIÓN', 'AV LO ESPEJO 02360, SAN BERNARDO, SANTIAGO'],
-                ['TELÉFONO', '2 3347 5040'],
-                ['SEPARADOR_1', ''],
-                ['DESTINATARIO', campos.destinatario],
-                ['RUT DESTINATARIO', campos.rut],
-                ['TELÉFONO DESTINO', campos.telefono],
-                ['DIRECCIÓN DESTINO', campos.direccion]
+                ['DE', 'SOC INV FUCAS SPA - RUT: 76.230.392-2'], ['VENDEDOR', `${vendedorSeleccionado} - ${vendedores[vendedorSeleccionado]}`],
+                ['DIRECCIÓN', 'AV LO ESPEJO 02360, SAN BERNARDO, SANTIAGO'], ['TELÉFONO', '2 3347 5040'], ['SEPARADOR_1', ''],
+                ['DESTINATARIO', datosForm.destinatario], ['RUT DESTINATARIO', datosForm.rut], ['TELÉFONO DESTINO', datosForm.telefono],
+                ['DIRECCIÓN DESTINO', datosForm.direccion], ...(referencia ? [['REFERENCIA', referencia]] : []),
+                ['COMUNA DESTINO', datosForm.comuna], ['CIUDAD DESTINO', ciudad], ['REGIÓN', region], ['SEPARADOR_2', ''],
+                ['TIPO DE ENVÍO', document.getElementById('envioTipo').value], ['MEDIO DE TRANSPORTE', transporte],
+                ['FORMA DE PAGO', document.getElementById('envioPago').value], ['NOTA DE VENTA', datosForm.notaVenta]
             ];
-            
-            if (referencia) {
-                datosEnvio.push(['REFERENCIA', referencia]);
-            }
-
-            datosEnvio.push(
-                ['COMUNA DESTINO', comunaCompleta],
-                ['CIUDAD DESTINO', ciudad],
-                ['REGIÓN', region],
-                ['SEPARADOR_2', ''],
-                ['TIPO DE ENVÍO', document.getElementById('envioTipo').value],
-                ['MEDIO DE TRANSPORTE', transporte],
-                ['FORMA DE PAGO', document.getElementById('envioPago').value],
-                ['NOTA DE VENTA', campos.notaVenta]
-            );
-
-            return {
-                tipo: 'ENVÍO',
-                bultos: parseInt(document.getElementById('envioBultos').value) || 1,
-                datos: datosEnvio
-            };
+            return { tipo: 'ENVIO', bultos: parseInt(document.getElementById('envioBultos').value) || 1, datos: datosEnvio };
         }
 
         function procesarEnvio() {
             const datosEtiqueta = obtenerDatosEnvioDelFormulario();
             if (!datosEtiqueta) return;
-
             if (modoActual === 'multiple') {
                 batchData.push(datosEtiqueta);
                 renderizarLote();
@@ -641,14 +611,8 @@
         }
         
         function procesarLote() {
-            if (batchData.length === 0) {
-                alert('No hay etiquetas en el lote para procesar.');
-                return;
-            }
-            processedData = {
-                tipo: 'ENVIO_LOTE',
-                lote: batchData
-            };
+            if (batchData.length === 0) { alert('No hay etiquetas en el lote para procesar.'); return; }
+            processedData = { tipo: 'LOTE', lote: batchData };
             generarVistaImprimible();
         }
 
@@ -668,11 +632,10 @@
         
         function generarContenidoEtiquetaHTML(datosEtiqueta) {
             let contenidoEtiqueta = '';
-            const esRetiro = datosEtiqueta.tipo === 'RETIRO';
-            const esProvisoria = datosEtiqueta.tipo === 'PROVISORIA';
+            const esRetiroOProvisoria = datosEtiqueta.tipo === 'RETIRO' || datosEtiqueta.tipo === 'PROVISORIA';
 
-            if (esRetiro || esProvisoria) {
-                let tituloEtiqueta = `<div class="titulo-etiqueta ${esProvisoria ? 'titulo-provisoria' : ''}">ETIQUETA ${datosEtiqueta.tipo}</div>`;
+            if (esRetiroOProvisoria) {
+                let tituloEtiqueta = `<div class="titulo-etiqueta ${datosEtiqueta.tipo === 'PROVISORIA' ? 'titulo-provisoria' : ''}">ETIQUETA ${datosEtiqueta.tipo}</div>`;
                 let mainContent = '<div class="retiro-main">';
                 datosEtiqueta.datos.filter(f => f[0] === 'CLIENTE' || f[0] === 'NOTA DE VENTA').forEach(fila => {
                     mainContent += `<p class="${fila[0].includes('NOTA') ? 'nota-venta' : ''}"><span class="campo">${fila[0]}:</span> ${fila[1]}</p>`;
@@ -707,6 +670,8 @@
         function generarVistaImprimible() {
             if (!processedData) { alert('Primero debes procesar los datos.'); return; }
             
+            enviarAGoogleSheets(processedData);
+
             const printWindow = window.open('', '_blank');
             let content = `
                 <html><head><title>Etiquetas para Imprimir</title><style>
@@ -736,35 +701,33 @@
             
             let etiquetasHtml = '';
             
-            if (processedData.tipo === 'ENVIO_LOTE') {
+            if (processedData.tipo === 'LOTE' && processedData.lote) {
                 let totalEtiquetasGeneradas = 0;
-                const totalEtiquetasEnLote = processedData.lote.reduce((sum, item) => sum + item.bultos, 0);
+                const lote = processedData.lote;
+                const totalEtiquetasEnLote = lote.reduce((sum, item) => sum + item.bultos, 0);
+                const tipoLote = lote.length > 0 ? lote[0].tipo : 'ENVIO';
+                const esRetiroOProvisoria = tipoLote === 'RETIRO' || tipoLote === 'PROVISORIA';
+                const pageBreakTrigger = esRetiroOProvisoria ? 2 : 4;
+                const claseTipoCSS = `etiqueta-${tipoLote.toLowerCase()}`;
 
-                // <-- BUCLE PRINCIPAL: Itera sobre cada ENTRADA del lote (ej. RPM, Marta, etc.)
-                processedData.lote.forEach(etiquetaData => {
+                lote.forEach(etiquetaData => {
                     const contenidoEtiqueta = generarContenidoEtiquetaHTML(etiquetaData);
-                    
-                    // <-- BUCLE INTERNO: Genera las COPIAS (bultos) para esta entrada específica
                     for (let i = 0; i < etiquetaData.bultos; i++) {
-                        etiquetasHtml += `<div class="etiqueta etiqueta-envio">${contenidoEtiqueta}</div>`;
+                        etiquetasHtml += `<div class="etiqueta ${claseTipoCSS}">${contenidoEtiqueta}</div>`;
                         totalEtiquetasGeneradas++;
-                        
-                        // Lógica para saltar de página cada 4 etiquetas
-                        if (totalEtiquetasGeneradas % 4 === 0 && totalEtiquetasGeneradas < totalEtiquetasEnLote) {
+                        if (totalEtiquetasGeneradas % pageBreakTrigger === 0 && totalEtiquetasGeneradas < totalEtiquetasEnLote) {
                             etiquetasHtml += `</div><div class="pagina">`;
                         }
                     }
                 });
-
             } else { // Modo individual
                 for (let i = 1; i <= processedData.bultos; i++) {
                     const contenidoEtiqueta = generarContenidoEtiquetaHTML(processedData);
-                    const esRetiro = processedData.tipo === 'RETIRO';
-                    const esProvisoria = processedData.tipo === 'PROVISORIA';
-                    let claseTipo = esRetiro ? 'etiqueta-retiro' : esProvisoria ? 'etiqueta-provisoria' : 'etiqueta-envio';
+                    const esRetiroOProvisoria = processedData.tipo === 'RETIRO' || processedData.tipo === 'PROVISORIA';
+                    let claseTipo = `etiqueta-${processedData.tipo.toLowerCase()}`;
                     etiquetasHtml += `<div class="etiqueta ${claseTipo}">${contenidoEtiqueta}</div>`;
                     
-                    const pageBreakTrigger = (esRetiro || esProvisoria) ? 2 : 4;
+                    const pageBreakTrigger = esRetiroOProvisoria ? 2 : 4;
                     if (i % pageBreakTrigger === 0 && i < processedData.bultos) {
                         etiquetasHtml += `</div><div class="pagina">`;
                     }
@@ -777,10 +740,7 @@
         }
 
         function generarExcel() {
-            if (!processedData || processedData.tipo === 'ENVIO_LOTE') { 
-                alert('La exportación a Excel solo está disponible en modo individual. Imprime el lote y luego genera cada Excel si es necesario.'); 
-                return; 
-            }
+            if (!processedData || processedData.tipo === 'LOTE') { alert('La exportación a Excel solo está disponible en modo individual.'); return; }
             const wb = XLSX.utils.book_new();
             const ws_data = [];
             const datosBase = processedData.datos.filter(fila => !fila[0].startsWith('SEPARADOR'));
@@ -797,15 +757,12 @@
             for (let i = 0; i < processedData.bultos; i++) { colWidths.push({ wch: 35 }, { wch: 35 }, { wch: 5 }); }
             ws['!cols'] = colWidths;
             XLSX.utils.book_append_sheet(wb, ws, 'Etiquetas');
-            const nombreCliente = (processedData.datos.find(d => d[0] === 'CLIENTE' || d[0] === 'DESTINATARIO')[1]).replace(/ /g, '_');
+            const nombreCliente = (obtenerValor(processedData.datos, 'CLIENTE') || obtenerValor(processedData.datos, 'DESTINATARIO')).replace(/ /g, '_');
             XLSX.writeFile(wb, `Etiquetas_${nombreCliente}_${new Date().toISOString().slice(0, 10)}.xlsx`);
         }
         
         function copiarParaSheets() {
-             if (!processedData || processedData.tipo === 'ENVIO_LOTE') { 
-                alert('Esta función solo está disponible en modo individual.'); 
-                return; 
-            }
+             if (!processedData || processedData.tipo === 'LOTE') { alert('Esta función solo está disponible en modo individual.'); return; }
             const sheet_data = [];
             const datosBase = processedData.datos.filter(fila => !fila[0].startsWith('SEPARADOR'));
             for (let i = 1; i <= processedData.bultos; i++) {
@@ -818,15 +775,12 @@
             }
             const tsvContent = sheet_data.map(row => row.join('\t')).join('\n');
             navigator.clipboard.writeText(tsvContent).then(() => {
-                alert('Datos copiados en formato para Sheets. Abre una hoja de cálculo y pega los datos (Ctrl+V).');
+                alert('Datos copiados. Abre una hoja de cálculo y pega los datos (Ctrl+V).');
             }).catch(err => console.error('Error:', err));
         }
 
         function mostrarDatosCopiables() {
-            if (processedData.tipo === 'ENVIO_LOTE') { 
-                alert('Esta función solo está disponible en modo individual.'); 
-                return; 
-            }
+            if (processedData.tipo === 'LOTE') { alert('Esta función solo está disponible en modo individual.'); return; }
             const copySection = document.getElementById('copySection');
             copySection.classList.toggle('hidden');
             if (!copySection.classList.contains('hidden')) {
