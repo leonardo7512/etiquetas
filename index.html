@@ -16,6 +16,11 @@
         .flex-btn { padding: 15px 30px; border: 2px solid #e5e7eb; background: white; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; min-width: 150px; text-align: center; }
         .flex-btn.active { background: #2563eb; color: white; border-color: #2563eb; }
         .flex-btn:hover:not(.active) { border-color: #2563eb; background: #f8fafc; }
+        
+        /* ESTILO NUEVO PARA EL BOTÓN DE PEGAR */
+        .paste-btn { background: #8b5cf6 !important; color: white !important; border-color: #7c3aed !important; }
+        .paste-btn:hover { background: #7c3aed !important; }
+
         .form-section { display: none; }
         .form-section.active { display: block; }
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 20px; }
@@ -81,6 +86,7 @@
                 <button class="flex-btn" onclick="seleccionarTipo('RETIRO', this)">🏪 RETIRO</button>
                 <button class="flex-btn" onclick="seleccionarTipo('ENVIO', this)">📦 ENVÍO</button>
                 <button class="flex-btn" onclick="seleccionarTipo('PROVISORIA', this)">⏳ PROVISORIA</button>
+                <button class="flex-btn paste-btn" onclick="abrirModalPegar()">📥 Pegar Datos</button>
             </div>
         </div>
 
@@ -175,6 +181,19 @@
                         <button class="btn btn-success" onclick="aplicarDatosImportados()">✅ Usar estos datos</button>
                         <button class="btn btn-secondary" onclick="cerrarImportarCliente()">❌ Cancelar</button>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="modalPegarDatos" class="modal-importar" style="display: none;">
+            <div class="modal-content">
+                <span class="modal-close" onclick="cerrarModalPegar()">×</span>
+                <h3>📋 Pegar Datos Copiados</h3>
+                <p style="margin-bottom: 10px; font-size: 13px; color: #666;">Pega aquí el texto copiado de una etiqueta anterior (con formato: DESTINATARIO: ..., RUT: ..., etc).</p>
+                <textarea id="textoPegado" class="copy-textarea" placeholder="Pega el texto aquí..."></textarea>
+                <div style="margin-top: 15px; text-align: right;">
+                    <button class="btn btn-secondary" onclick="cerrarModalPegar()">Cancelar</button>
+                    <button class="btn btn-success" onclick="procesarTextoPegado()">✅ Cargar Datos</button>
                 </div>
             </div>
         </div>
@@ -351,6 +370,97 @@
                 else if (this.value === 'JULIO MILLAN' || this.value === 'CHRISTIAN ALIAGA') { alert(`INFO: Para envíos con ${this.value}, el cobro "Por Pagar" lo gestiona el transporte.`); }
             });
         });
+
+        // --- FUNCIONES NUEVAS PARA PEGAR DATOS ---
+        function abrirModalPegar() {
+            document.getElementById('modalPegarDatos').style.display = 'flex';
+            document.getElementById('textoPegado').value = '';
+            document.getElementById('textoPegado').focus();
+        }
+
+        function cerrarModalPegar() {
+            document.getElementById('modalPegarDatos').style.display = 'none';
+        }
+
+        function procesarTextoPegado() {
+            const texto = document.getElementById('textoPegado').value;
+            if (!texto.trim()) return;
+
+            // Variables para almacenar datos
+            let rut = "", nombre = "", documento = "", vendedor = "", telefono = "", direccion = "", comuna = "", transporte = "", pago = "", referencia = "";
+
+            const lineas = texto.split('\n');
+            lineas.forEach(linea => {
+                const limpio = linea.trim();
+                if (limpio.startsWith('RUT DESTINATARIO:')) rut = limpio.substring('RUT DESTINATARIO:'.length).trim();
+                else if (limpio.startsWith('DESTINATARIO:')) nombre = limpio.substring('DESTINATARIO:'.length).trim();
+                else if (limpio.startsWith('CLIENTE:')) nombre = limpio.substring('CLIENTE:'.length).trim(); // Por si es retiro
+                else if (limpio.startsWith('NOTA DE VENTA:')) documento = limpio.substring('NOTA DE VENTA:'.length).trim();
+                else if (limpio.startsWith('TELÉFONO DESTINO:')) telefono = limpio.substring('TELÉFONO DESTINO:'.length).trim();
+                else if (limpio.startsWith('DIRECCIÓN DESTINO:')) direccion = limpio.substring('DIRECCIÓN DESTINO:'.length).trim();
+                else if (limpio.startsWith('REFERENCIA:')) referencia = limpio.substring('REFERENCIA:'.length).trim();
+                else if (limpio.startsWith('COMUNA DESTINO:')) comuna = limpio.substring('COMUNA DESTINO:'.length).trim();
+                else if (limpio.startsWith('MEDIO DE TRANSPORTE:')) transporte = limpio.substring('MEDIO DE TRANSPORTE:'.length).trim();
+                else if (limpio.startsWith('FORMA DE PAGO:')) pago = limpio.substring('FORMA DE PAGO:'.length).trim();
+                else if (limpio.startsWith('VENDEDOR:')) {
+                    // Extraer solo el nombre antes del guión
+                    let vendRaw = limpio.substring('VENDEDOR:'.length).trim();
+                    vendedor = vendRaw.split('-')[0].trim();
+                }
+            });
+
+            // Detectar formulario activo
+            const formRetiro = document.getElementById('formRETIRO').classList.contains('active');
+            const formEnvio = document.getElementById('formENVIO').classList.contains('active');
+            const formProvisoria = document.getElementById('formPROVISORIA').classList.contains('active');
+
+            if (formEnvio) {
+                if(nombre) document.getElementById('envioDestinatario').value = nombre;
+                if(rut) document.getElementById('envioRut').value = rut;
+                if(telefono) document.getElementById('envioTelefono').value = telefono;
+                if(direccion) document.getElementById('envioDireccion').value = direccion;
+                if(comuna) document.getElementById('envioComuna').value = comuna;
+                if(documento) document.getElementById('envioNotaVenta').value = documento;
+                if(referencia) document.getElementById('envioReferencia').value = referencia;
+                if(vendedor) document.getElementById('envioVendedor').value = vendedor;
+                
+                if(transporte) {
+                    const selectTrans = document.getElementById('envioTransporte');
+                    // Intentar coincidencia exacta
+                    let matched = false;
+                    for(let i=0; i<selectTrans.options.length; i++){
+                        if(selectTrans.options[i].value === transporte) {
+                            selectTrans.selectedIndex = i;
+                            matched = true;
+                            break;
+                        }
+                    }
+                    if(!matched && transporte) {
+                        selectTrans.value = 'Otro';
+                        document.getElementById('transporteOtroGroup').classList.remove('hidden');
+                        document.getElementById('envioTransporteOtro').value = transporte;
+                    }
+                }
+                if(pago) document.getElementById('envioPago').value = pago;
+                
+            } else if (formRetiro) {
+                if(nombre) document.getElementById('retiroCliente').value = nombre;
+                if(documento) document.getElementById('retiroNotaVenta').value = documento;
+                if(vendedor) document.getElementById('retiroVendedor').value = vendedor;
+            } else if (formProvisoria) {
+                if(nombre) document.getElementById('provisoriaCliente').value = nombre;
+                if(documento) document.getElementById('provisoriaNotaVenta').value = documento;
+                if(vendedor) document.getElementById('provisoriaVendedor').value = vendedor;
+            } else {
+                alert("Primero selecciona un tipo de etiqueta (Retiro, Envío, etc).");
+                cerrarModalPegar();
+                return;
+            }
+
+            alert('Datos cargados correctamente.');
+            cerrarModalPegar();
+        }
+
         function seleccionarModo(m, e) {
             modoActual = m;
             document.querySelectorAll('#modoSelectorSection .flex-btn').forEach(b => b.classList.remove('active'));
@@ -382,8 +492,11 @@
         function limpiarFormularioRetiro() { ['retiroCliente','retiroNotaVenta','retiroObservaciones'].forEach(id => document.getElementById(id).value = ''); document.getElementById('retiroBultos').value = '1'; }
         function limpiarFormularioProvisoria() { ['provisoriaCliente','provisoriaNotaVenta','provisoriaObservaciones'].forEach(id => document.getElementById(id).value = ''); document.getElementById('provisoriaBultos').value = '1'; }
         function seleccionarTipo(t, e) {
-            document.querySelectorAll('.selector-section:first-child .flex-btn').forEach(b => b.classList.remove('active'));
-            e.classList.add('active');
+            document.querySelectorAll('.selector-section:first-child .flex-btn').forEach(b => {
+                if(!b.classList.contains('paste-btn')) b.classList.remove('active');
+            });
+            if(!e.classList.contains('paste-btn')) e.classList.add('active');
+            
             document.querySelectorAll('.form-section, #previewSection').forEach(s => s.classList.remove('active'));
             document.getElementById(`form${t}`).classList.add('active');
             document.getElementById('modoSelectorSection').classList.remove('hidden');
