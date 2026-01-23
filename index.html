@@ -176,7 +176,6 @@
         <div id="formENVIO" class="form-section">
             <h2 style="margin-bottom: 20px; color: #1f2937;">📦 Formulario de Envío</h2>
             
-            <!-- SWITCH PAGA AROMAKER -->
             <div class="switch-container">
                 <label class="switch">
                     <input type="checkbox" id="switchPagaAromaker">
@@ -294,7 +293,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('switchPagaAromaker').addEventListener('change', function() {
                 pagaAromakerActivo = this.checked;
-                console.log('PAGA AROMAKER:', pagaAromakerActivo ? 'ACTIVADO' : 'DESACTIVADO');
             });
         });
 
@@ -687,11 +685,12 @@ body{margin:0;font-family:sans-serif}
 .separador{border-top:1.5px solid #000;margin:5px 0}
 .nota-venta{font-weight:700;font-size:18pt!important}
 ${usarMarcadorPaga ? `
+.etiqueta-con-marca{padding:24px 20px 24px 20px!important}
 .marca-paga-container{position:absolute;inset:0;pointer-events:none;z-index:10}
-.marca-paga-top,.marca-paga-bottom{position:absolute;left:0;right:0;height:25px;background:#f59e0b;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#000;letter-spacing:2px}
+.marca-paga-top,.marca-paga-bottom{position:absolute;left:0;right:0;height:18px;background:#f59e0b;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:10px;color:#000;letter-spacing:1px}
 .marca-paga-top{top:0}
 .marca-paga-bottom{bottom:0}
-.marca-paga-left,.marca-paga-right{position:absolute;top:0;bottom:0;width:25px;background:#f59e0b;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#000;writing-mode:vertical-rl;letter-spacing:2px}
+.marca-paga-left,.marca-paga-right{position:absolute;top:0;bottom:0;width:15px;background:#f59e0b;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:9px;color:#000;writing-mode:vertical-rl;letter-spacing:1px}
 .marca-paga-left{left:0}
 .marca-paga-right{right:0;writing-mode:vertical-lr}
 ` : ''}
@@ -705,17 +704,19 @@ ${usarMarcadorPaga ? `
                 l.forEach(item => { 
                     const e = generarContenidoEtiquetaHTML(item); 
                     const marcaPaga = item.pagaAromaker ? '<div class="marca-paga-container"><div class="marca-paga-top">PAGA AROMAKER</div><div class="marca-paga-bottom">PAGA AROMAKER</div><div class="marca-paga-left">PAGA AROMAKER</div><div class="marca-paga-right">PAGA AROMAKER</div></div>' : '';
+                    const claseExtra = item.pagaAromaker ? ' etiqueta-con-marca' : '';
                     for (let i = 0; i < item.bultos; i++) { 
-                        h += `<div class="etiqueta ${s}">${e}${marcaPaga}</div>`; 
+                        h += `<div class="etiqueta ${s}${claseExtra}">${e}${marcaPaga}</div>`; 
                         g++; 
                         if (g % p === 0 && g < t) h += `</div><div class="pagina">`; 
                     } 
                 });
             } else {
                 const marcaPaga = processedData.pagaAromaker ? '<div class="marca-paga-container"><div class="marca-paga-top">PAGA AROMAKER</div><div class="marca-paga-bottom">PAGA AROMAKER</div><div class="marca-paga-left">PAGA AROMAKER</div><div class="marca-paga-right">PAGA AROMAKER</div></div>' : '';
+                const claseExtra = processedData.pagaAromaker ? ' etiqueta-con-marca' : '';
                 for (let i = 1; i <= processedData.bultos; i++) {
                     const e = generarContenidoEtiquetaHTML(processedData), r = processedData.tipo === 'RETIRO' || processedData.tipo === 'PROVISORIA', s = `etiqueta-${processedData.tipo.toLowerCase()}`;
-                    h += `<div class="etiqueta ${s}">${e}${marcaPaga}</div>`;
+                    h += `<div class="etiqueta ${s}${claseExtra}">${e}${marcaPaga}</div>`;
                     if (i % (r ? 2 : 4) === 0 && i < processedData.bultos) h += `</div><div class="pagina">`;
                 }
             }
