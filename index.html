@@ -653,20 +653,20 @@
                 return `<div class="bulto-manual">BULTOS: ______ / ______</div>${r}</div><div class="separador"></div>${a}</div><div class="separador"></div>${e}</div>`;
             }
         }
-        
+
         function generarVistaImprimible() {
-            if (!processedData) { alert('Primero debes procesar los datos.'); return; }
-            enviarAGoogleSheets(processedData);
-            const w = window.open('', '_blank');
-            
-            let usarMarcadorPaga = false;
-            if (processedData.tipo === 'ENVIO' && processedData.pagaAromaker) {
-                usarMarcadorPaga = true;
-            } else if (processedData.tipo === 'LOTE' && processedData.lote && processedData.lote.length > 0) {
-                usarMarcadorPaga = processedData.lote.some(item => item.pagaAromaker);
-            }
-            
-            let c = `<html><head><title>Etiquetas</title><style>
+    if (!processedData) { alert('Primero debes procesar los datos.'); return; }
+    enviarAGoogleSheets(processedData);
+    const w = window.open('', '_blank');
+    
+    let usarMarcadorPaga = false;
+    if (processedData.tipo === 'ENVIO' && processedData.pagaAromaker) {
+        usarMarcadorPaga = true;
+    } else if (processedData.tipo === 'LOTE' && processedData.lote && processedData.lote.length > 0) {
+        usarMarcadorPaga = processedData.lote.some(item => item.pagaAromaker);
+    }
+    
+    let c = `<html><head><title>Etiquetas</title><style>
 body{margin:0;font-family:sans-serif}
 .pagina{display:flex;flex-wrap:wrap;justify-content:space-around;align-content:flex-start;width:21.59cm;height:27.94cm;padding:0.5cm;box-sizing:border-box;page-break-after:always}
 .etiqueta{display:flex;flex-direction:column;border:1.5px dashed #777;padding:6px 10px;box-sizing:border-box;line-height:1.3;overflow-wrap:break-word;position:relative}
@@ -687,42 +687,42 @@ body{margin:0;font-family:sans-serif}
 ${usarMarcadorPaga ? `
 .etiqueta-con-marca{padding:24px 20px 24px 20px!important}
 .marca-paga-container{position:absolute;inset:0;pointer-events:none;z-index:10}
-.marca-paga-top,.marca-paga-bottom{position:absolute;left:0;right:0;height:18px;background:#f59e0b;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:10px;color:#000;letter-spacing:1px}
+.marca-paga-top,.marca-paga-bottom{position:absolute;left:0;right:0;height:18px;background:#333;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:10px;color:#fff;letter-spacing:1px}
 .marca-paga-top{top:0}
 .marca-paga-bottom{bottom:0}
-.marca-paga-left,.marca-paga-right{position:absolute;top:0;bottom:0;width:15px;background:#f59e0b;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:9px;color:#000;writing-mode:vertical-rl;letter-spacing:1px}
+.marca-paga-left,.marca-paga-right{position:absolute;top:0;bottom:0;width:15px;background:#333;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:9px;color:#fff;writing-mode:vertical-rl;letter-spacing:1px}
 .marca-paga-left{left:0}
 .marca-paga-right{right:0;writing-mode:vertical-lr}
 ` : ''}
 @media print{.no-imprimir{display:none}}
 </style></head><body><div class="no-imprimir" style="text-align:center;padding:15px;background:#eee;"><h2>Vista de Impresión</h2><button onclick="window.print()">Imprimir</button> <button onclick="window.close()">Cerrar</button></div>`;
-            
-            let h = '';
-            if (processedData.tipo === 'LOTE' && processedData.lote) {
-                let g = 0, l = processedData.lote, t = l.reduce((s, i) => s + i.bultos, 0), o = l.length > 0 ? l[0].tipo : 'ENVIO';
-                const p = (o === 'RETIRO' || o === 'PROVISORIA') ? 2 : 4, s = `etiqueta-${o.toLowerCase()}`;
-                l.forEach(item => { 
-                    const e = generarContenidoEtiquetaHTML(item); 
-                    const marcaPaga = item.pagaAromaker ? '<div class="marca-paga-container"><div class="marca-paga-top">PAGA AROMAKER</div><div class="marca-paga-bottom">PAGA AROMAKER</div><div class="marca-paga-left">PAGA AROMAKER</div><div class="marca-paga-right">PAGA AROMAKER</div></div>' : '';
-                    const claseExtra = item.pagaAromaker ? ' etiqueta-con-marca' : '';
-                    for (let i = 0; i < item.bultos; i++) { 
-                        h += `<div class="etiqueta ${s}${claseExtra}">${e}${marcaPaga}</div>`; 
-                        g++; 
-                        if (g % p === 0 && g < t) h += `</div><div class="pagina">`; 
-                    } 
-                });
-            } else {
-                const marcaPaga = processedData.pagaAromaker ? '<div class="marca-paga-container"><div class="marca-paga-top">PAGA AROMAKER</div><div class="marca-paga-bottom">PAGA AROMAKER</div><div class="marca-paga-left">PAGA AROMAKER</div><div class="marca-paga-right">PAGA AROMAKER</div></div>' : '';
-                const claseExtra = processedData.pagaAromaker ? ' etiqueta-con-marca' : '';
-                for (let i = 1; i <= processedData.bultos; i++) {
-                    const e = generarContenidoEtiquetaHTML(processedData), r = processedData.tipo === 'RETIRO' || processedData.tipo === 'PROVISORIA', s = `etiqueta-${processedData.tipo.toLowerCase()}`;
-                    h += `<div class="etiqueta ${s}${claseExtra}">${e}${marcaPaga}</div>`;
-                    if (i % (r ? 2 : 4) === 0 && i < processedData.bultos) h += `</div><div class="pagina">`;
-                }
-            }
-            w.document.write(c + `<div class="pagina">${h}</div></body></html>`);
-            w.document.close();
+    
+    let h = '';
+    if (processedData.tipo === 'LOTE' && processedData.lote) {
+        let g = 0, l = processedData.lote, t = l.reduce((s, i) => s + i.bultos, 0), o = l.length > 0 ? l[0].tipo : 'ENVIO';
+        const p = (o === 'RETIRO' || o === 'PROVISORIA') ? 2 : 4, s = `etiqueta-${o.toLowerCase()}`;
+        l.forEach(item => { 
+            const e = generarContenidoEtiquetaHTML(item); 
+            const marcaPaga = item.pagaAromaker ? '<div class="marca-paga-container"><div class="marca-paga-top">PAGA AROMAKER</div><div class="marca-paga-bottom">PAGA AROMAKER</div><div class="marca-paga-left">PAGA AROMAKER</div><div class="marca-paga-right">PAGA AROMAKER</div></div>' : '';
+            const claseExtra = item.pagaAromaker ? ' etiqueta-con-marca' : '';
+            for (let i = 0; i < item.bultos; i++) { 
+                h += `<div class="etiqueta ${s}${claseExtra}">${e}${marcaPaga}</div>`; 
+                g++; 
+                if (g % p === 0 && g < t) h += `</div><div class="pagina">`; 
+            } 
+        });
+    } else {
+        const marcaPaga = processedData.pagaAromaker ? '<div class="marca-paga-container"><div class="marca-paga-top">PAGA AROMAKER</div><div class="marca-paga-bottom">PAGA AROMAKER</div><div class="marca-paga-left">PAGA AROMAKER</div><div class="marca-paga-right">PAGA AROMAKER</div></div>' : '';
+        const claseExtra = processedData.pagaAromaker ? ' etiqueta-con-marca' : '';
+        for (let i = 1; i <= processedData.bultos; i++) {
+            const e = generarContenidoEtiquetaHTML(processedData), r = processedData.tipo === 'RETIRO' || processedData.tipo === 'PROVISORIA', s = `etiqueta-${processedData.tipo.toLowerCase()}`;
+            h += `<div class="etiqueta ${s}${claseExtra}">${e}${marcaPaga}</div>`;
+            if (i % (r ? 2 : 4) === 0 && i < processedData.bultos) h += `</div><div class="pagina">`;
         }
+    }
+    w.document.write(c + `<div class="pagina">${h}</div></body></html>`);
+    w.document.close();
+}
         
         function generarExcel() {
             if (!processedData || processedData.tipo === 'LOTE') { alert('Función solo para modo individual.'); return; }
