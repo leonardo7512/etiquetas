@@ -68,7 +68,6 @@
         .batch-item-info { font-size: 14px; }
         .batch-item-info strong { color: #1d4ed8; }
 
-        /* ESTILOS PARA EL SWITCH DE PAGA AROMAKER */
         .switch-container { 
             display: flex; 
             align-items: center; 
@@ -290,10 +289,8 @@
         const vendedores = { "LEONARDO CASTRO": "2 3347 5040", "ANDREA FUENTES": "+56 9 6863 7136", "JOSELYN GOMEZ": "+56 9 3096 8640", "YEIMY REALPE": "+56 9 8544 9261", "LESLIE RIOS": "+56 9 3457 2139", "ADM": "+56 9 4755 4045" };
         const comunasPorRegion = { "Arica y Parinacota": ["Arica", "Camarones", "Putre", "General Lagos"], "Tarapacá": ["Iquique", "Alto Hospicio", "Pozo Almonte", "Camiña", "Colchane", "Huara", "Pica"], "Antofagasta": ["Antofagasta", "Mejillones", "Sierra Gorda", "Taltal", "Calama", "Ollagüe", "San Pedro de Atacama", "Tocopilla", "María Elena"], "Atacama": ["Copiapó", "Caldera", "Tierra Amarilla", "Chañaral", "Diego de Almagro", "Vallenar", "Alto del Carmen", "Freirina", "Huasco"], "Coquimbo": ["La Serena", "Coquimbo", "Andacollo", "La Higuera", "Paiguano", "Vicuña", "Illapel", "Canela", "Los Vilos", "Salamanca", "Ovalle", "Combarbalá", "Monte Patria", "Punitaqui", "Río Hurtado"], "Valparaíso": ["Valparaíso", "Casablanca", "Concón", "Juan Fernández", "Puchuncaví", "Quintero", "Viña del Mar", "Isla de Pascua", "Los Andes", "Calle Larga", "Rinconada", "San Esteban", "La Ligua", "Cabildo", "Papudo", "Petorca", "Zapallar", "Quillota", "Calera", "Hijuelas", "La Cruz", "Nogales", "San Antonio", "Algarrobo", "Cartagena", "El Quisco", "El Tabo", "Santo Domingo", "San Felipe", "Catemu", "Llaillay", "Panquehue", "Putaendo", "Santa María", "Quilpué", "Limache", "Olmué", "Villa Alemana"], "Metropolitana de Santiago": ["Santiago", "Cerrillos", "Cerro Navia", "Conchalí", "El Bosque", "Estación Central", "Huechuraba", "Independencia", "La Cisterna", "La Florida", "La Granja", "La Pintana", "La Reina", "Las Condes", "Lo Barnechea", "Lo Espejo", "Lo Prado", "Macul", "Maipú", "Ñuñoa", "Pedro Aguirre Cerda", "Peñalén", "Providencia", "Pudahuel", "Quilicura", "Quinta Normal", "Recoleta", "Renca", "San Joaquín", "San Miguel", "San Ramón", "Vitacura", "Puente Alto", "Pirque", "San José de Maipo", "Colina", "Lampa", "Tiltil", "San Bernardo", "Buin", "Calera de Tango", "Paine", "Melipilla", "Alhué", "Curacaví", "María Pinto", "San Pedro", "Talagante", "El Monte", "Isla de Maipo", "Padre Hurtado", "Peñaflor"], "Libertador General Bernardo O'Higgins": ["Rancagua", "Codegua", "Coinco", "Coltauco", "Doñihue", "Graneros", "Las Cabras", "Machalí", "Malloa", "Mostazal", "Olivar", "Peumo", "Pichidegua", "Quinta de Tilcoco", "Rengo", "Requínoa", "San Vicente", "Pichilemu", "La Estrella", "Litueche", "Marchihue", "Navidad", "Paredones", "San Fernando", "Chépica", "Chimbarongo", "Lolol", "Nancagua", "Palmilla", "Peralillo", "Placilla", "Pumanque", "Santa Cruz"], "Maule": ["Talca", "Constitución", "Curepto", "Empedrado", "Maule", "Pelarco", "Pencahue", "Río Claro", "San Clemente", "San Rafael", "Cauquenes", "Chanco", "Pelluhue", "Curicó", "Hualañé", "Licantén", "Molina", "Rauco", "Romeral", "Sagrada Familia", "Teno", "Vichuquén", "Linares", "Colbún", "Longaví", "Parral", "Retiro", "San Javier", "Villa Alegre", "Yerbas Buenas"], "Ñuble": ["Cobquecura", "Coelemu", "Ninhue", "Portezuelo", "Quirihue", "Ránquil", "Treguaco", "Bulnes", "Chillán Viejo", "Chillán", "El Carmen", "Pemuco", "Pinto", "Quillón", "San Ignacio", "Yungay", "Coihueco", "Ñiquén", "San Carlos", "San Fabián", "San Nicolás"], "Biobío": ["Concepción", "Coronel", "Chiguayante", "Florida", "Hualqui", "Lota", "Penco", "San Pedro de la Paz", "Santa Juana", "Talcahuano", "Tomé", "Hualpén", "Lebu", "Arauco", "Cañete", "Contulmo", "Curanilahue", "Los Álamos", "Tirúa", "Los Ángeles", "Antuco", "Cabrero", "Laja", "Mulchén", "Nacimiento", "Negrete", "Quilaco", "Quilleco", "San Rosendo", "Santa Bárbara", "Tucapel", "Yumbel", "Alto Biobío"], "La Araucanía": ["Temuco", "Carahue", "Cunco", "Curarrehue", "Freire", "Galvarino", "Gorbea", "Lautaro", "Loncoche", "Melipeuco", "Nueva Imperial", "Padre las Casas", "Perquenco", "Pitrufquén", "Pucón", "Saavedra", "Teodoro Schmidt", "Toltén", "Vilcún", "Villarrica", "Cholchol", "Angol", "Collipulli", "Curacautín", "Ercilla", "Lonquimay", "Los Sauces", "Lumaco", "Purén", "Renaico", "Traiguén", "Victoria"], "Los Ríos": ["Valdivia", "Corral", "Lanco", "Los Lagos", "Máfil", "Mariquina", "Paillaco", "Panguipulli", "La Unión", "Futrono", "Lago Ranco", "Río Bueno"], "Los Lagos": ["Puerto Montt", "Calbuco", "Cochamó", "Fresia", "Frutillar", "Los Muermos", "Llanquihue", "Maullín", "Puerto Varas", "Castro", "Ancud", "Chonchi", "Curaco de Vélez", "Dalcahue", "Puqueldón", "Queilén", "Quellón", "Quemchi", "Quinchao", "Osorno", "Puerto Octay", "Purranque", "Puyehue", "Río Negro", "San Juan de la Costa", "San Pablo", "Chaitén", "Futaleufú", "Hualaihué", "Palena"], "Aysén del General Carlos Ibáñez del Campo": ["Coyhaique", "Lago Verde", "Aysén", "Cisnes", "Guaitecas", "Cochrane", "O'Higgins", "Tortel", "Chile Chico", "Río Ibáñez"], "Magallanes y de la Antártica Chilena": ["Punta Arenas", "Laguna Blanca", "Río Verde", "San Gregorio", "Cabo de Hornos (Ex Navarino)", "Antártica", "Porvenir", "Primavera", "Timaukel", "Natales", "Torres del Paine"] };
         
-        // ✅ TU NUEVA URL DE GOOGLE APPS SCRIPT
         const googleScriptURL = 'https://script.google.com/macros/s/AKfycbwEIehhRdV6jDI9lDGCQEgUaRh13kTZDdBUO4Oc7Ph8I5FY1yJ7zx53fqmXNqs9DMF4tA/exec';
 
-        // Detectar cambio en el switch
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('switchPagaAromaker').addEventListener('change', function() {
                 pagaAromakerActivo = this.checked;
@@ -664,7 +661,6 @@
             enviarAGoogleSheets(processedData);
             const w = window.open('', '_blank');
             
-            // Detectar si hay marcador PAGA AROMAKER
             let usarMarcadorPaga = false;
             if (processedData.tipo === 'ENVIO' && processedData.pagaAromaker) {
                 usarMarcadorPaga = true;
@@ -690,7 +686,15 @@ body{margin:0;font-family:sans-serif}
 .campo{font-weight:700}
 .separador{border-top:1.5px solid #000;margin:5px 0}
 .nota-venta{font-weight:700;font-size:18pt!important}
-${usarMarcadorPaga ? `.marca-paga-aromaker{position:absolute;top:0;left:0;right:0;bottom:0;border:4px solid #f59e0b;pointer-events:none;display:flex;align-items:center;justify-content:center}.marca-paga-aromaker::before{content:'*** PAGA AROMAKER ***';font-size:2em;font-weight:900;color:#f59e0b;transform:rotate(-15deg);opacity:0.3;white-space:nowrap}` : ''}
+${usarMarcadorPaga ? `
+.marca-paga-container{position:absolute;inset:0;pointer-events:none;z-index:10}
+.marca-paga-top,.marca-paga-bottom{position:absolute;left:0;right:0;height:25px;background:#f59e0b;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#000;letter-spacing:2px}
+.marca-paga-top{top:0}
+.marca-paga-bottom{bottom:0}
+.marca-paga-left,.marca-paga-right{position:absolute;top:0;bottom:0;width:25px;background:#f59e0b;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#000;writing-mode:vertical-rl;letter-spacing:2px}
+.marca-paga-left{left:0}
+.marca-paga-right{right:0;writing-mode:vertical-lr}
+` : ''}
 @media print{.no-imprimir{display:none}}
 </style></head><body><div class="no-imprimir" style="text-align:center;padding:15px;background:#eee;"><h2>Vista de Impresión</h2><button onclick="window.print()">Imprimir</button> <button onclick="window.close()">Cerrar</button></div>`;
             
@@ -700,7 +704,7 @@ ${usarMarcadorPaga ? `.marca-paga-aromaker{position:absolute;top:0;left:0;right:
                 const p = (o === 'RETIRO' || o === 'PROVISORIA') ? 2 : 4, s = `etiqueta-${o.toLowerCase()}`;
                 l.forEach(item => { 
                     const e = generarContenidoEtiquetaHTML(item); 
-                    const marcaPaga = item.pagaAromaker ? '<div class="marca-paga-aromaker"></div>' : '';
+                    const marcaPaga = item.pagaAromaker ? '<div class="marca-paga-container"><div class="marca-paga-top">PAGA AROMAKER</div><div class="marca-paga-bottom">PAGA AROMAKER</div><div class="marca-paga-left">PAGA AROMAKER</div><div class="marca-paga-right">PAGA AROMAKER</div></div>' : '';
                     for (let i = 0; i < item.bultos; i++) { 
                         h += `<div class="etiqueta ${s}">${e}${marcaPaga}</div>`; 
                         g++; 
@@ -708,7 +712,7 @@ ${usarMarcadorPaga ? `.marca-paga-aromaker{position:absolute;top:0;left:0;right:
                     } 
                 });
             } else {
-                const marcaPaga = processedData.pagaAromaker ? '<div class="marca-paga-aromaker"></div>' : '';
+                const marcaPaga = processedData.pagaAromaker ? '<div class="marca-paga-container"><div class="marca-paga-top">PAGA AROMAKER</div><div class="marca-paga-bottom">PAGA AROMAKER</div><div class="marca-paga-left">PAGA AROMAKER</div><div class="marca-paga-right">PAGA AROMAKER</div></div>' : '';
                 for (let i = 1; i <= processedData.bultos; i++) {
                     const e = generarContenidoEtiquetaHTML(processedData), r = processedData.tipo === 'RETIRO' || processedData.tipo === 'PROVISORIA', s = `etiqueta-${processedData.tipo.toLowerCase()}`;
                     h += `<div class="etiqueta ${s}">${e}${marcaPaga}</div>`;
