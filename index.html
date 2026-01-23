@@ -17,7 +17,6 @@
         .flex-btn.active { background: #2563eb; color: white; border-color: #2563eb; }
         .flex-btn:hover:not(.active) { border-color: #2563eb; background: #f8fafc; }
         
-        /* ESTILO NUEVO PARA EL BOTÓN DE PEGAR */
         .paste-btn { background: #8b5cf6 !important; color: white !important; border-color: #7c3aed !important; }
         .paste-btn:hover { background: #7c3aed !important; }
 
@@ -69,6 +68,57 @@
         .batch-item-info { font-size: 14px; }
         .batch-item-info strong { color: #1d4ed8; }
 
+        /* ESTILOS PARA EL SWITCH DE PAGA AROMAKER */
+        .switch-container { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            padding: 15px; 
+            background: #fef3c7; 
+            border: 2px solid #f59e0b; 
+            border-radius: 8px; 
+            margin: 20px 0; 
+        }
+        .switch { 
+            position: relative; 
+            display: inline-block; 
+            width: 60px; 
+            height: 34px; 
+        }
+        .switch input { 
+            opacity: 0; 
+            width: 0; 
+            height: 0; 
+        }
+        .slider { 
+            position: absolute; 
+            cursor: pointer; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            background-color: #ccc; 
+            transition: .4s; 
+            border-radius: 34px; 
+        }
+        .slider:before { 
+            position: absolute; 
+            content: ""; 
+            height: 26px; 
+            width: 26px; 
+            left: 4px; 
+            bottom: 4px; 
+            background-color: white; 
+            transition: .4s; 
+            border-radius: 50%; 
+        }
+        input:checked + .slider { 
+            background-color: #f59e0b; 
+        }
+        input:checked + .slider:before { 
+            transform: translateX(26px); 
+        }
+
         @media (max-width: 768px) {
             .container { padding: 10px; }
             .form-grid { grid-template-columns: 1fr; }
@@ -105,6 +155,8 @@
                 <div class="form-group"><label for="retiroCliente" class="required">Cliente</label><input type="text" id="retiroCliente"></div>
                 <div class="form-group"><label for="retiroNotaVenta" class="required">Nota de Venta</label><input type="text" id="retiroNotaVenta"></div>
                 <div class="form-group"><label for="retiroBultos">Copias de Etiqueta</label><input type="number" id="retiroBultos" min="1" value="1"></div>
+                <div class="form-group"><label for="retiroContacto">Contacto (Opcional)</label><input type="text" id="retiroContacto" placeholder="Nombre de contacto"></div>
+                <div class="form-group"><label for="retiraQuien">Retira (Opcional)</label><input type="text" id="retiraQuien" placeholder="Quien retira"></div>
                 <div class="form-group"><label for="retiroObservaciones">Observaciones</label><textarea id="retiroObservaciones"></textarea></div>
             </div>
             <div class="btn-group"><button class="btn btn-primary" onclick="procesarRetiro()">Generar Vista Previa</button></div>
@@ -124,6 +176,18 @@
 
         <div id="formENVIO" class="form-section">
             <h2 style="margin-bottom: 20px; color: #1f2937;">📦 Formulario de Envío</h2>
+            
+            <!-- SWITCH PAGA AROMAKER -->
+            <div class="switch-container">
+                <label class="switch">
+                    <input type="checkbox" id="switchPagaAromaker">
+                    <span class="slider"></span>
+                </label>
+                <label for="switchPagaAromaker" style="font-weight: 600; color: #b45309; cursor: pointer;">
+                    💰 Marcar como "PAGA AROMAKER"
+                </label>
+            </div>
+
             <div class="form-group"><label for="envioVendedor">Vendedor (Remitente)</label><select id="envioVendedor"></select></div>
             <h3 style="margin-bottom: 15px; color: #374151;">Datos del Destinatario</h3>
             <div class="form-grid">
@@ -221,10 +285,21 @@
         let processedData = null;
         let batchData = [];
         let modoActual = 'individual';
+        let pagaAromakerActivo = false;
+        
         const vendedores = { "LEONARDO CASTRO": "2 3347 5040", "ANDREA FUENTES": "+56 9 6863 7136", "JOSELYN GOMEZ": "+56 9 3096 8640", "YEIMY REALPE": "+56 9 8544 9261", "LESLIE RIOS": "+56 9 3457 2139", "ADM": "+56 9 4755 4045" };
         const comunasPorRegion = { "Arica y Parinacota": ["Arica", "Camarones", "Putre", "General Lagos"], "Tarapacá": ["Iquique", "Alto Hospicio", "Pozo Almonte", "Camiña", "Colchane", "Huara", "Pica"], "Antofagasta": ["Antofagasta", "Mejillones", "Sierra Gorda", "Taltal", "Calama", "Ollagüe", "San Pedro de Atacama", "Tocopilla", "María Elena"], "Atacama": ["Copiapó", "Caldera", "Tierra Amarilla", "Chañaral", "Diego de Almagro", "Vallenar", "Alto del Carmen", "Freirina", "Huasco"], "Coquimbo": ["La Serena", "Coquimbo", "Andacollo", "La Higuera", "Paiguano", "Vicuña", "Illapel", "Canela", "Los Vilos", "Salamanca", "Ovalle", "Combarbalá", "Monte Patria", "Punitaqui", "Río Hurtado"], "Valparaíso": ["Valparaíso", "Casablanca", "Concón", "Juan Fernández", "Puchuncaví", "Quintero", "Viña del Mar", "Isla de Pascua", "Los Andes", "Calle Larga", "Rinconada", "San Esteban", "La Ligua", "Cabildo", "Papudo", "Petorca", "Zapallar", "Quillota", "Calera", "Hijuelas", "La Cruz", "Nogales", "San Antonio", "Algarrobo", "Cartagena", "El Quisco", "El Tabo", "Santo Domingo", "San Felipe", "Catemu", "Llaillay", "Panquehue", "Putaendo", "Santa María", "Quilpué", "Limache", "Olmué", "Villa Alemana"], "Metropolitana de Santiago": ["Santiago", "Cerrillos", "Cerro Navia", "Conchalí", "El Bosque", "Estación Central", "Huechuraba", "Independencia", "La Cisterna", "La Florida", "La Granja", "La Pintana", "La Reina", "Las Condes", "Lo Barnechea", "Lo Espejo", "Lo Prado", "Macul", "Maipú", "Ñuñoa", "Pedro Aguirre Cerda", "Peñalén", "Providencia", "Pudahuel", "Quilicura", "Quinta Normal", "Recoleta", "Renca", "San Joaquín", "San Miguel", "San Ramón", "Vitacura", "Puente Alto", "Pirque", "San José de Maipo", "Colina", "Lampa", "Tiltil", "San Bernardo", "Buin", "Calera de Tango", "Paine", "Melipilla", "Alhué", "Curacaví", "María Pinto", "San Pedro", "Talagante", "El Monte", "Isla de Maipo", "Padre Hurtado", "Peñaflor"], "Libertador General Bernardo O'Higgins": ["Rancagua", "Codegua", "Coinco", "Coltauco", "Doñihue", "Graneros", "Las Cabras", "Machalí", "Malloa", "Mostazal", "Olivar", "Peumo", "Pichidegua", "Quinta de Tilcoco", "Rengo", "Requínoa", "San Vicente", "Pichilemu", "La Estrella", "Litueche", "Marchihue", "Navidad", "Paredones", "San Fernando", "Chépica", "Chimbarongo", "Lolol", "Nancagua", "Palmilla", "Peralillo", "Placilla", "Pumanque", "Santa Cruz"], "Maule": ["Talca", "Constitución", "Curepto", "Empedrado", "Maule", "Pelarco", "Pencahue", "Río Claro", "San Clemente", "San Rafael", "Cauquenes", "Chanco", "Pelluhue", "Curicó", "Hualañé", "Licantén", "Molina", "Rauco", "Romeral", "Sagrada Familia", "Teno", "Vichuquén", "Linares", "Colbún", "Longaví", "Parral", "Retiro", "San Javier", "Villa Alegre", "Yerbas Buenas"], "Ñuble": ["Cobquecura", "Coelemu", "Ninhue", "Portezuelo", "Quirihue", "Ránquil", "Treguaco", "Bulnes", "Chillán Viejo", "Chillán", "El Carmen", "Pemuco", "Pinto", "Quillón", "San Ignacio", "Yungay", "Coihueco", "Ñiquén", "San Carlos", "San Fabián", "San Nicolás"], "Biobío": ["Concepción", "Coronel", "Chiguayante", "Florida", "Hualqui", "Lota", "Penco", "San Pedro de la Paz", "Santa Juana", "Talcahuano", "Tomé", "Hualpén", "Lebu", "Arauco", "Cañete", "Contulmo", "Curanilahue", "Los Álamos", "Tirúa", "Los Ángeles", "Antuco", "Cabrero", "Laja", "Mulchén", "Nacimiento", "Negrete", "Quilaco", "Quilleco", "San Rosendo", "Santa Bárbara", "Tucapel", "Yumbel", "Alto Biobío"], "La Araucanía": ["Temuco", "Carahue", "Cunco", "Curarrehue", "Freire", "Galvarino", "Gorbea", "Lautaro", "Loncoche", "Melipeuco", "Nueva Imperial", "Padre las Casas", "Perquenco", "Pitrufquén", "Pucón", "Saavedra", "Teodoro Schmidt", "Toltén", "Vilcún", "Villarrica", "Cholchol", "Angol", "Collipulli", "Curacautín", "Ercilla", "Lonquimay", "Los Sauces", "Lumaco", "Purén", "Renaico", "Traiguén", "Victoria"], "Los Ríos": ["Valdivia", "Corral", "Lanco", "Los Lagos", "Máfil", "Mariquina", "Paillaco", "Panguipulli", "La Unión", "Futrono", "Lago Ranco", "Río Bueno"], "Los Lagos": ["Puerto Montt", "Calbuco", "Cochamó", "Fresia", "Frutillar", "Los Muermos", "Llanquihue", "Maullín", "Puerto Varas", "Castro", "Ancud", "Chonchi", "Curaco de Vélez", "Dalcahue", "Puqueldón", "Queilén", "Quellón", "Quemchi", "Quinchao", "Osorno", "Puerto Octay", "Purranque", "Puyehue", "Río Negro", "San Juan de la Costa", "San Pablo", "Chaitén", "Futaleufú", "Hualaihué", "Palena"], "Aysén del General Carlos Ibáñez del Campo": ["Coyhaique", "Lago Verde", "Aysén", "Cisnes", "Guaitecas", "Cochrane", "O'Higgins", "Tortel", "Chile Chico", "Río Ibáñez"], "Magallanes y de la Antártica Chilena": ["Punta Arenas", "Laguna Blanca", "Río Verde", "San Gregorio", "Cabo de Hornos (Ex Navarino)", "Antártica", "Porvenir", "Primavera", "Timaukel", "Natales", "Torres del Paine"] };
         
-        const googleScriptURL = 'https://script.google.com/macros/s/AKfycbwiIfve9GDgaYuvsnB30wUaXei0psTS7fCpMA5ntr8TdRZjKjkm-fEkdum0aElPD_3a/exec';
+        // ✅ TU NUEVA URL DE GOOGLE APPS SCRIPT
+        const googleScriptURL = 'https://script.google.com/macros/s/AKfycbwEIehhRdV6jDI9lDGCQEgUaRh13kTZDdBUO4Oc7Ph8I5FY1yJ7zx53fqmXNqs9DMF4tA/exec';
+
+        // Detectar cambio en el switch
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('switchPagaAromaker').addEventListener('change', function() {
+                pagaAromakerActivo = this.checked;
+                console.log('PAGA AROMAKER:', pagaAromakerActivo ? 'ACTIVADO' : 'DESACTIVADO');
+            });
+        });
 
         function obtenerValor(datos, clave) {
             const campo = datos.find(d => d[0].toUpperCase().trim() === clave.toUpperCase().trim());
@@ -267,8 +342,8 @@
                     body: formData,
                     mode: 'no-cors'
                 })
-                .then(response => console.log(`Intento de envío a la hoja "${nombreVendedorLimpio}" realizado.`))
-                .catch(error => console.error('Error al intentar enviar datos a Google Sheets:', error));
+                .then(response => console.log(`✅ Datos enviados a la hoja "${nombreVendedorLimpio}"`))
+                .catch(error => console.error('❌ Error al enviar a Google Sheets:', error));
             });
         }
         
@@ -371,7 +446,6 @@
             });
         });
 
-        // --- FUNCIONES NUEVAS PARA PEGAR DATOS ---
         function abrirModalPegar() {
             document.getElementById('modalPegarDatos').style.display = 'flex';
             document.getElementById('textoPegado').value = '';
@@ -386,7 +460,6 @@
             const texto = document.getElementById('textoPegado').value;
             if (!texto.trim()) return;
 
-            // Variables para almacenar datos
             let rut = "", nombre = "", documento = "", vendedor = "", telefono = "", direccion = "", comuna = "", transporte = "", pago = "", referencia = "";
 
             const lineas = texto.split('\n');
@@ -394,7 +467,7 @@
                 const limpio = linea.trim();
                 if (limpio.startsWith('RUT DESTINATARIO:')) rut = limpio.substring('RUT DESTINATARIO:'.length).trim();
                 else if (limpio.startsWith('DESTINATARIO:')) nombre = limpio.substring('DESTINATARIO:'.length).trim();
-                else if (limpio.startsWith('CLIENTE:')) nombre = limpio.substring('CLIENTE:'.length).trim(); // Por si es retiro
+                else if (limpio.startsWith('CLIENTE:')) nombre = limpio.substring('CLIENTE:'.length).trim();
                 else if (limpio.startsWith('NOTA DE VENTA:')) documento = limpio.substring('NOTA DE VENTA:'.length).trim();
                 else if (limpio.startsWith('TELÉFONO DESTINO:')) telefono = limpio.substring('TELÉFONO DESTINO:'.length).trim();
                 else if (limpio.startsWith('DIRECCIÓN DESTINO:')) direccion = limpio.substring('DIRECCIÓN DESTINO:'.length).trim();
@@ -403,13 +476,11 @@
                 else if (limpio.startsWith('MEDIO DE TRANSPORTE:')) transporte = limpio.substring('MEDIO DE TRANSPORTE:'.length).trim();
                 else if (limpio.startsWith('FORMA DE PAGO:')) pago = limpio.substring('FORMA DE PAGO:'.length).trim();
                 else if (limpio.startsWith('VENDEDOR:')) {
-                    // Extraer solo el nombre antes del guión
                     let vendRaw = limpio.substring('VENDEDOR:'.length).trim();
                     vendedor = vendRaw.split('-')[0].trim();
                 }
             });
 
-            // Detectar formulario activo
             const formRetiro = document.getElementById('formRETIRO').classList.contains('active');
             const formEnvio = document.getElementById('formENVIO').classList.contains('active');
             const formProvisoria = document.getElementById('formPROVISORIA').classList.contains('active');
@@ -426,7 +497,6 @@
                 
                 if(transporte) {
                     const selectTrans = document.getElementById('envioTransporte');
-                    // Intentar coincidencia exacta
                     let matched = false;
                     for(let i=0; i<selectTrans.options.length; i++){
                         if(selectTrans.options[i].value === transporte) {
@@ -489,7 +559,7 @@
         }
         function eliminarDelLote(i) { batchData.splice(i, 1); renderizarLote(); }
         function limpiarFormularioEnvio() { ['envioDestinatario','envioRut','envioTelefono','envioDireccion','envioReferencia','envioComuna','envioNotaVenta'].forEach(id => document.getElementById(id).value = ''); document.getElementById('envioBultos').value = '1'; }
-        function limpiarFormularioRetiro() { ['retiroCliente','retiroNotaVenta','retiroObservaciones'].forEach(id => document.getElementById(id).value = ''); document.getElementById('retiroBultos').value = '1'; }
+        function limpiarFormularioRetiro() { ['retiroCliente','retiroNotaVenta','retiroContacto','retiraQuien','retiroObservaciones'].forEach(id => document.getElementById(id).value = ''); document.getElementById('retiroBultos').value = '1'; }
         function limpiarFormularioProvisoria() { ['provisoriaCliente','provisoriaNotaVenta','provisoriaObservaciones'].forEach(id => document.getElementById(id).value = ''); document.getElementById('provisoriaBultos').value = '1'; }
         function seleccionarTipo(t, e) {
             document.querySelectorAll('.selector-section:first-child .flex-btn').forEach(b => {
@@ -504,14 +574,30 @@
             const b = document.querySelector('#modoSelectorSection .flex-btn.active') || document.querySelector('#modoSelectorSection .flex-btn');
             seleccionarModo(modoActual, b);
         }
+        
         function procesarRetiro() {
             const c = document.getElementById('retiroCliente').value.trim(), n = document.getElementById('retiroNotaVenta').value.trim();
             if (!c || !n) { alert('Cliente y Nota de Venta son obligatorios.'); return; }
             const v = document.getElementById('retiroVendedor').value, d = new Date();
-            const e = { tipo: 'RETIRO', bultos: parseInt(document.getElementById('retiroBultos').value) || 1, datos: [['CLIENTE', c],['NOTA DE VENTA', n],['FECHA', `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()}`],['VENDEDOR', `${v} - ${vendedores[v]}`],['OBSERVACIONES', document.getElementById('retiroObservaciones').value.trim()]] };
+            const contacto = document.getElementById('retiroContacto').value.trim();
+            const retira = document.getElementById('retiraQuien').value.trim();
+            
+            const datosBase = [
+                ['CLIENTE', c],
+                ['NOTA DE VENTA', n],
+                ['FECHA', `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()}`],
+                ['VENDEDOR', `${v} - ${vendedores[v]}`]
+            ];
+            
+            if(contacto) datosBase.push(['CONTACTO', contacto]);
+            if(retira) datosBase.push(['RETIRA', retira]);
+            datosBase.push(['OBSERVACIONES', document.getElementById('retiroObservaciones').value.trim()]);
+            
+            const e = { tipo: 'RETIRO', bultos: parseInt(document.getElementById('retiroBultos').value) || 1, datos: datosBase };
             if (modoActual === 'multiple') { batchData.push(e); renderizarLote(); limpiarFormularioRetiro(); alert(`✅ Entrada para "${c}" agregada.`); }
             else { processedData = e; mostrarVistaPrevia(); }
         }
+        
         function procesarProvisoria() {
             const c = document.getElementById('provisoriaCliente').value.trim(), n = document.getElementById('provisoriaNotaVenta').value.trim();
             if (!c || !n) { alert('Cliente y Nota de Venta son obligatorios.'); return; }
@@ -520,6 +606,7 @@
             if (modoActual === 'multiple') { batchData.push(e); renderizarLote(); limpiarFormularioProvisoria(); alert(`✅ Entrada para "${c}" agregada.`); }
             else { processedData = e; mostrarVistaPrevia(); }
         }
+        
         function obtenerDatosEnvioDelFormulario() {
             const c = {d:'envioDestinatario',r:'envioRut',t:'envioTelefono',a:'envioDireccion',o:'envioComuna',n:'envioNotaVenta'}, f = {};
             for (const k in c) { f[k] = document.getElementById(c[k]).value.trim(); }
@@ -531,8 +618,9 @@
             for (const r in comunasPorRegion) { if (comunasPorRegion[r].includes(m)) { g = r; break; } }
             const u = (g === 'Metropolitana de Santiago') ? 'Santiago' : m, v = document.getElementById('envioVendedor').value, e = document.getElementById('envioReferencia').value.trim();
             const d = [['DE','SOC INV FUCAS SPA - RUT: 76.230.392-2'],['VENDEDOR',`${v} - ${vendedores[v]}`],['DIRECCIÓN','AV LO ESPEJO 02360, SAN BERNARDO, SANTIAGO'],['TELÉFONO','2 3347 5040'],['SEPARADOR_1',''],['DESTINATARIO',f.d],['RUT DESTINATARIO',f.r],['TELÉFONO DESTINO',f.t],['DIRECCIÓN DESTINO',f.a],...(e ? [['REFERENCIA', e]] : []),['COMUNA DESTINO',f.o],['CIUDAD DESTINO',u],['REGIÓN',g],['SEPARADOR_2',''],['TIPO DE ENVÍO',document.getElementById('envioTipo').value],['MEDIO DE TRANSPORTE',t],['FORMA DE PAGO',document.getElementById('envioPago').value],['NOTA DE VENTA',f.n]];
-            return { tipo: 'ENVIO', bultos: parseInt(document.getElementById('envioBultos').value) || 1, datos: d };
+            return { tipo: 'ENVIO', bultos: parseInt(document.getElementById('envioBultos').value) || 1, datos: d, pagaAromaker: pagaAromakerActivo };
         }
+        
         function procesarEnvio() {
             const d = obtenerDatosEnvioDelFormulario();
             if (!d) return;
@@ -549,13 +637,14 @@
             t.innerHTML = '';
             processedData.datos.filter(f => !f[0].startsWith('SEPARADOR')).forEach(f => { t.innerHTML += `<tr><td style="font-weight:600;">${f[0]||''}</td><td>${f[1]||''}</td></tr>`; });
         }
+        
         function generarContenidoEtiquetaHTML(d) {
             if (d.tipo === 'RETIRO' || d.tipo === 'PROVISORIA') {
                 let t = `<div class="titulo-etiqueta ${d.tipo==='PROVISORIA'?'titulo-provisoria':''}">${'ETIQUETA '+d.tipo}</div>`, m = '<div class="retiro-main">';
                 d.datos.filter(f => f[0]==='CLIENTE'||f[0]==='NOTA DE VENTA').forEach(f => { m += `<p class="${f[0].includes('NOTA')?'nota-venta':''}"><span class="campo">${f[0]}:</span> ${f[1]}</p>`; });
                 m += '</div>';
                 let f = `<div class="seccion-remitente">`;
-                d.datos.filter(i => i[0]==='FECHA'||i[0]==='VENDEDOR'||i[0]==='OBSERVACIONES').forEach(i => { if(i[1]) f += `<p><span class="campo">${i[0]}:</span> ${i[1]}</p>`; });
+                d.datos.filter(i => i[0]==='FECHA'||i[0]==='VENDEDOR'||i[0]==='CONTACTO'||i[0]==='RETIRA'||i[0]==='OBSERVACIONES').forEach(i => { if(i[1]) f += `<p><span class="campo">${i[0]}:</span> ${i[1]}</p>`; });
                 f += '</div>';
                 return `${t}${m}${f}`;
             } else {
@@ -569,26 +658,67 @@
                 return `<div class="bulto-manual">BULTOS: ______ / ______</div>${r}</div><div class="separador"></div>${a}</div><div class="separador"></div>${e}</div>`;
             }
         }
+        
         function generarVistaImprimible() {
             if (!processedData) { alert('Primero debes procesar los datos.'); return; }
             enviarAGoogleSheets(processedData);
             const w = window.open('', '_blank');
-            let c = `<html><head><title>Etiquetas</title><style>body{margin:0;font-family:sans-serif}.pagina{display:flex;flex-wrap:wrap;justify-content:space-around;align-content:flex-start;width:21.59cm;height:27.94cm;padding:0.5cm;box-sizing:border-box;page-break-after:always}.etiqueta{display:flex;flex-direction:column;border:1.5px dashed #777;padding:6px 10px;box-sizing:border-box;line-height:1.3;overflow-wrap:break-word}.etiqueta-envio{width:49%;height:48%;margin-bottom:.5cm}.etiqueta-retiro,.etiqueta-provisoria{width:100%;height:48%;margin-bottom:2%}.titulo-etiqueta{text-align:center;font-weight:700;font-size:1.4em;margin-bottom:5px;border-bottom:1.5px solid #000;padding-bottom:3px}.titulo-provisoria{background-color:#ffc}.bulto-manual{text-align:center;font-weight:700;font-size:1.2em;margin-bottom:5px;border-bottom:1.5px solid #000;padding-bottom:3px}.seccion p{margin:1px 0}.seccion-remitente{font-size:8pt}.seccion-destinatario{font-size:11pt;flex-grow:2;display:flex;flex-direction:column;justify-content:center}.seccion-destinatario p,.seccion-envio .nota-venta,.retiro-main{text-transform:uppercase}.seccion-envio{font-size:11pt;flex-grow:1;display:flex;flex-direction:column;justify-content:flex-end}.retiro-main{flex-grow:1;display:flex;flex-direction:column;justify-content:center;font-size:16pt}.campo{font-weight:700}.separador{border-top:1.5px solid #000;margin:5px 0}.nota-venta{font-weight:700;font-size:18pt!important}@media print{.no-imprimir{display:none}}</style></head><body><div class="no-imprimir" style="text-align:center;padding:15px;background:#eee;"><h2>Vista de Impresión</h2><button onclick="window.print()">Imprimir</button> <button onclick="window.close()">Cerrar</button></div>`;
+            
+            // Detectar si hay marcador PAGA AROMAKER
+            let usarMarcadorPaga = false;
+            if (processedData.tipo === 'ENVIO' && processedData.pagaAromaker) {
+                usarMarcadorPaga = true;
+            } else if (processedData.tipo === 'LOTE' && processedData.lote && processedData.lote.length > 0) {
+                usarMarcadorPaga = processedData.lote.some(item => item.pagaAromaker);
+            }
+            
+            let c = `<html><head><title>Etiquetas</title><style>
+body{margin:0;font-family:sans-serif}
+.pagina{display:flex;flex-wrap:wrap;justify-content:space-around;align-content:flex-start;width:21.59cm;height:27.94cm;padding:0.5cm;box-sizing:border-box;page-break-after:always}
+.etiqueta{display:flex;flex-direction:column;border:1.5px dashed #777;padding:6px 10px;box-sizing:border-box;line-height:1.3;overflow-wrap:break-word;position:relative}
+.etiqueta-envio{width:49%;height:48%;margin-bottom:.5cm}
+.etiqueta-retiro,.etiqueta-provisoria{width:100%;height:48%;margin-bottom:2%}
+.titulo-etiqueta{text-align:center;font-weight:700;font-size:1.4em;margin-bottom:5px;border-bottom:1.5px solid #000;padding-bottom:3px}
+.titulo-provisoria{background-color:#ffc}
+.bulto-manual{text-align:center;font-weight:700;font-size:1.2em;margin-bottom:5px;border-bottom:1.5px solid #000;padding-bottom:3px}
+.seccion p{margin:1px 0}
+.seccion-remitente{font-size:8pt}
+.seccion-destinatario{font-size:11pt;flex-grow:2;display:flex;flex-direction:column;justify-content:center}
+.seccion-destinatario p,.seccion-envio .nota-venta,.retiro-main{text-transform:uppercase}
+.seccion-envio{font-size:11pt;flex-grow:1;display:flex;flex-direction:column;justify-content:flex-end}
+.retiro-main{flex-grow:1;display:flex;flex-direction:column;justify-content:center;font-size:16pt}
+.campo{font-weight:700}
+.separador{border-top:1.5px solid #000;margin:5px 0}
+.nota-venta{font-weight:700;font-size:18pt!important}
+${usarMarcadorPaga ? `.marca-paga-aromaker{position:absolute;top:0;left:0;right:0;bottom:0;border:4px solid #f59e0b;pointer-events:none;display:flex;align-items:center;justify-content:center}.marca-paga-aromaker::before{content:'*** PAGA AROMAKER ***';font-size:2em;font-weight:900;color:#f59e0b;transform:rotate(-15deg);opacity:0.3;white-space:nowrap}` : ''}
+@media print{.no-imprimir{display:none}}
+</style></head><body><div class="no-imprimir" style="text-align:center;padding:15px;background:#eee;"><h2>Vista de Impresión</h2><button onclick="window.print()">Imprimir</button> <button onclick="window.close()">Cerrar</button></div>`;
+            
             let h = '';
             if (processedData.tipo === 'LOTE' && processedData.lote) {
                 let g = 0, l = processedData.lote, t = l.reduce((s, i) => s + i.bultos, 0), o = l.length > 0 ? l[0].tipo : 'ENVIO';
                 const p = (o === 'RETIRO' || o === 'PROVISORIA') ? 2 : 4, s = `etiqueta-${o.toLowerCase()}`;
-                l.forEach(d => { const e = generarContenidoEtiquetaHTML(d); for (let i = 0; i < d.bultos; i++) { h += `<div class="etiqueta ${s}">${e}</div>`; g++; if (g % p === 0 && g < t) h += `</div><div class="pagina">`; } });
+                l.forEach(item => { 
+                    const e = generarContenidoEtiquetaHTML(item); 
+                    const marcaPaga = item.pagaAromaker ? '<div class="marca-paga-aromaker"></div>' : '';
+                    for (let i = 0; i < item.bultos; i++) { 
+                        h += `<div class="etiqueta ${s}">${e}${marcaPaga}</div>`; 
+                        g++; 
+                        if (g % p === 0 && g < t) h += `</div><div class="pagina">`; 
+                    } 
+                });
             } else {
+                const marcaPaga = processedData.pagaAromaker ? '<div class="marca-paga-aromaker"></div>' : '';
                 for (let i = 1; i <= processedData.bultos; i++) {
                     const e = generarContenidoEtiquetaHTML(processedData), r = processedData.tipo === 'RETIRO' || processedData.tipo === 'PROVISORIA', s = `etiqueta-${processedData.tipo.toLowerCase()}`;
-                    h += `<div class="etiqueta ${s}">${e}</div>`;
+                    h += `<div class="etiqueta ${s}">${e}${marcaPaga}</div>`;
                     if (i % (r ? 2 : 4) === 0 && i < processedData.bultos) h += `</div><div class="pagina">`;
                 }
             }
             w.document.write(c + `<div class="pagina">${h}</div></body></html>`);
             w.document.close();
         }
+        
         function generarExcel() {
             if (!processedData || processedData.tipo === 'LOTE') { alert('Función solo para modo individual.'); return; }
             const w = XLSX.utils.book_new(), d = [];
