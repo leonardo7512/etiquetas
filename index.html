@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Procesador de Etiquetas - FUCAS SPA</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- 🆕 DEXIE.JS para IndexedDB -->
+    <script src="https://unpkg.com/dexie@latest/dist/dexie.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f5f5f5; color: #333; line-height: 1.6; }
@@ -118,16 +120,96 @@
             transform: translateX(26px); 
         }
 
+        /* 🆕 ESTILOS PARA GESTIÓN DE CLIENTES */
+        .cache-info-bar {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .cache-info-bar strong {
+            font-size: 16px;
+        }
+        .cache-info-bar .btn {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+        .modal-large {
+            max-width: 900px;
+        }
+        .cliente-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .cliente-card:hover {
+            background: #f3f4f6;
+        }
+        .cliente-info {
+            flex: 1;
+        }
+        .cliente-info h4 {
+            margin: 0 0 5px 0;
+            color: #1f2937;
+        }
+        .cliente-info p {
+            margin: 2px 0;
+            font-size: 13px;
+            color: #6b7280;
+        }
+        .cliente-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .storage-alert {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            color: #92400e;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
         @media (max-width: 768px) {
             .container { padding: 10px; }
             .form-grid { grid-template-columns: 1fr; }
             .button-group-flex, .btn-group { flex-direction: column; }
+            .cache-info-bar { flex-direction: column; text-align: center; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header"><h1>Procesador de Etiquetas - FUCAS SPA</h1><p>Sistema interactivo de generación de etiquetas</p></div>
+        
+        <!-- 🆕 BARRA DE INFO DE CACHÉ -->
+        <div id="cacheInfoBar" class="cache-info-bar hidden">
+            <div>
+                <strong>💾 Caché de Clientes:</strong> 
+                <span id="cacheCount">0 clientes guardados</span>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="btn btn-info" onclick="abrirGestionClientes()">👥 Ver Clientes</button>
+                <button class="btn btn-warning" onclick="limpiarClientesAntiguos()">🗑️ Limpiar Antiguos</button>
+            </div>
+        </div>
+
+        <!-- ALERTA DE STORAGE -->
+        <div id="storageAlert" class="storage-alert hidden">
+            ⚠️ El almacenamiento está al <span id="storagePercent">0</span>% de capacidad. Considera limpiar clientes antiguos.
+        </div>
         
         <div class="selector-section">
             <h3 style="margin-bottom: 15px; text-align: center;">1. Selecciona el tipo de operación:</h3>
@@ -260,6 +342,31 @@
             </div>
         </div>
 
+        <!-- 🆕 MODAL GESTIÓN DE CLIENTES -->
+        <div id="modalGestionClientes" class="modal-importar" style="display: none;">
+            <div class="modal-content modal-large">
+                <span class="modal-close" onclick="cerrarGestionClientes()">×</span>
+                <h3>👥 Gestión de Clientes Guardados</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin: 15px 0; padding: 15px; background: #f3f4f6; border-radius: 6px;">
+                    <div>
+                        <strong id="totalClientesGestion">0 clientes</strong> en caché
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-success" onclick="exportarClientesExcel()">📊 Exportar Excel</button>
+                        <button class="btn btn-danger" onclick="limpiarTodoCache()">🗑️ Limpiar Todo</button>
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <input type="text" id="buscarCliente" placeholder="🔍 Buscar por nombre, RUT o comuna..." 
+                           style="width: 100%; padding: 10px; border: 2px solid #e5e7eb; border-radius: 6px;"
+                           oninput="filtrarClientes()">
+                </div>
+                <div id="listaClientes" style="max-height: 400px; overflow-y: auto;">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </div>
+        </div>
+
         <div id="previewSection" class="preview-section">
             <h2 style="margin-bottom: 20px; color: #1f2937;">👀 Vista Previa</h2>
             <div id="successMessage" class="success-message"><strong>✅ Datos correctos.</strong><p>Usa las opciones de abajo para imprimir o exportar.</p></div>
@@ -280,6 +387,327 @@
     </div>
 
     <script>
+        // ============================================
+        // 🆕 CONFIGURACIÓN DE INDEXEDDB CON DEXIE
+        // ============================================
+        
+        const db = new Dexie('AromakerClientesDB');
+        db.version(1).stores({
+            clientes: 'rut, nombre, comuna, fechaGuardado, expira'
+        });
+
+        // ============================================
+        // 🆕 FUNCIONES DE GESTIÓN DE CLIENTES
+        // ============================================
+
+        async function guardarClienteEnCache(cliente) {
+            try {
+                const ahora = Date.now();
+                const expiracion = ahora + (90 * 24 * 60 * 60 * 1000); // 90 días
+                
+                const clienteParaGuardar = {
+                    rut: limpiarRUT(cliente.rut),
+                    nombre: cliente.nombre.toUpperCase(),
+                    comuna: cliente.comuna,
+                    telefono: cliente.telefono || '',
+                    direccion: cliente.direccion || '',
+                    referencia: cliente.referencia || '',
+                    transporte: cliente.transporte || '',
+                    fechaGuardado: ahora,
+                    expira: expiracion,
+                    vecesUsado: 1
+                };
+
+                // Verificar si existe
+                const existente = await db.clientes.get(clienteParaGuardar.rut);
+                if (existente) {
+                    // Actualizar y aumentar contador
+                    clienteParaGuardar.vecesUsado = (existente.vecesUsado || 0) + 1;
+                    clienteParaGuardar.expira = expiracion; // Renovar expiración
+                }
+
+                await db.clientes.put(clienteParaGuardar);
+                await actualizarInfoCache();
+                await verificarEspacioStorage();
+                
+                console.log('✅ Cliente guardado:', clienteParaGuardar.nombre);
+            } catch (error) {
+                console.error('❌ Error al guardar cliente:', error);
+            }
+        }
+
+        async function buscarClientePorRut() {
+            const rutInput = document.getElementById('envioRut').value.trim();
+            if (!rutInput || rutInput.length < 7) return;
+
+            const rutLimpio = limpiarRUT(rutInput);
+            
+            try {
+                const cliente = await db.clientes.get(rutLimpio);
+                
+                if (cliente) {
+                    document.getElementById('envioDestinatario').value = cliente.nombre || '';
+                    document.getElementById('envioTelefono').value = cliente.telefono || '';
+                    document.getElementById('envioDireccion').value = cliente.direccion || '';
+                    document.getElementById('envioReferencia').value = cliente.referencia || '';
+                    document.getElementById('envioComuna').value = cliente.comuna || '';
+                    
+                    if (cliente.transporte) {
+                        const selectTrans = document.getElementById('envioTransporte');
+                        const opcionExiste = Array.from(selectTrans.options).some(opt => opt.value === cliente.transporte);
+                        
+                        if (opcionExiste) {
+                            selectTrans.value = cliente.transporte;
+                            document.getElementById('transporteOtroGroup').classList.add('hidden');
+                        } else {
+                            selectTrans.value = 'Otro';
+                            document.getElementById('transporteOtroGroup').classList.remove('hidden');
+                            document.getElementById('envioTransporteOtro').value = cliente.transporte;
+                        }
+                    }
+                    
+                    const diasDesde = Math.floor((Date.now() - cliente.fechaGuardado) / (1000 * 60 * 60 * 24));
+                    mostrarMensajeTemporalCliente(`✅ Cliente encontrado (última vez hace ${diasDesde} días, usado ${cliente.vecesUsado} veces)`);
+                }
+            } catch (error) {
+                console.error('Error al buscar cliente:', error);
+            }
+        }
+
+        async function limpiarClientesExpirados() {
+            try {
+                const ahora = Date.now();
+                const expirados = await db.clientes.where('expira').below(ahora).toArray();
+                
+                if (expirados.length > 0) {
+                    await db.clientes.bulkDelete(expirados.map(c => c.rut));
+                    console.log(`🗑️ ${expirados.length} clientes expirados eliminados`);
+                    await actualizarInfoCache();
+                }
+            } catch (error) {
+                console.error('Error al limpiar expirados:', error);
+            }
+        }
+
+        async function limpiarClientesAntiguos() {
+            if (!confirm('¿Eliminar clientes sin usar en más de 1 año?')) return;
+            
+            try {
+                const unAnio = Date.now() - (365 * 24 * 60 * 60 * 1000);
+                const antiguos = await db.clientes.where('fechaGuardado').below(unAnio).toArray();
+                
+                if (antiguos.length === 0) {
+                    alert('No hay clientes antiguos para eliminar.');
+                    return;
+                }
+                
+                await db.clientes.bulkDelete(antiguos.map(c => c.rut));
+                alert(`✅ ${antiguos.length} clientes antiguos eliminados.`);
+                await actualizarInfoCache();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al limpiar clientes antiguos');
+            }
+        }
+
+        async function actualizarInfoCache() {
+            try {
+                const total = await db.clientes.count();
+                document.getElementById('cacheCount').textContent = `${total} cliente${total !== 1 ? 's' : ''} guardado${total !== 1 ? 's' : ''}`;
+                document.getElementById('cacheInfoBar').classList.toggle('hidden', total === 0);
+            } catch (error) {
+                console.error('Error al actualizar info:', error);
+            }
+        }
+
+        async function verificarEspacioStorage() {
+            // Esta función es más simbólica con IndexedDB ya que tiene MUCHO espacio
+            // pero la dejamos por si quieres monitorear
+            if (navigator.storage && navigator.storage.estimate) {
+                const estimate = await navigator.storage.estimate();
+                const porcentaje = (estimate.usage / estimate.quota) * 100;
+                
+                const alertDiv = document.getElementById('storageAlert');
+                if (porcentaje > 90) {
+                    document.getElementById('storagePercent').textContent = porcentaje.toFixed(1);
+                    alertDiv.classList.remove('hidden');
+                } else {
+                    alertDiv.classList.add('hidden');
+                }
+                
+                console.log(`📊 Storage: ${(estimate.usage / 1024 / 1024).toFixed(2)} MB / ${(estimate.quota / 1024 / 1024).toFixed(2)} MB (${porcentaje.toFixed(2)}%)`);
+            }
+        }
+
+        async function abrirGestionClientes() {
+            document.getElementById('modalGestionClientes').style.display = 'flex';
+            await cargarListaClientes();
+        }
+
+        function cerrarGestionClientes() {
+            document.getElementById('modalGestionClientes').style.display = 'none';
+        }
+
+        async function cargarListaClientes(filtro = '') {
+            try {
+                let clientes = await db.clientes.orderBy('fechaGuardado').reverse().toArray();
+                
+                if (filtro) {
+                    const filtroLower = filtro.toLowerCase();
+                    clientes = clientes.filter(c => 
+                        c.nombre.toLowerCase().includes(filtroLower) ||
+                        c.rut.includes(filtroLower) ||
+                        (c.comuna && c.comuna.toLowerCase().includes(filtroLower))
+                    );
+                }
+                
+                document.getElementById('totalClientesGestion').textContent = `${clientes.length} cliente${clientes.length !== 1 ? 's' : ''}`;
+                
+                const lista = document.getElementById('listaClientes');
+                if (clientes.length === 0) {
+                    lista.innerHTML = '<p style="text-align:center;color:#6b7280;padding:40px;">No hay clientes guardados</p>';
+                    return;
+                }
+                
+                lista.innerHTML = clientes.map(c => {
+                    const diasDesde = Math.floor((Date.now() - c.fechaGuardado) / (1000 * 60 * 60 * 24));
+                    return `
+                        <div class="cliente-card">
+                            <div class="cliente-info">
+                                <h4>${c.nombre}</h4>
+                                <p>📋 RUT: ${formatearRUT(c.rut)} | 📍 ${c.comuna || 'Sin comuna'}</p>
+                                <p>📞 ${c.telefono || 'Sin teléfono'} | 🚚 ${c.transporte || 'Sin transporte'}</p>
+                                <p style="color:#059669;">💾 Guardado hace ${diasDesde} día${diasDesde !== 1 ? 's' : ''} | Usado ${c.vecesUsado || 1} vez${(c.vecesUsado || 1) !== 1 ? 'ces' : ''}</p>
+                            </div>
+                            <div class="cliente-actions">
+                                <button class="btn btn-info" onclick='cargarClienteEnFormulario(${JSON.stringify(c)})' 
+                                        style="padding:8px 16px;font-size:13px;">Usar</button>
+                                <button class="btn btn-danger" onclick="eliminarCliente('${c.rut}')" 
+                                        style="padding:8px 16px;font-size:13px;">Eliminar</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error al cargar clientes:', error);
+            }
+        }
+
+        async function filtrarClientes() {
+            const filtro = document.getElementById('buscarCliente').value;
+            await cargarListaClientes(filtro);
+        }
+
+        function cargarClienteEnFormulario(cliente) {
+            document.getElementById('envioDestinatario').value = cliente.nombre || '';
+            document.getElementById('envioRut').value = formatearRUT(cliente.rut) || '';
+            document.getElementById('envioTelefono').value = cliente.telefono || '';
+            document.getElementById('envioDireccion').value = cliente.direccion || '';
+            document.getElementById('envioReferencia').value = cliente.referencia || '';
+            document.getElementById('envioComuna').value = cliente.comuna || '';
+            
+            if (cliente.transporte) {
+                const selectTrans = document.getElementById('envioTransporte');
+                const opcionExiste = Array.from(selectTrans.options).some(opt => opt.value === cliente.transporte);
+                if (opcionExiste) {
+                    selectTrans.value = cliente.transporte;
+                } else {
+                    selectTrans.value = 'Otro';
+                    document.getElementById('transporteOtroGroup').classList.remove('hidden');
+                    document.getElementById('envioTransporteOtro').value = cliente.transporte;
+                }
+            }
+            
+            cerrarGestionClientes();
+            
+            // Scroll al formulario
+            document.getElementById('formENVIO').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            alert(`✅ Datos de "${cliente.nombre}" cargados en el formulario`);
+        }
+
+        async function eliminarCliente(rut) {
+            if (!confirm('¿Eliminar este cliente del caché?')) return;
+            
+            try {
+                await db.clientes.delete(rut);
+                await cargarListaClientes();
+                await actualizarInfoCache();
+                alert('✅ Cliente eliminado');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al eliminar cliente');
+            }
+        }
+
+        async function limpiarTodoCache() {
+            if (!confirm('⚠️ ¿Eliminar TODOS los clientes guardados?\n\nEsta acción no se puede deshacer.')) return;
+            
+            try {
+                await db.clientes.clear();
+                await actualizarInfoCache();
+                await cargarListaClientes();
+                alert('✅ Todos los clientes eliminados');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al limpiar caché');
+            }
+        }
+
+        async function exportarClientesExcel() {
+            try {
+                const clientes = await db.clientes.orderBy('nombre').toArray();
+                
+                if (clientes.length === 0) {
+                    alert('No hay clientes para exportar');
+                    return;
+                }
+                
+                const datos = clientes.map(c => ({
+                    'Nombre': c.nombre,
+                    'RUT': formatearRUT(c.rut),
+                    'Teléfono': c.telefono || '',
+                    'Dirección': c.direccion || '',
+                    'Comuna': c.comuna || '',
+                    'Transporte': c.transporte || '',
+                    'Referencia': c.referencia || '',
+                    'Veces Usado': c.vecesUsado || 1,
+                    'Último Uso': new Date(c.fechaGuardado).toLocaleDateString('es-CL')
+                }));
+                
+                const ws = XLSX.utils.json_to_sheet(datos);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Clientes');
+                
+                XLSX.writeFile(wb, `Clientes_AROMAKER_${new Date().toISOString().slice(0,10)}.xlsx`);
+                alert(`✅ ${clientes.length} clientes exportados a Excel`);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al exportar');
+            }
+        }
+
+        // ============================================
+        // 🆕 FUNCIONES AUXILIARES
+        // ============================================
+
+        function limpiarRUT(rut) {
+            return rut.replace(/[.-]/g, '').toUpperCase();
+        }
+
+        function formatearRUT(rut) {
+            const limpio = limpiarRUT(rut);
+            if (limpio.length < 2) return limpio;
+            
+            const dv = limpio.slice(-1);
+            const numero = limpio.slice(0, -1);
+            
+            return numero.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '-' + dv;
+        }
+
+        // ============================================
+        // CÓDIGO ORIGINAL (sin cambios importantes)
+        // ============================================
+        
         let processedData = null;
         let batchData = [];
         let modoActual = 'individual';
@@ -290,10 +718,15 @@
         
         const googleScriptURL = 'https://script.google.com/macros/s/AKfycbwEIehhRdV6jDI9lDGCQEgUaRh13kTZDdBUO4Oc7Ph8I5FY1yJ7zx53fqmXNqs9DMF4tA/exec';
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('switchPagaAromaker').addEventListener('change', function() {
                 pagaAromakerActivo = this.checked;
             });
+            
+            // 🆕 Inicializar caché
+            await limpiarClientesExpirados();
+            await actualizarInfoCache();
+            await verificarEspacioStorage();
         });
 
         function obtenerValor(datos, clave) {
@@ -370,7 +803,7 @@
             document.getElementById('datosImportados').innerHTML = `<div style="background:#f0f9ff;padding:15px;border-radius:6px;border:1px solid #0ea5e9;"><h4 style="margin-bottom:10px;">📋 Datos:</h4><p><strong>Cliente:</strong> ${d.nombre||'N/A'}</p><p><strong>RUT:</strong> ${d.rut||'N/A'}</p><p><strong>Teléfono:</strong> ${d.telefono||'N/A'}</p></div>`;
             document.getElementById('resultadoImportacion').style.display = 'block';
         }
-        function aplicarDatosImportados() {
+        async function aplicarDatosImportados() {
             if (!datosClienteImportado) return;
             const d = datosClienteImportado;
             document.getElementById('envioDestinatario').value = d.nombre || '';
@@ -386,29 +819,21 @@
             }
             alert('✅ Datos del cliente cargados.');
             cerrarImportarCliente();
-            if (d.rut) {
-                const c = { ...d, fecha: new Date().toISOString() };
-                let l = JSON.parse(localStorage.getItem('clientesImportados') || '[]');
-                l = l.filter(i => i.rut !== c.rut);
-                l.push(c);
-                if (l.length > 50) l = l.slice(-50);
-                localStorage.setItem('clientesImportados', JSON.stringify(l));
+            
+            // 🆕 Guardar en IndexedDB también
+            if (d.rut && d.nombre) {
+                await guardarClienteEnCache({
+                    rut: d.rut,
+                    nombre: d.nombre,
+                    telefono: d.telefono,
+                    direccion: d.direccion,
+                    comuna: d.comuna,
+                    referencia: d.referencia,
+                    transporte: d.transporte
+                });
             }
         }
-        function buscarClientePorRut() {
-            const r = document.getElementById('envioRut').value.trim();
-            if (!r || r.length < 8) return;
-            const l = JSON.parse(localStorage.getItem('clientesImportados') || '[]'), f = l.find(c => c.rut.replace(/[.-]/g, '') === r.replace(/[.-]/g, ''));
-            if (f) {
-                document.getElementById('envioDestinatario').value = f.nombre || '';
-                document.getElementById('envioTelefono').value = f.telefono || '';
-                document.getElementById('envioDireccion').value = f.direccion || '';
-                document.getElementById('envioReferencia').value = f.referencia || '';
-                document.getElementById('envioComuna').value = f.comuna || '';
-                if (f.transporte) document.getElementById('envioTransporte').value = f.transporte;
-                mostrarMensajeTemporalCliente(`✅ Cliente encontrado en caché: ${f.nombre}`);
-            }
-        }
+        
         function mostrarMensajeTemporalCliente(m) {
             let d = document.getElementById('mensajeCliente');
             if (!d) {
@@ -616,9 +1041,25 @@
             return { tipo: 'ENVIO', bultos: parseInt(document.getElementById('envioBultos').value) || 1, datos: d, pagaAromaker: pagaAromakerActivo };
         }
         
-        function procesarEnvio() {
+        async function procesarEnvio() {
             const d = obtenerDatosEnvioDelFormulario();
             if (!d) return;
+            
+            // 🆕 Guardar cliente en caché automáticamente
+            const rutDest = obtenerValor(d.datos, 'RUT DESTINATARIO');
+            const nombreDest = obtenerValor(d.datos, 'DESTINATARIO');
+            if (rutDest && nombreDest) {
+                await guardarClienteEnCache({
+                    rut: rutDest,
+                    nombre: nombreDest,
+                    telefono: obtenerValor(d.datos, 'TELÉFONO DESTINO'),
+                    direccion: obtenerValor(d.datos, 'DIRECCIÓN DESTINO'),
+                    comuna: obtenerValor(d.datos, 'COMUNA DESTINO'),
+                    referencia: obtenerValor(d.datos, 'REFERENCIA'),
+                    transporte: obtenerValor(d.datos, 'MEDIO DE TRANSPORTE')
+                });
+            }
+            
             if (modoActual === 'multiple') { batchData.push(d); renderizarLote(); limpiarFormularioEnvio(); alert(`✅ Entrada para "${d.datos.find(i=>i[0]==='DESTINATARIO')[1]}" agregada.`); }
             else { processedData = d; mostrarVistaPrevia(); }
         }
