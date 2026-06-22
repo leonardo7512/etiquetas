@@ -199,16 +199,21 @@
             <div>
                 <strong>💾 Caché de Clientes:</strong> 
                 <span id="cacheCount">0 clientes guardados</span>
+                <br><span id="storageInfo" style="font-size:12px;opacity:0.9;"></span>
             </div>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                 <button class="btn btn-info" onclick="abrirGestionClientes()">👥 Ver Clientes</button>
-                <button class="btn btn-warning" onclick="limpiarClientesAntiguos()">🗑️ Limpiar Antiguos</button>
+                <button class="btn btn-success" onclick="respaldarClientesJSON()">💾 Respaldo</button>
+                <button class="btn btn-warning" onclick="dispararImportMasivo()">📤 Importar Masivo</button>
             </div>
         </div>
 
+        <!-- 🆕 Input oculto compartido para importar / restaurar (acepta Excel y JSON) -->
+        <input type="file" id="fileImportMasivo" accept=".xlsx,.xls,.json" style="display:none" onchange="importarRestaurarArchivo(event)">
+
         <!-- ALERTA DE STORAGE -->
         <div id="storageAlert" class="storage-alert hidden">
-            ⚠️ El almacenamiento está al <span id="storagePercent">0</span>% de capacidad. Considera limpiar clientes antiguos.
+            ⚠️ El almacenamiento está al <span id="storagePercent">0</span>% de capacidad. Considera respaldar y limpiar.
         </div>
         
         <div class="selector-section">
@@ -347,12 +352,14 @@
             <div class="modal-content modal-large">
                 <span class="modal-close" onclick="cerrarGestionClientes()">×</span>
                 <h3>👥 Gestión de Clientes Guardados</h3>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin: 15px 0; padding: 15px; background: #f3f4f6; border-radius: 6px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin: 15px 0; padding: 15px; background: #f3f4f6; border-radius: 6px; flex-wrap: wrap; gap: 10px;">
                     <div>
                         <strong id="totalClientesGestion">0 clientes</strong> en caché
                     </div>
-                    <div style="display: flex; gap: 10px;">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <button class="btn btn-success" onclick="exportarClientesExcel()">📊 Exportar Excel</button>
+                        <button class="btn btn-success" onclick="respaldarClientesJSON()">💾 Respaldo JSON</button>
+                        <button class="btn btn-warning" onclick="dispararImportMasivo()">📤 Importar / Restaurar</button>
                         <button class="btn btn-danger" onclick="limpiarTodoCache()">🗑️ Limpiar Todo</button>
                     </div>
                 </div>
@@ -396,6 +403,12 @@
             clientes: 'rut, nombre, comuna, fechaGuardado, expira'
         });
 
+        // 🆕 Días que un cliente permanece en caché (antes: 90).
+        // Pon 3650 = 10 años. Si quieres que NUNCA caduque, deja un número
+        // muy grande (ej: 36500 = 100 años) o comenta limpiarClientesExpirados() en el DOMContentLoaded.
+        const DIAS_EXPIRACION_CLIENTE = 3650;
+        const MS_EXPIRACION = DIAS_EXPIRACION_CLIENTE * 24 * 60 * 60 * 1000;
+
         // ============================================
         // 🆕 FUNCIONES DE GESTIÓN DE CLIENTES
         // ============================================
@@ -403,28 +416,24 @@
         async function guardarClienteEnCache(cliente) {
             try {
                 const ahora = Date.now();
-                const expiracion = ahora + (90 * 24 * 60 * 60 * 1000); // 90 días
+                const expiracion = ahora + MS_EXPIRACION;
+                const rut = limpiarRUT(cliente.rut);
                 
-                const clienteParaGuardar = {
-                    rut: limpiarRUT(cliente.rut),
-                    nombre: cliente.nombre.toUpperCase(),
-                    comuna: cliente.comuna,
-                    telefono: cliente.telefono || '',
-                    direccion: cliente.direccion || '',
-                    referencia: cliente.referencia || '',
-                    transporte: cliente.transporte || '',
-                    fechaGuardado: ahora,
-                    expira: expiracion,
-                    vecesUsado: 1
-                };
+                // Verificar si existe (para preservar fecha original y contador)
+                const existente = await db.clientes.get(rut);
 
-                // Verificar si existe
-                const existente = await db.clientes.get(clienteParaGuardar.rut);
-                if (existente) {
-                    // Actualizar y aumentar contador
-                    clienteParaGuardar.vecesUsado = (existente.vecesUsado || 0) + 1;
-                    clienteParaGuardar.expira = expiracion; // Renovar expiración
-                }
+                const clienteParaGuardar = {
+                    rut: rut,
+                    nombre: cliente.nombre.toUpperCase(),
+                    comuna: cliente.comuna || (existente ? existente.comuna : '') || '',
+                    telefono: cliente.telefono || (existente ? existente.telefono : '') || '',
+                    direccion: cliente.direccion || (existente ? existente.direccion : '') || '',
+                    referencia: cliente.referencia || (existente ? existente.referencia : '') || '',
+                    transporte: cliente.transporte || (existente ? existente.transporte : '') || '',
+                    fechaGuardado: existente ? existente.fechaGuardado : ahora,
+                    expira: expiracion,
+                    vecesUsado: existente ? (existente.vecesUsado || 0) + 1 : 1
+                };
 
                 await db.clientes.put(clienteParaGuardar);
                 await actualizarInfoCache();
@@ -465,9 +474,12 @@
                             document.getElementById('envioTransporteOtro').value = cliente.transporte;
                         }
                     }
+
+                    // 🆕 Usar el cliente RENUEVA su vigencia: si lo sigues consultando, no caduca.
+                    await db.clientes.update(rutLimpio, { expira: Date.now() + MS_EXPIRACION });
                     
                     const diasDesde = Math.floor((Date.now() - cliente.fechaGuardado) / (1000 * 60 * 60 * 24));
-                    mostrarMensajeTemporalCliente(`✅ Cliente encontrado (última vez hace ${diasDesde} días, usado ${cliente.vecesUsado} veces)`);
+                    mostrarMensajeTemporalCliente(`✅ Cliente encontrado (guardado hace ${diasDesde} días, usado ${cliente.vecesUsado} veces)`);
                 }
             } catch (error) {
                 console.error('Error al buscar cliente:', error);
@@ -521,21 +533,32 @@
         }
 
         async function verificarEspacioStorage() {
-            // Esta función es más simbólica con IndexedDB ya que tiene MUCHO espacio
-            // pero la dejamos por si quieres monitorear
+            // IndexedDB tiene MUCHO espacio (suele ser un % del disco libre).
+            // Esta función ahora muestra el uso real en la barra para que sepas
+            // cuándo (si alguna vez) conviene limpiar.
             if (navigator.storage && navigator.storage.estimate) {
                 const estimate = await navigator.storage.estimate();
-                const porcentaje = (estimate.usage / estimate.quota) * 100;
+                const usage = estimate.usage || 0;
+                const quota = estimate.quota || 1;
+                const porcentaje = (usage / quota) * 100;
                 
                 const alertDiv = document.getElementById('storageAlert');
-                if (porcentaje > 90) {
+                if (porcentaje > 80) {
                     document.getElementById('storagePercent').textContent = porcentaje.toFixed(1);
                     alertDiv.classList.remove('hidden');
                 } else {
                     alertDiv.classList.add('hidden');
                 }
+
+                // 🆕 Mostrar uso real en la barra de caché
+                const infoSpan = document.getElementById('storageInfo');
+                if (infoSpan) {
+                    const usoMB = (usage / 1024 / 1024).toFixed(2);
+                    const totalMB = (quota / 1024 / 1024).toFixed(0);
+                    infoSpan.textContent = `📊 Usando ${usoMB} MB de ~${totalMB} MB disponibles (${porcentaje.toFixed(3)}%)`;
+                }
                 
-                console.log(`📊 Storage: ${(estimate.usage / 1024 / 1024).toFixed(2)} MB / ${(estimate.quota / 1024 / 1024).toFixed(2)} MB (${porcentaje.toFixed(2)}%)`);
+                console.log(`📊 Storage: ${(usage / 1024 / 1024).toFixed(2)} MB / ${(quota / 1024 / 1024).toFixed(2)} MB (${porcentaje.toFixed(2)}%)`);
             }
         }
 
@@ -640,7 +663,7 @@
         }
 
         async function limpiarTodoCache() {
-            if (!confirm('⚠️ ¿Eliminar TODOS los clientes guardados?\n\nEsta acción no se puede deshacer.')) return;
+            if (!confirm('⚠️ ¿Eliminar TODOS los clientes guardados?\n\nEsta acción no se puede deshacer. Te recomiendo hacer un Respaldo antes.')) return;
             
             try {
                 await db.clientes.clear();
@@ -679,11 +702,167 @@
                 XLSX.utils.book_append_sheet(wb, ws, 'Clientes');
                 
                 XLSX.writeFile(wb, `Clientes_AROMAKER_${new Date().toISOString().slice(0,10)}.xlsx`);
-                alert(`✅ ${clientes.length} clientes exportados a Excel`);
+                alert(`✅ ${clientes.length} clientes exportados a Excel.\n\nPuedes editar este archivo (borrar las filas que no quieras) y luego subirlo con "Importar / Restaurar".`);
             } catch (error) {
                 console.error('Error:', error);
                 alert('Error al exportar');
             }
+        }
+
+        // ============================================
+        // 🆕 RESPALDO (JSON) — copia fiel para restaurar exacto
+        // ============================================
+        async function respaldarClientesJSON() {
+            try {
+                const clientes = await db.clientes.toArray();
+                if (clientes.length === 0) {
+                    alert('No hay clientes para respaldar');
+                    return;
+                }
+                const respaldo = {
+                    _meta: {
+                        app: 'Procesador Etiquetas FUCAS',
+                        tipo: 'respaldo_clientes',
+                        version: 1,
+                        fecha: new Date().toISOString(),
+                        total: clientes.length
+                    },
+                    clientes: clientes
+                };
+                const blob = new Blob([JSON.stringify(respaldo, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Respaldo_Clientes_AROMAKER_${new Date().toISOString().slice(0,10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                alert(`✅ Respaldo creado con ${clientes.length} clientes.\n\nGuárdalo en un lugar seguro. Para volver a cargarlo usa "Importar / Restaurar".`);
+            } catch (error) {
+                console.error('Error al respaldar:', error);
+                alert('Error al crear el respaldo');
+            }
+        }
+
+        // ============================================
+        // 🆕 IMPORTACIÓN MASIVA (Excel o JSON) con FUSIÓN de caché
+        // ============================================
+        function dispararImportMasivo() {
+            const input = document.getElementById('fileImportMasivo');
+            input.value = ''; // permite re-subir el mismo archivo
+            input.click();
+        }
+
+        async function importarRestaurarArchivo(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const nombre = file.name.toLowerCase();
+            try {
+                let clientesParseados = [];
+
+                if (nombre.endsWith('.json')) {
+                    const texto = await file.text();
+                    const data = JSON.parse(texto);
+                    // Acepta tanto el formato de respaldo {clientes:[...]} como un array directo
+                    clientesParseados = Array.isArray(data) ? data : (data.clientes || []);
+                } else {
+                    // Excel
+                    const buffer = await file.arrayBuffer();
+                    const wb = XLSX.read(buffer);
+                    const sheet = wb.Sheets[wb.SheetNames[0]];
+                    const filas = XLSX.utils.sheet_to_json(sheet); // objetos por encabezado
+                    clientesParseados = filas.map(mapearFilaExcelACliente);
+                }
+
+                clientesParseados = clientesParseados.filter(c => c && c.rut && c.nombre);
+
+                if (clientesParseados.length === 0) {
+                    alert('No se encontraron clientes válidos en el archivo.\n\nAsegúrate de que tenga al menos columnas de Nombre y RUT (Excel), o de que sea un respaldo JSON válido.');
+                    return;
+                }
+
+                if (!confirm(`Se detectaron ${clientesParseados.length} registros.\n\nSe FUSIONARÁN con los clientes que ya tienes en caché (los existentes se actualizan, los nuevos se agregan). No se borra nada de lo que ya está.\n\n¿Continuar?`)) {
+                    return;
+                }
+
+                const resultado = await bulkUpsertClientes(clientesParseados);
+
+                await actualizarInfoCache();
+                await verificarEspacioStorage();
+                if (document.getElementById('modalGestionClientes').style.display === 'flex') {
+                    await cargarListaClientes();
+                }
+
+                alert(`✅ Importación completada.\n\n• Nuevos agregados: ${resultado.nuevos}\n• Actualizados: ${resultado.actualizados}\n• Total procesados: ${resultado.total}`);
+            } catch (error) {
+                console.error('Error en importación masiva:', error);
+                alert('Error al procesar el archivo: ' + error.message);
+            }
+        }
+
+        // Mapea una fila del Excel exportado (encabezados en español) a la estructura interna
+        function mapearFilaExcelACliente(fila) {
+            const get = (...claves) => {
+                for (const k of claves) {
+                    for (const key in fila) {
+                        if (key.toString().trim().toLowerCase() === k.toLowerCase()) {
+                            const v = fila[key];
+                            return v == null ? '' : v.toString().trim();
+                        }
+                    }
+                }
+                return '';
+            };
+            return {
+                rut: get('RUT', 'RUT DESTINATARIO'),
+                nombre: get('Nombre', 'DESTINATARIO', 'CLIENTE'),
+                telefono: get('Teléfono', 'Telefono', 'TELÉFONO DESTINO'),
+                direccion: get('Dirección', 'Direccion', 'DIRECCIÓN DESTINO'),
+                comuna: get('Comuna', 'COMUNA DESTINO'),
+                transporte: get('Transporte', 'MEDIO DE TRANSPORTE'),
+                referencia: get('Referencia', 'REFERENCIA'),
+                vecesUsado: parseInt(get('Veces Usado')) || 0
+            };
+        }
+
+        // Inserta/actualiza en bloque LEYENDO lo que ya está en caché (fusión, no reemplazo)
+        async function bulkUpsertClientes(clientes) {
+            const ahora = Date.now();
+            const expiracion = ahora + MS_EXPIRACION;
+            let nuevos = 0, actualizados = 0;
+            const aGuardar = [];
+
+            for (const c of clientes) {
+                const rut = limpiarRUT((c.rut || '').toString());
+                const nombre = (c.nombre || '').toString().trim();
+                if (!rut || !nombre) continue;
+
+                const existente = await db.clientes.get(rut);
+
+                const registro = {
+                    rut: rut,
+                    nombre: nombre.toUpperCase(),
+                    comuna: c.comuna || (existente ? existente.comuna : '') || '',
+                    telefono: c.telefono || (existente ? existente.telefono : '') || '',
+                    direccion: c.direccion || (existente ? existente.direccion : '') || '',
+                    referencia: c.referencia || (existente ? existente.referencia : '') || '',
+                    transporte: c.transporte || (existente ? existente.transporte : '') || '',
+                    // Si el archivo (respaldo JSON) trae fecha original, se respeta; si no, se conserva la existente o se usa ahora.
+                    fechaGuardado: c.fechaGuardado || (existente ? existente.fechaGuardado : ahora),
+                    expira: expiracion,
+                    vecesUsado: Math.max(parseInt(c.vecesUsado) || 0, existente ? (existente.vecesUsado || 0) : 0) || 1
+                };
+
+                aGuardar.push(registro);
+                if (existente) actualizados++; else nuevos++;
+            }
+
+            if (aGuardar.length > 0) {
+                await db.clientes.bulkPut(aGuardar);
+            }
+            return { nuevos, actualizados, total: aGuardar.length };
         }
 
         // ============================================
