@@ -195,17 +195,23 @@
         <div class="header"><h1>Procesador de Etiquetas - FUCAS SPA</h1><p>Sistema interactivo de generación de etiquetas</p></div>
         
         <!-- 🆕 BARRA DE INFO DE CACHÉ -->
-        <div id="cacheInfoBar" class="cache-info-bar hidden">
+        <div id="cacheInfoBar" class="cache-info-bar">
             <div>
-                <strong>💾 Caché de Clientes:</strong> 
+                <strong>💾 Clientes de este navegador:</strong> 
                 <span id="cacheCount">0 clientes guardados</span>
                 <br><span id="storageInfo" style="font-size:12px;opacity:0.9;"></span>
             </div>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                 <button class="btn btn-info" onclick="abrirGestionClientes()">👥 Ver Clientes</button>
-                <button class="btn btn-success" onclick="respaldarClientesJSON()">💾 Respaldo</button>
-                <button class="btn btn-warning" onclick="dispararImportMasivo()">📤 Importar Masivo</button>
+                <button class="btn btn-success" onclick="respaldarClientesJSON()">⬇️ Exportar respaldo</button>
+                <button class="btn btn-warning" onclick="dispararImportMasivo()">⬆️ Importar clientes</button>
             </div>
+        </div>
+
+        <div style="background:#eff6ff;border:1px solid #93c5fd;color:#1e3a8a;padding:12px 16px;border-radius:8px;margin-bottom:20px;font-size:14px;">
+            <strong>🔄 Cambio de Chrome a Zen:</strong>
+            en Chrome usa <strong>“Exportar respaldo”</strong>; luego abre este archivo en Zen y usa
+            <strong>“Importar clientes”</strong>. El archivo JSON transfiere todos los clientes de una sola vez.
         </div>
 
         <!-- 🆕 Input oculto compartido para importar / restaurar (acepta Excel y JSON) -->
@@ -526,7 +532,15 @@
             try {
                 const total = await db.clientes.count();
                 document.getElementById('cacheCount').textContent = `${total} cliente${total !== 1 ? 's' : ''} guardado${total !== 1 ? 's' : ''}`;
-                document.getElementById('cacheInfoBar').classList.toggle('hidden', total === 0);
+                // La barra debe seguir visible aunque este navegador tenga 0 clientes.
+                // Así, al abrir el archivo por primera vez en Zen Browser, siempre se
+                // puede importar el respaldo creado previamente en Chrome.
+                document.getElementById('cacheInfoBar').classList.remove('hidden');
+
+                const infoSpan = document.getElementById('storageInfo');
+                if (total === 0 && infoSpan) {
+                    infoSpan.textContent = 'Para traer tus clientes desde Chrome, pulsa “Importar clientes” y selecciona el respaldo JSON.';
+                }
             } catch (error) {
                 console.error('Error al actualizar info:', error);
             }
@@ -555,7 +569,11 @@
                 if (infoSpan) {
                     const usoMB = (usage / 1024 / 1024).toFixed(2);
                     const totalMB = (quota / 1024 / 1024).toFixed(0);
-                    infoSpan.textContent = `📊 Usando ${usoMB} MB de ~${totalMB} MB disponibles (${porcentaje.toFixed(3)}%)`;
+                    const totalClientes = await db.clientes.count();
+                    const ayudaImportar = totalClientes === 0
+                        ? 'Pulsa “Importar clientes” para cargar el respaldo de Chrome. · '
+                        : '';
+                    infoSpan.textContent = `${ayudaImportar}📊 Usando ${usoMB} MB de ~${totalMB} MB disponibles (${porcentaje.toFixed(3)}%)`;
                 }
                 
                 console.log(`📊 Storage: ${(usage / 1024 / 1024).toFixed(2)} MB / ${(quota / 1024 / 1024).toFixed(2)} MB (${porcentaje.toFixed(2)}%)`);
