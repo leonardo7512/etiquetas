@@ -1266,10 +1266,21 @@
                 let t = `<div class="titulo-etiqueta ${d.tipo==='PROVISORIA'?'titulo-provisoria':''}">${'ETIQUETA '+d.tipo}</div>`, m = '<div class="retiro-main">';
                 d.datos.filter(f => f[0]==='CLIENTE'||f[0]==='NOTA DE VENTA').forEach(f => { m += `<p class="${f[0].includes('NOTA')?'nota-venta':''}"><span class="campo">${f[0]}:</span> ${f[1]}</p>`; });
                 m += '</div>';
+
+                // 🆕 OBSERVACIONES: ahora van en un recuadro destacado, separado de los datos chicos.
+                // Si el texto es largo, se usa una letra un poco menor para que no se salga de la etiqueta.
+                const obs = (obtenerValor(d.datos, 'OBSERVACIONES') || '').trim();
+                let o = '';
+                if (obs) {
+                    const claseLargo = obs.length > 120 ? ' obs-largo' : '';
+                    o = `<div class="observaciones-destacada${claseLargo}"><div class="obs-titulo">⚠ OBSERVACIONES</div><div class="obs-texto">${obs}</div></div>`;
+                }
+
+                // Datos secundarios (fecha, vendedor, contacto, retira) se mantienen chicos abajo
                 let f = `<div class="seccion-remitente">`;
-                d.datos.filter(i => i[0]==='FECHA'||i[0]==='VENDEDOR'||i[0]==='CONTACTO'||i[0]==='RETIRA'||i[0]==='OBSERVACIONES').forEach(i => { if(i[1]) f += `<p><span class="campo">${i[0]}:</span> ${i[1]}</p>`; });
+                d.datos.filter(i => i[0]==='FECHA'||i[0]==='VENDEDOR'||i[0]==='CONTACTO'||i[0]==='RETIRA').forEach(i => { if(i[1]) f += `<p><span class="campo">${i[0]}:</span> ${i[1]}</p>`; });
                 f += '</div>';
-                return `${t}${m}${f}`;
+                return `${t}${m}${o}${f}`;
             } else {
                 let r='<div class="seccion seccion-remitente">', a='<div class="seccion seccion-destinatario">', e='<div class="seccion seccion-envio">', c='remitente';
                 d.datos.forEach(f => {
@@ -1312,6 +1323,10 @@ body{margin:0;font-family:sans-serif}
 .campo{font-weight:700}
 .separador{border-top:1.5px solid #000;margin:5px 0}
 .nota-venta{font-weight:700;font-size:18pt!important}
+.observaciones-destacada{border:2.5px solid #000;border-radius:6px;padding:5px 12px 7px 12px;margin:4px 0 6px 0;background:#fff3cd;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.obs-titulo{font-size:10pt;font-weight:900;letter-spacing:1.5px;border-bottom:1px solid #000;padding-bottom:2px;margin-bottom:4px}
+.obs-texto{font-size:15pt;font-weight:700;text-transform:uppercase;line-height:1.25;white-space:pre-wrap}
+.obs-largo .obs-texto{font-size:12pt}
 ${usarMarcadorPaga ? `
 .etiqueta-con-marca{padding:24px 20px 24px 20px!important}
 .marca-paga-container{position:absolute;inset:0;pointer-events:none;z-index:10}
